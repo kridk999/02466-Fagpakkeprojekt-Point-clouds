@@ -11,7 +11,7 @@ from tqdm import tqdm
 import glob
 
 
-class PointClouds(Dataset):
+class PointCloudDataset(Dataset):
     def __init__(self):
 
         males = []
@@ -46,13 +46,22 @@ class PointClouds(Dataset):
             males.append(pcd)
 
         
-        self.males = males
+        
         self.females = females
+        self.males = males
         self.pcds = np.concatenate((females, males), axis=0)
     
     def __len__(self):
         return len(self.pcds)
     
     def __getitem__(self, idx):
-        sample = {'pointcloud': self.pcds[index]}
-        return sample
+        return self.pcds[idx]
+
+
+
+
+
+#Load entire dataset and stash in the pytorch class:
+pcds_dataset = PointCloudDataset()
+
+print(len(pcds_dataset))
