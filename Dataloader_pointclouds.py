@@ -56,12 +56,22 @@ class PointCloudDataset(Dataset):
     
     def __getitem__(self, idx):
         return self.pcds[idx]
-
-
+    
+    def Get_normals(self, points): 
+        normals = []
+        for i in range(len(points)):
+            normals.append(np.asarray(points[i].normals))
+        return normals   
 
 
 
 #Load entire dataset and stash in the pytorch class:
-pcds_dataset = PointCloudDataset()
+datamales = PointCloudDataset()
 
-print(len(pcds_dataset))
+
+
+
+
+#data.females[0]
+
+print(len(data.females))
