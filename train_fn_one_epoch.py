@@ -9,7 +9,7 @@ import sys
 import config
 import torch.optim as optim
 from utils import save_checkpoint, load_checkpoint
-#import foldingnet as Generator
+from Generator import ReconstructionNet as Generator_Fold
 #import Pointnet as Discriminator
 
 
@@ -55,25 +55,25 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
 
         #Train the generators for male and female
         with torch.cuda.amp.autocast():
-            #adviserial loss for both generators
+            #Adviserial loss for both generators
             D_M_fake = disc_M(fake_male)
             D_FM_fake = disc_FM(fake_female)
             loss_G_M = mse(D_M_fake, torch.ones_like(D_M_fake))
             loss_G_FM = mse(D_FM_fake, torch.ones_like(D_FM_fake))
 
-            #cycle loss
+            #Cycle loss
             cycle_female = gen_FM(fake_male)
             cycle_male = gen_M(fake_female)
             cycle_female_loss = l1(female, cycle_female)
             cycle_male_loss = l1(male, cycle_male)
 
-            #identity loss - gør det en forskel?
+            #Identity loss - gør det en forskel?
             identity_female = gen_FM(female)
             identity_male = gen_M(male)
             identity_female_loss = l1(female, identity_female)
             identity_male_loss = l1(male, identity_male)
 
-            #adding all generative losses together:
+            #Adding all generative losses together:
             G_loss = (
                 loss_G_FM
                 + loss_G_M
@@ -88,11 +88,14 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
         g_scaler.update()
 
 def main():
+    #missing the disc and gen networks
     disc_M = Discriminator
     disc_FM = Discriminator
-    gen_M = Generator
-    gen_FM = Generator
+    gen_M = Generator_Fold()
+    gen_FM = Generator_Fold()
 
+
+    # using Adam as optimizer, is this correct?
     opt_disc = optim.Adam(
         list(disc_FM.parameters()) + list(disc_M.parameters()),
         lr=config.LEARNING_RATE,
@@ -148,20 +151,18 @@ def main():
         transform=config.transform
     )
 
-    val_loader = DataLoader(
-        val_dataset,
-        batch_size=1,
-        shuffle=False
-        pin_memory=True
-    )
+    val_loader = DataLoader(val_dataset,
+            batch_size=1,
+            shuffle=False,
+            pin_memory=True
+            )
 
-    loader = DataLoader(
-        dataset,
-        batch_size=config.BATCH_SIZE
-        shuffle=True,
-        num_workers=config.NUM_WORKERS,
-        pin_memory=True
-    )
+    loader = DataLoader(dataset,
+            batch_size=config.BATCH_SIZE,
+            shuffle=True,
+            num_workers=config.NUM_WORKERS,
+            pin_memory=True
+            )
 
     #create scalers for g and d:
     g_scaler = torch.cuda.amp.GradScaler()
