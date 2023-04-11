@@ -177,5 +177,6 @@ def main():
             save_checkpoint(disc_M, opt_disc, filename=config.CHECKPOINT_CRITIC_M)
             save_checkpoint(disc_FM, opt_disc, filename=config.CHECKPOINT_CRITIC_FM)
 
+
 if __name__ == "__main__":
     main()

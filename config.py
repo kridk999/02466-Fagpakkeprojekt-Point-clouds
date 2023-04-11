@@ -1,6 +1,6 @@
 import torch
-import albumentations as A
-from albumentations.pytorch import ToTensorV2
+#import albumentations as A
+#from albumentations.pytorch import ToTensorV2
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 MALE_DIR = "data/male"
@@ -17,3 +17,5 @@ CHECKPOINT_GEN_M = "genM.pth.tar"
 CHECKPOINT_GEN_FM = "genFM.pth.tar"
 CHECKPOINT_CRITIC_M = "criticM.pth.tar"
 CHECKPOINT_CRITIC_FM = "criticFM.pth.tar"
+
+transform = None
