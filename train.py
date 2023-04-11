@@ -10,6 +10,7 @@ import config
 import torch.optim as optim
 from utils import save_checkpoint, load_checkpoint
 from Generator import ReconstructionNet as Generator_Fold
+from Discriminator import get_model as Discriminator_Point
 #import Pointnet as Discriminator
 
 
@@ -68,10 +69,10 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
             cycle_male_loss = l1(male, cycle_male)
 
             #Identity loss - gør det en forskel?
-            identity_female = gen_FM(female)
-            identity_male = gen_M(male)
-            identity_female_loss = l1(female, identity_female)
-            identity_male_loss = l1(male, identity_male)
+            # identity_female = gen_FM(female)
+            # identity_male = gen_M(male)
+            # identity_female_loss = l1(female, identity_female)
+            # identity_male_loss = l1(male, identity_male)
 
             #Adding all generative losses together:
             G_loss = (
@@ -79,8 +80,8 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
                 + loss_G_M
                 + cycle_female_loss * config.LAMBDA_CYCLE
                 + cycle_male_loss * config.LAMBDA_CYCLE
-                + identity_female_loss * config.LAMBDA_IDENTITY
-                + identity_male_loss * config.LAMBDA_IDENTITY
+                #+ identity_female_loss * config.LAMBDA_IDENTITY
+                #+ identity_male_loss * config.LAMBDA_IDENTITY
             )
         opt_gen.zero_grad()
         g_scaler.scale(G_loss).backward()
@@ -89,8 +90,8 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
 
 def main():
     #missing the disc and gen networks
-    disc_M = Discriminator
-    disc_FM = Discriminator
+    disc_M = Discriminator_Point()
+    disc_FM = Discriminator_Point()
     gen_M = Generator_Fold()
     gen_FM = Generator_Fold()
 
