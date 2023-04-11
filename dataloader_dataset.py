@@ -59,9 +59,7 @@ class PointCloudDataset(Dataset):
         
         #perform transformation / augmentation if turned on
         if self.transform:
-            augmentations = self.transform(female=female_array, male = male_array)
-            female_array = augmentations[female]
-            male_array = augmentations[male]
+            female_array, male_array = self.transform(female=female_array, male = male_array)
         
         #normalize with regard to furtherst point in the whole dataset
         for pcl in (male_array, female_array):
@@ -103,7 +101,7 @@ class PointCloudDataset(Dataset):
     
 
 data = PointCloudDataset()
-
+print(len(data))
 male, female = data[4]
 breakpoint()
 male
