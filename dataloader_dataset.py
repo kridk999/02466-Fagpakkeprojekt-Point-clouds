@@ -6,6 +6,7 @@ import torch
 from torch.utils.data import Dataset, DataLoader
 from torchvision import datasets
 from torchvision.transforms import ToTensor
+from config import SAMPLE_POINTS
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 import glob
@@ -18,6 +19,7 @@ class PointCloudDataset(Dataset):
         self.root_female = root_female
         self.root_male = root_male
         self.transform = transform
+        self.sample_points = SAMPLE_POINTS
 
         self.object_female = os.listdir(root_female)
         self.object_male = os.listdir(root_male)
@@ -42,14 +44,37 @@ class PointCloudDataset(Dataset):
 
     #given index, output a pointcloud as a tensor from both domains, have been normalized
     def __getitem__(self, idx):
-        male_obj = [idx % self.male_len]
-        female_obj = [idx % self.female_len]
+        #get index for both domains
+        male_obj = self.object_male[idx % self.male_len]
+        female_obj = self.object_female[idx % self.female_len]
 
-        mesh = o3d.io.read_triangle_mesh(obj_path)
-        pointcloud = mesh.sample_points_uniformly(number_of_points=2048)
+        #create path to the indexed objects
+        male_path = os.path.join(self.root_male, male_obj)
+        female_path = os.path.join(self.root_female, female_obj)
+       
+        #convert from .obj to torch tensor
+        pcl_male = o3d.io.read_triangle_mesh(male_path).sample_points_uniformly(number_of_points=2048) 
+        pcl_female = o3d.io.read_triangle_mesh(female_path).sample_points_uniformly(number_of_points=2048)
+        male_array, female_array = np.asarray(pcl_male.points), np.asarray(pcl_female.points)
         
-        male_pointcloud, female_pointcloud = 1,1
-        return male_pointcloud, female_pointcloud
+        #perform transformation / augmentation if turned on
+        if self.transform:
+            augmentations = self.transform(female=female_array, male = male_array)
+            female_array = augmentations[female]
+            male_array = augmentations[male]
+        
+        #normalize with regard to furtherst point in the whole dataset
+        for pcl in (male_array, female_array):
+            centroid = np.mean(pcl, axis=0)
+            pcl -= centroid
+            pcl /= self.furthest_distance
+        
+        #return a tensor pointcloud for each domain
+        male_pointcloud, female_pointcloud = torch.from_numpy(male_array), torch.from_numpy(female_array)
+        
+        return female_pointcloud, male_pointcloud
+
+    #Make a function that returns the normalvector for the points in a pointcloud
 
 
     
@@ -79,9 +104,9 @@ class PointCloudDataset(Dataset):
 
 data = PointCloudDataset()
 
-
-print(len(data))
-print(data[1])
+male, female = data[4]
+breakpoint()
+male
 
 
 
