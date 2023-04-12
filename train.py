@@ -90,10 +90,12 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
 
 def main():
     #missing the disc and gen networks
+    args = config.get_parser()
+
     disc_M = Discriminator_Point().to(config.DEVICE)
     disc_FM = Discriminator_Point().to(config.DEVICE)
-    gen_M = Generator_Fold("plane",16).to(config.DEVICE)
-    gen_FM = Generator_Fold("plane",16).to(config.DEVICE)
+    gen_M = Generator_Fold(args).to(config.DEVICE)
+    gen_FM = Generator_Fold(args).to(config.DEVICE)
 
 
     # using Adam as optimizer, is this correct?
@@ -147,8 +149,8 @@ def main():
     )
     #test dataset
     val_dataset = PointCloudDataset(
-        root_female=config.FEMALE_DIR,
-        root_male=config.MALE_DIR,
+        root_female=config.VAL_DIR + "/female_test",
+        root_male=config.VAL_DIR + "/male_test",
         transform=config.transform
     )
 
