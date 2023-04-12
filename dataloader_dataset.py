@@ -23,7 +23,7 @@ class PointCloudDataset(Dataset):
         self.female_len = len(self.object_female)
         #self.object_all = np.concatenate((self.object_female, self.object_male), axis=0)
 
-        self.furthest_distance = 1.103279724474332 #calculated in notebook 
+        self.furthest_distance = 1.1048446043276023 #calculated in notebook 
         """"
         furthest_distance = 0
 
