@@ -1,5 +1,5 @@
 
-
+import matplotlib.pyplot as plt
 import open3d as o3d
 import numpy as np
 import torch
@@ -68,75 +68,50 @@ class PointCloudDataset(Dataset):
         return female_pointcloud, male_pointcloud
 
     #Make a function that returns the normalvector for the points in a pointcloud
-
-
-    
-    # def __getitem__(self, idx):
-
-    #     if idx < len(self.object_female):
-    #         obj_path = os.path.join(self.root_female, self.object_female[idx])
-    #         label = 0  # Female label
-    #     else: 
-    #         obj_path = os.path.join(self.root_male, self.object_male[idx - len(self.object_female)])
-    #         label = 1  # male label
-
-    #     #convert obj. into pointclouds
-    #     mesh = o3d.io.read_triangle_mesh(obj_path)
-    #     pointcloud = mesh.sample_points_uniformly(number_of_points=2048)
-
-    #     #normalize using furthest distance in whole dataset
-    #     centroid = np.mean(pointcloud.points, axis=0)
-    #     pointcloud.points -= centroid
-    #     pointcloud.points /= self.furthest_distance
-
-    #     if self.transform:
-    #         pointcloud = self.transform(pointcloud)
-    #     #if np.random > 05. augmentate to be developed...
-    #     return pointcloud, label
     
 
 # data = PointCloudDataset()
 # female, male = data[4]
 
-# def visualize3d(cloud):
-#     name = "random pointcloud"
-#     points = cloud.numpy() #takes tensor makes it into np.array [x,y,z] koordinates
-#     # Creating figure
-#     fig = plt.figure()
-#     ax = plt.axes(projection ="3d")
+def visualize3d(cloud):
+    name = "random pointcloud"
+    points = cloud.numpy() #takes tensor makes it into np.array [x,y,z] koordinates
+    # Creating figure
+    fig = plt.figure()
+    ax = plt.axes(projection ="3d")
 
-#     x,y,z = points[:,0], points[:,1], points[:,2]
-#     # Add x, y gridlines
-#     ax.grid(b = True, color ='grey',
-#             linestyle ='-.', linewidth = 0.3,
-#             alpha = 0.8)
+    x,y,z = points[:,0], points[:,1], points[:,2]
+    # Add x, y gridlines
+    ax.grid(b = True, color ='grey',
+            linestyle ='-.', linewidth = 0.3,
+            alpha = 0.8)
 
 
-#     # Creating color map
-#     my_cmap = plt.get_cmap('cool')#plt.get_cmap('hsv')
+    # Creating color map
+    my_cmap = plt.get_cmap('cool')#plt.get_cmap('hsv')
 
-#     # Creating plot
-#     sctt = ax.scatter3D(x, y, z,
-#                         alpha = 0.5,
-#                         c = (x + y + z),
-#                         cmap = my_cmap,
-#                         marker = 'o',
-#                         s=0.5)
+    # Creating plot
+    sctt = ax.scatter3D(x, y, z,
+                        alpha = 0.5,
+                        c = (x + y + z),
+                        cmap = my_cmap,
+                        marker = 'o',
+                        s=0.5)
 
-#     plt.title(str(name))
-#     ax.set_xlabel('X-axis', fontweight ='bold')
-#     ax.set_ylabel('Y-axis', fontweight ='bold')
-#     ax.set_zlabel('Z-axis', fontweight ='bold')
-#     ax.view_init(elev=20,azim=-160,roll=0)
-#     ax.set_box_aspect((1,1,1)) # Constrain the axes
-#     ax.set_proj_type('ortho') # Use orthographic projection
-#     ax.set_xlim(-0.75,0.75) # Set x-axis range
-#     ax.set_ylim(-0.75,0.75) # Set y-axis range
-#     ax.set_zlim(-0.75,0.75) # Set z-axis range
-#     #fig.colorbar(sctt, ax = ax, shrink = 0.5, aspect = 5)
+    plt.title(str(name))
+    ax.set_xlabel('X-axis', fontweight ='bold')
+    ax.set_ylabel('Y-axis', fontweight ='bold')
+    ax.set_zlabel('Z-axis', fontweight ='bold')
+    ax.view_init(elev=20,azim=-160,roll=0)
+    ax.set_box_aspect((1,1,1)) # Constrain the axes
+    ax.set_proj_type('ortho') # Use orthographic projection
+    ax.set_xlim(-0.75,0.75) # Set x-axis range
+    ax.set_ylim(-0.75,0.75) # Set y-axis range
+    ax.set_zlim(-0.75,0.75) # Set z-axis range
+    #fig.colorbar(sctt, ax = ax, shrink = 0.5, aspect = 5)
 
-#     # show plot
-#     plt.show()
+    # show plot
+    plt.show()
 
 #visualize3d(female)
 #visualize3d(male)

@@ -92,8 +92,8 @@ def main():
     #missing the disc and gen networks
     disc_M = Discriminator_Point().to(config.DEVICE)
     disc_FM = Discriminator_Point().to(config.DEVICE)
-    gen_M = Generator_Fold("plane").to(config.DEVICE)
-    gen_FM = Generator_Fold("plane").to(config.DEVICE)
+    gen_M = Generator_Fold("plane",16).to(config.DEVICE)
+    gen_FM = Generator_Fold("plane",16).to(config.DEVICE)
 
 
     # using Adam as optimizer, is this correct?
