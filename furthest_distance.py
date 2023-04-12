@@ -10,14 +10,14 @@ import glob
 from torch.utils.data import Dataset, DataLoader
 import pandas as pd
 
-filepath = ["data/female", "data/male"]
+filepath = ["data/train/female", "data/train/male"]
 
 #count how many objects there are in total
 fem = []
 mal = []
-for obj in glob.iglob("./data/female/*.obj"):
+for obj in glob.iglob("./data/train/female/*.obj"):
     fem.append(1)
-for obj in glob.iglob("./data/male/*.obj"):
+for obj in glob.iglob("./data/train/male/*.obj"):
     mal.append(1)
 
 fem_tot, mal_tot, total = len(fem), len(mal), len(fem)+len(mal)
