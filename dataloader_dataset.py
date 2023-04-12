@@ -23,16 +23,8 @@ class PointCloudDataset(Dataset):
         self.female_len = len(self.object_female)
         #self.object_all = np.concatenate((self.object_female, self.object_male), axis=0)
 
-        self.furthest_distance = 1.1048446043276023 #calculated in notebook 
-        """"
-        furthest_distance = 0
+        self.furthest_distance = 1.1048446043276023 #calculated in furthest_distance.py 
 
-        for clouds in range(len(pcds_dataset)):
-            distance = np.max(np.sqrt(np.sum(abs(np.asarray(pcds_dataset[clouds].points))**2,axis=1)))
-            if distance > furthest_distance:
-                furthest_distance = distance
-        furthest_distance
-        """
 
     def __len__(self):
         return self.length_dataset
