@@ -90,10 +90,10 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
 
 def main():
     #missing the disc and gen networks
-    disc_M = Discriminator_Point()
-    disc_FM = Discriminator_Point()
-    gen_M = Generator_Fold()
-    gen_FM = Generator_Fold()
+    disc_M = Discriminator_Point().to(config.DEVICE)
+    disc_FM = Discriminator_Point().to(config.DEVICE)
+    gen_M = Generator_Fold("plane").to(config.DEVICE)
+    gen_FM = Generator_Fold("plane").to(config.DEVICE)
 
 
     # using Adam as optimizer, is this correct?
@@ -141,8 +141,8 @@ def main():
 
     #load training dataset - HAR IKKE OPDELT I TRAIN OG VAL ENDNU
     dataset = PointCloudDataset(
-        root_female=config.FEMALE_DIR,
-        root_male=config.MALE_DIR,
+        root_female=config.TRAIN_DIR + "/female",
+        root_male=config.TRAIN_DIR + "/male",
         transform=config.transform
     )
     #test dataset
@@ -173,10 +173,10 @@ def main():
         train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, d_scaler, g_scaler, l1)
 
         if config.SAVE_MODEL:
-            save_checkpoint(gen_M, opt_gen, filename=config.CHECKPOINT_GEN_M)
-            save_checkpoint(gen_FM, opt_gen, filename=config.CHECKPOINT_GEN_FM)
-            save_checkpoint(disc_M, opt_disc, filename=config.CHECKPOINT_CRITIC_M)
-            save_checkpoint(disc_FM, opt_disc, filename=config.CHECKPOINT_CRITIC_FM)
+            save_checkpoint(epoch,gen_M, opt_gen, filename=config.CHECKPOINT_GEN_M)
+            save_checkpoint(epoch,gen_FM, opt_gen, filename=config.CHECKPOINT_GEN_FM)
+            save_checkpoint(epoch,disc_M, opt_disc, filename=config.CHECKPOINT_CRITIC_M)
+            save_checkpoint(epoch,disc_FM, opt_disc, filename=config.CHECKPOINT_CRITIC_FM)
 
 
 if __name__ == "__main__":

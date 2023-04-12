@@ -6,11 +6,13 @@ import copy
 from torch.autograd import Variable
 import torch.nn.functional as F
 
-def save_checkpoint(model, optimizer, filename="my_checkpoint.pth.tar"):
+def save_checkpoint(epoch, model, optimizer, best_loss, filename="my_checkpoint.pth.tar"):
     print("=> Saving checkpoint")
     checkpoint = {
+        'epoch': epoch,
         "state_dict": model.state_dict(),
         "optimizer": optimizer.state_dict(),
+        'best_loss': best_loss
     }
     torch.save(checkpoint, filename)
 
@@ -25,6 +27,7 @@ def load_checkpoint(checkpoint_file, model, optimizer, lr):
     # and it will lead to many hours of debugging \:
     for param_group in optimizer.param_groups:
         param_group["lr"] = lr
+
 
 
 class ChamferLoss(nn.Module):
@@ -50,7 +53,6 @@ class ChamferLoss(nn.Module):
         mins, _ = torch.min(P, 2)
         loss_2 = torch.sum(mins)
         return loss_1 + loss_2
-
 
 class CrossEntropyLoss(nn.Module):
     def __init__(self, smoothing=True):
@@ -111,7 +113,6 @@ class STN3d(nn.Module):
         x = x.view(-1, 3, 3)
         return x
 
-
 class STNkd(nn.Module):
     def __init__(self, k=64):
         super(STNkd, self).__init__()
@@ -150,8 +151,7 @@ class STNkd(nn.Module):
         x = x + iden
         x = x.view(-1, self.k, self.k)
         return x
-
-    
+  
 class PointNetEncoder(nn.Module):
     def __init__(self, global_feat=True, feature_transform=False, channel=3):
         super(PointNetEncoder, self).__init__()

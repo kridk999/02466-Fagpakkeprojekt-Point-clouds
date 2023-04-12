@@ -10,7 +10,7 @@ import os
 
 class PointCloudDataset(Dataset):
 
-    def __init__(self, root_female="./data/female", root_male="./data/male", transform = None):
+    def __init__(self, root_female="./data/train/female", root_male="./data/train/male", transform = None):
         self.root_female = root_female
         self.root_male = root_male
         self.transform = transform

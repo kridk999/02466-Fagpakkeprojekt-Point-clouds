@@ -4,8 +4,8 @@ import numpy as np
 #from albumentations.pytorch import ToTensorV2
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-MALE_DIR = "data/male"
-FEMALE_DIR = "data/female"
+TRAIN_DIR = "data/train"
+VAL_DIR = "data/val"
 SAMPLE_POINTS = 2048
 BATCH_SIZE = 1
 LEARNING_RATE = 1e-5
