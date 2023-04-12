@@ -11,10 +11,6 @@ import torch.optim as optim
 from utils import save_checkpoint, load_checkpoint
 from Generator import ReconstructionNet as Generator_Fold
 from Discriminator import get_model as Discriminator_Point
-#import Pointnet as Discriminator
-
-
-
 
 def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse,d_scaler, g_scaler, l1):
     real_Males = 0
@@ -87,6 +83,12 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
         g_scaler.scale(G_loss).backward()
         g_scaler.step(opt_gen)
         g_scaler.update()
+
+        #Save a couple pcl's:
+        if idx % 300 == 0:
+
+            pass
+
 
 
 def main():
@@ -171,7 +173,8 @@ def main():
             batch_size=config.BATCH_SIZE,
             shuffle=True,
             num_workers=config.NUM_WORKERS,
-            pin_memory=True
+            pin_memory=True,
+            #collate_fn=config.collate_fn
             )
 
     #create scalers for g and d:
@@ -186,6 +189,7 @@ def main():
             save_checkpoint(epoch,gen_FM, opt_gen, filename=config.CHECKPOINT_GEN_FM)
             save_checkpoint(epoch,disc_M, opt_disc, filename=config.CHECKPOINT_CRITIC_M)
             save_checkpoint(epoch,disc_FM, opt_disc, filename=config.CHECKPOINT_CRITIC_FM)
+
 
 
 if __name__ == "__main__":

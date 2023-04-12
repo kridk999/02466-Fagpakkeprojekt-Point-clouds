@@ -28,6 +28,12 @@ def transform(female, male):
             pcl *= np.random.uniform(0.7,1)
     return female, male
 
+def collate_fn(batch):
+    pc = [b["pcs"] for b in batch]
+    pc = torch.stack(pc).transpose(1, 2)
+    ids = [b["ids"] for b in batch]
+    return dict(pc=pc, ids=ids)
+
 def get_parser():
     parser = argparse.ArgumentParser(description='FoldingNet as Generator')
     parser.add_argument('--exp_name', type=str, default=None, metavar='N',
