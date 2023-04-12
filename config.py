@@ -5,6 +5,7 @@ import argparse
 #from albumentations.pytorch import ToTensorV2
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+DUMMY_TRAIN_DIR = "data/dummy"
 TRAIN_DIR = "data/train"
 VAL_DIR = "data/val"
 SAMPLE_POINTS = 2048
@@ -40,14 +41,14 @@ def get_parser():
 
     parser.add_argument('--feat_dims', type=int, default=512, metavar='N',
                         help='Number of dims for feature ')
-    parser.add_argument('--k', type=int, default=None, metavar='N',
+    parser.add_argument('--k', type=int, default=16, metavar='N',
                         help='Num of nearest neighbors to use for KNN')
     parser.add_argument('--shape', type=str, default='plane', metavar='N',
                         choices=['plane', 'sphere', 'gaussian'],
                         help='Shape of points to input decoder, [plane, sphere, gaussian]')
-    # parser.add_argument('--dataset', type=str, default='shapenetcorev2', metavar='N',
-    #                     choices=['shapenetcorev2','modelnet40', 'modelnet10'],
-    #                     help='Encoder to use, [shapenetcorev2,modelnet40, modelnet10]')
+    parser.add_argument('--dataset', type=str, default='dummy_dataset', metavar='N',
+                        choices=['dataset','dummy_dataset'],
+                        help='Encoder to use, [dataset,dummy_dataset]')
     # parser.add_argument('--use_rotate', action='store_true',
     #                     help='Rotate the pointcloud before training')
     # parser.add_argument('--use_translate', action='store_true',
@@ -56,7 +57,7 @@ def get_parser():
     #                     help='Jitter the pointcloud before training')
     parser.add_argument('--dataset_root', type=str, default='../dataset', help="Dataset root path")
     parser.add_argument('--gpu', type=str, help='Id of gpu device to be used', default='0')
-    parser.add_argument('--batch_size', type=int, default=16, metavar='batch_size',
+    parser.add_argument('--batch_size', type=int, default=BATCH_SIZE, metavar='batch_size',
                         help='Size of batch)')
     parser.add_argument('--workers', type=int, help='Number of data loading workers', default=NUM_WORKERS)
     parser.add_argument('--epochs', type=int, default=NUM_EPOCHS, metavar='N',

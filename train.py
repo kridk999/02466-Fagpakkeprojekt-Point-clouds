@@ -88,8 +88,8 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
         g_scaler.step(opt_gen)
         g_scaler.update()
 
+
 def main():
-    #missing the disc and gen networks
     args = config.get_parser()
 
     disc_M = Discriminator_Point().to(config.DEVICE)
@@ -141,13 +141,20 @@ def main():
             config.LEARNING_RATE,
         )
 
-    #load training dataset - HAR IKKE OPDELT I TRAIN OG VAL ENDNU
-    dataset = PointCloudDataset(
-        root_female=config.TRAIN_DIR + "/female",
-        root_male=config.TRAIN_DIR + "/male",
-        transform=config.transform
-    )
-    #test dataset
+    #load training dataset
+    if args.dataset == 'dataset':
+        dataset = PointCloudDataset(
+            root_female=config.TRAIN_DIR + "/female",
+            root_male=config.TRAIN_DIR + "/male",
+            transform=config.transform
+        )
+    elif args.dataset == 'dummy_dataset':
+        dataset = PointCloudDataset(
+            root_female=config.DUMMY_TRAIN_DIR + "/female",
+            root_male=config.DUMMY_TRAIN_DIR + "/male",
+            transform=config.transform
+        )
+    #load test dataset
     val_dataset = PointCloudDataset(
         root_female=config.VAL_DIR + "/female_test",
         root_male=config.VAL_DIR + "/male_test",

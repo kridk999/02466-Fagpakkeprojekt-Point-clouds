@@ -51,8 +51,10 @@ def local_cov(pts, idx):
     x = x.view(batch_size*num_points, -1)[idx, :]           # (batch_size*num_points*2, 3)
     x = x.view(batch_size, num_points, -1, num_dims)        # (batch_size, num_points, k, 3)
 
+    #Uncomment the bottommost comment to use local covariance as proposed in the FoldingNet paper
     x = torch.matmul(x[:,:,0].unsqueeze(3), x[:,:,1].unsqueeze(2))  # (batch_size, num_points, 3, 1) * (batch_size, num_points, 1, 3) -> (batch_size, num_points, 3, 3)
-    # x = torch.matmul(x[:,:,1:].transpose(3, 2), x[:,:,1:])
+    #x = torch.matmul(x[:,:,1:].transpose(3, 2), x[:,:,1:])
+
     x = x.view(batch_size, num_points, 9).transpose(2, 1)   # (batch_size, 9, num_points)
 
     x = torch.cat((pts, x), dim=1)                          # (batch_size, 12, num_points)
