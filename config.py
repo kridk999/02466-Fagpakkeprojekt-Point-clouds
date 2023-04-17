@@ -61,7 +61,7 @@ def get_parser():
     #                     help='Translate the pointcloud before training')
     # parser.add_argument('--use_jitter', action='store_true',
     #                     help='Jitter the pointcloud before training')
-    parser.add_argument('--dataset_root', type=str, default='../dataset', help="Dataset root path")
+    # parser.add_argument('--dataset_root', type=str, default='../dataset', help="Dataset root path")
     parser.add_argument('--gpu', type=str, help='Id of gpu device to be used', default='0')
     parser.add_argument('--batch_size', type=int, default=BATCH_SIZE, metavar='batch_size',
                         help='Size of batch)')
