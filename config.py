@@ -9,7 +9,7 @@ DUMMY_TRAIN_DIR = "data/dummy"
 TRAIN_DIR = "data/train"
 VAL_DIR = "data/val"
 SAMPLE_POINTS = 2048
-BATCH_SIZE = 1
+BATCH_SIZE = 4
 LEARNING_RATE = 1e-5
 LAMBDA_IDENTITY = 0.0
 LAMBDA_CYCLE = 10
@@ -81,7 +81,7 @@ def get_parser():
     args = parser.parse_args()
     return args
 
-if __name__ == "__main__":
-    import torch
-    print(torch.version.cuda)
-    print(torch.cuda.is_available())
+# if __name__ == "__main__":
+#     import torch
+#     print(torch.version.cuda)
+#     print(torch.cuda.is_available())

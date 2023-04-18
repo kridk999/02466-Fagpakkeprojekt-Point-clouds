@@ -6,6 +6,10 @@ import torch.nn.functional as F
 import numpy as np
 import itertools
 from utils import ChamferLoss, CrossEntropyLoss
+import config
+from dataloader_dataset import PointCloudDataset
+
+
 
 def knn(x, k):
     batch_size = x.size(0)
@@ -185,3 +189,11 @@ class ReconstructionNet(nn.Module):
         # input shape  (batch_size, 2048, 3)
         # output shape (batch_size, 2025, 3)
         return self.loss(input, output)
+
+if __name__ == '__main__':
+    args = config.get_parser()
+    data = PointCloudDataset()
+    
+    female, male = data[1]
+    Gen = ReconstructionNet(args)
+    Gen(female).to(config.DEVICE)

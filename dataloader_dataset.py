@@ -108,4 +108,3 @@ def visualize3d(cloud):
 #visualize3d(female)
 #visualize3d(male)
 
-
