@@ -190,6 +190,7 @@ class ReconstructionNet(nn.Module):
         # output shape (batch_size, 2025, 3)
         return self.loss(input, output)
 
+<<<<<<< HEAD
 if __name__ == '__main__':
     args = config.get_parser()
     data = PointCloudDataset()
@@ -197,3 +198,5 @@ if __name__ == '__main__':
     female, male = data[1]
     Gen = ReconstructionNet(args)
     Gen(female).to(config.DEVICE)
+=======
+>>>>>>> 7e2965e5cf78014491606f71505673f4c25bb7f2
