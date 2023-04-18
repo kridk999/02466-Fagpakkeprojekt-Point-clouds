@@ -5,6 +5,7 @@ import config
 import copy
 from torch.autograd import Variable
 import torch.nn.functional as F
+import matplotlib.pyplot as plt
 
 def save_checkpoint(epoch, model, optimizer, best_loss, filename="my_checkpoint.pth.tar"):
     print("=> Saving checkpoint")
