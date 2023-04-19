@@ -105,8 +105,11 @@ class FoldNet_Encoder(nn.Module):
     def forward(self, pts):
         pts = pts.transpose(2, 1)               # (batch_size, 3, num_points)
         idx = knn(pts, k=self.k)
+        print("hellO1")
         x = local_cov(pts, idx)                 # (batch_size, 3, num_points) -> (batch_size, 12, num_points])            
+        print("hellO2")
         x = self.mlp1(x)                        # (batch_size, 12, num_points) -> (batch_size, 64, num_points])
+        print("hellO3")
         x = self.graph_layer(x, idx)            # (batch_size, 64, num_points) -> (batch_size, 1024, num_points)
         x = torch.max(x, 2, keepdim=True)[0]    # (batch_size, 1024, num_points) -> (batch_size, 1024, 1)
         x = self.mlp2(x)                        # (batch_size, 1024, 1) -> (batch_size, feat_dims, 1)
