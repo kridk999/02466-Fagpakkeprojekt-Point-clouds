@@ -43,7 +43,7 @@ class PointCloudDataset(Dataset):
         pcl_male = o3d.io.read_triangle_mesh(male_path).sample_points_uniformly(number_of_points=2048) 
         pcl_female = o3d.io.read_triangle_mesh(female_path).sample_points_uniformly(number_of_points=2048)
         male_array, female_array = np.asarray(pcl_male.points), np.asarray(pcl_female.points)
-        
+        male_array, female_array = male_array.astype(np.float32), female_array.astype(np.float32)
         #perform transformation / augmentation if turned on
         if self.transform:
             female_array, male_array = self.transform(female=female_array, male = male_array)
@@ -55,6 +55,7 @@ class PointCloudDataset(Dataset):
             pcl /= self.furthest_distance
         
         #return a tensor pointcloud for each domain
+        
         male_pointcloud, female_pointcloud = torch.from_numpy(male_array), torch.from_numpy(female_array)
         
         return female_pointcloud, male_pointcloud
@@ -67,9 +68,3 @@ female, male = data[4]
 
 
 
-<<<<<<< HEAD
-=======
-breakpoint()
-
-print("hej")
->>>>>>> 7e2965e5cf78014491606f71505673f4c25bb7f2
