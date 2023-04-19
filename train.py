@@ -28,7 +28,6 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
         real_Males += D_M_real.mean().item()   
         fake_Males += D_M_fake.mean().item()  
         
-        opt_disc.zero_grad()
         
         #Calculating MSE loss 
         D_M_real_loss = mse(D_M_real, torch.ones_like(D_M_real))
@@ -46,12 +45,12 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
         #Total discriminator loss
         D_loss = (D_M_loss + D_FM_loss) / 2
         
-        
+        opt_disc.zero_grad()
         D_loss.backward()
         opt_disc.step()
 
         #Train the generators for male and female
-        opt_gen.zero_grad()
+        
         
         #Adviserial loss for both generators
         D_M_fake = disc_M(fake_male)
@@ -84,7 +83,7 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
         )
         
         
-        
+        opt_gen.zero_grad()
         G_loss.backward()
         opt_gen.step()
        
@@ -98,8 +97,8 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
 def main():
     args = config.get_parser()
 
-    disc_M = Discriminator_Point().to(config.DEVICE)
-    disc_FM = Discriminator_Point().to(config.DEVICE)
+    disc_M = Discriminator_Point(k=args.k, normal_channel=True).to(config.DEVICE)
+    disc_FM = Discriminator_Point(k=args.k, normal_channel=True).to(config.DEVICE)
     gen_M = Generator_Fold(args).to(config.DEVICE)
     gen_FM = Generator_Fold(args).to(config.DEVICE)
 
