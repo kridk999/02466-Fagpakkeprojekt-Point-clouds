@@ -97,11 +97,10 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
 def main():
     args = config.get_parser()
 
-    disc_M = Discriminator_Point(k=args.k, normal_channel=True).to(config.DEVICE)
-    disc_FM = Discriminator_Point(k=args.k, normal_channel=True).to(config.DEVICE)
+    disc_M = Discriminator_Point(k=40, normal_channel=True).to(config.DEVICE)
+    disc_FM = Discriminator_Point(k=40, normal_channel=True).to(config.DEVICE)
     gen_M = Generator_Fold(args).to(config.DEVICE)
     gen_FM = Generator_Fold(args).to(config.DEVICE)
-
 
     
     opt_disc = optim.Adam(
