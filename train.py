@@ -15,11 +15,12 @@ from Discriminator import get_model as Discriminator_Point
 def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse,d_scaler, g_scaler, l1):
     real_Males = 0
     fake_Males = 0
-
+    
     training_loop = tqdm(loader, leave=True)
 
     for idx, (female, male) in enumerate(training_loop):
-        
+        female = female.cuda()
+        male = male.cuda()
         #Training discriminators for both the male and female domain
         with torch.cuda.amp.autocast():
             # Male discriminator
@@ -174,7 +175,7 @@ def main():
             shuffle=True,
             num_workers=config.NUM_WORKERS,
             pin_memory=True,
-            #collate_fn=config.collate_fn
+            collate_fn=config.collate_fn
             )
 
     #create scalers for g and d:
@@ -193,4 +194,11 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    data = PointCloudDataset()
+    print([b["f_pcs"] for b in data[1]])
+    breakpoint()
+    print(config.collate_fn(data[1]))
+    breakpoint()
+    print('yes')
+    #main()
+     

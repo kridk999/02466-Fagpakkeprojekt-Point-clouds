@@ -9,7 +9,7 @@ DUMMY_TRAIN_DIR = "data/dummy"
 TRAIN_DIR = "data/train"
 VAL_DIR = "data/val"
 SAMPLE_POINTS = 2048
-BATCH_SIZE = 4
+BATCH_SIZE = 1
 LEARNING_RATE = 1e-5
 LAMBDA_IDENTITY = 0.0
 LAMBDA_CYCLE = 10
@@ -29,10 +29,12 @@ def transform(female, male):
     return female, male
 
 def collate_fn(batch):
-    pc = [b["pcs"] for b in batch]
-    pc = torch.stack(pc).transpose(1, 2)
+    pc_female = [b["f_pcs"] for b in batch]
+    pc_female = torch.stack(pc_female).transpose(1, 2)
+    pc_male = [b["m_pcs"] for b in batch]
+    pc_male = torch.stack(pc_male).transpose(1, 2)
     ids = [b["ids"] for b in batch]
-    return dict(pc=pc, ids=ids)
+    return dict(pc_female=pc_female,pc_male=pc_male, ids=ids)
 
 def get_parser():
     parser = argparse.ArgumentParser(description='FoldingNet as Generator')
@@ -81,7 +83,5 @@ def get_parser():
     args = parser.parse_args()
     return args
 
-# if __name__ == "__main__":
-#     import torch
-#     print(torch.version.cuda)
-#     print(torch.cuda.is_available())
+if __name__ == "__main__":
+    pass

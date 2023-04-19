@@ -57,19 +57,13 @@ class PointCloudDataset(Dataset):
         #return a tensor pointcloud for each domain
         male_pointcloud, female_pointcloud = torch.from_numpy(male_array), torch.from_numpy(female_array)
         
-        return female_pointcloud, male_pointcloud
+        return {"f_pcs": female_pointcloud,"m_pcs" : male_pointcloud, "ids":idx }
 
     #Make a function that returns the normalvector for the points in a pointcloud
     
 
-data = PointCloudDataset()
-female, male = data[4]
+# data = PointCloudDataset()
+# female, male = data[4]
 
 
 
-<<<<<<< HEAD
-=======
-breakpoint()
-
-print("hej")
->>>>>>> 7e2965e5cf78014491606f71505673f4c25bb7f2
