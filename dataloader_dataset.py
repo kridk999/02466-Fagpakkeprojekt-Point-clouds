@@ -4,7 +4,7 @@ import open3d as o3d
 import numpy as np
 import torch
 from torch.utils.data import Dataset
-from config import SAMPLE_POINTS
+import config as c
 import os
 
 
@@ -14,7 +14,7 @@ class PointCloudDataset(Dataset):
         self.root_female = root_female
         self.root_male = root_male
         self.transform = transform
-        self.sample_points = SAMPLE_POINTS
+        self.sample_points = c.SAMPLE_POINTS
 
         self.object_female = os.listdir(root_female)
         self.object_male = os.listdir(root_male)
@@ -23,7 +23,7 @@ class PointCloudDataset(Dataset):
         self.female_len = len(self.object_female)
         #self.object_all = np.concatenate((self.object_female, self.object_male), axis=0)
 
-        self.furthest_distance = 1.1048446043276023 #calculated in furthest_distance.py 
+        self.furthest_distance = c.FURTHEST_DISTANCE #calculated in furthest_distance.py 
 
 
     def __len__(self):
@@ -40,8 +40,8 @@ class PointCloudDataset(Dataset):
         female_path = os.path.join(self.root_female, female_obj)
        
         #convert from .obj to torch tensor
-        pcl_male = o3d.io.read_triangle_mesh(male_path).sample_points_uniformly(number_of_points=2048) 
-        pcl_female = o3d.io.read_triangle_mesh(female_path).sample_points_uniformly(number_of_points=2048)
+        pcl_male = o3d.io.read_triangle_mesh(male_path).sample_points_uniformly(number_of_points=self.sample_points) 
+        pcl_female = o3d.io.read_triangle_mesh(female_path).sample_points_uniformly(number_of_points=self.sample_points)
         male_array, female_array = np.asarray(pcl_male.points), np.asarray(pcl_female.points)
         male_array, female_array = male_array.astype(np.float32), female_array.astype(np.float32)
         #perform transformation / augmentation if turned on
@@ -66,6 +66,7 @@ class PointCloudDataset(Dataset):
 
 # data = PointCloudDataset()
 # female, male = data[4]
-
+# breakpoint()
+# print(female)
 
 

@@ -103,7 +103,7 @@ class FoldNet_Encoder(nn.Module):
         return x
 
     def forward(self, pts):
-        pts = pts.transpose(2, 1)               # (batch_size, 3, num_points)
+        #pts = pts.transpose(2, 1)               # (batch_size, 3, num_points)
         idx = knn(pts, k=self.k)
         x = local_cov(pts, idx)                 # (batch_size, 3, num_points) -> (batch_size, 12, num_points])            
         x = self.mlp1(x)                        # (batch_size, 12, num_points) -> (batch_size, 64, num_points])
@@ -180,7 +180,7 @@ class ReconstructionNet(nn.Module):
     def forward(self, input):
         feature = self.encoder(input)
         output = self.decoder(feature)
-        return output, feature
+        return output.transpose(2,1), feature
 
     def get_parameter(self):
         return list(self.encoder.parameters()) + list(self.decoder.parameters())
@@ -190,12 +190,12 @@ class ReconstructionNet(nn.Module):
         # output shape (batch_size, 2025, 3)
         return self.loss(input, output)
 
-if __name__ == '__main__':
-    args = config.get_parser()
-    data = PointCloudDataset()
+# if __name__ == '__main__':
+#     args = config.get_parser()
+#     data = PointCloudDataset()
     
-    female, male = data[1]
-    print(female.shape)
-    breakpoint()
-    Gen = ReconstructionNet(args)
-    Gen(female).to(config.DEVICE)
+#     female, male = data[1]
+#     print(female.shape)
+#     breakpoint()
+#     Gen = ReconstructionNet(args)
+#     Gen(female).to(config.DEVICE)

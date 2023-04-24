@@ -8,8 +8,9 @@ DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 DUMMY_TRAIN_DIR = "data/dummy"
 TRAIN_DIR = "data/train"
 VAL_DIR = "data/val"
-SAMPLE_POINTS = 2048
-BATCH_SIZE = 1
+FURTHEST_DISTANCE = 1.1048446043276023
+SAMPLE_POINTS = 2025
+BATCH_SIZE = 4
 LEARNING_RATE = 1e-5
 LAMBDA_IDENTITY = 0.0
 LAMBDA_CYCLE = 10
@@ -36,7 +37,7 @@ def collate_fn(batch):
     ids = [b["ids"] for b in batch]
     return dict(pc_female=pc_female,pc_male=pc_male, ids=ids)
 
-def get_parser():
+def get_parser_gen():
     parser = argparse.ArgumentParser(description='FoldingNet as Generator')
     parser.add_argument('--exp_name', type=str, default=None, metavar='N',
                         help='Name of the experiment')
@@ -80,6 +81,26 @@ def get_parser():
                         help='Num of points to use')
     parser.add_argument('--model_path', type=str, default='', metavar='N',
                         help='Path to load model')
+    args = parser.parse_args()
+    return args
+
+def get_parser_disc():
+    '''PARAMETERS'''
+    parser = argparse.ArgumentParser('training')
+    parser.add_argument('--use_cpu', action='store_true', default=False, help='use cpu mode')
+    parser.add_argument('--gpu', type=str, default='0', help='specify gpu device')
+    parser.add_argument('--batch_size', type=int, default=BATCH_SIZE, help='batch size in training')
+    #parser.add_argument('--model', default='pointnet_cls', help='model name [default: pointnet_cls]')
+    parser.add_argument('--num_category', default=40, type=int, choices=[10, 40],  help='training on ModelNet10/40')
+    #parser.add_argument('--epoch', default=NUM_EPOCHS, type=int, help='number of epoch in training')
+    parser.add_argument('--learning_rate', default=LEARNING_RATE, type=float, help='learning rate in training')
+    parser.add_argument('--num_point', type=int, default=1024, help='Point Number')
+    #parser.add_argument('--optimizer', type=str, default='Adam', help='optimizer for training')
+    #parser.add_argument('--log_dir', type=str, default=None, help='experiment root')
+    parser.add_argument('--decay_rate', type=float, default=1e-4, help='decay rate')
+    parser.add_argument('--use_normals', action='store_true', default=False, help='use normals')
+    parser.add_argument('--process_data', action='store_true', default=False, help='save data offline')
+    parser.add_argument('--use_uniform_sample', action='store_true', default=False, help='use uniform sampiling')
     args = parser.parse_args()
     return args
 

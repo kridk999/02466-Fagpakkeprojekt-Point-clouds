@@ -15,18 +15,20 @@ from Discriminator import get_model as Discriminator_Point
 def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, l1):
     real_Males = 0
     fake_Males = 0
-
+    best_G_loss = 1e10
+    best_D_loss = 1e10
     training_loop = tqdm(loader, leave=True)
 
     for idx, (female, male) in enumerate(training_loop):
-        female = female.to(config.DEVICE)
-        male = male.to(config.DEVICE)
+        female = female.transpose(2,1).to(config.DEVICE)
+        male = male.transpose(2,1).to(config.DEVICE)
         # Male discriminator
-        fake_male = gen_M(female)
-        D_M_real = disc_M(male)
-        D_M_fake = disc_M(fake_male.detach())
-        real_Males += D_M_real.mean().item()   
-        fake_Males += D_M_fake.mean().item()  
+        fake_male, _ = gen_M(female)
+        D_M_real, _ = disc_M(male)
+        D_M_fake, _ = disc_M(fake_male.detach())
+        
+        #real_Males += D_M_real.mean().item()   
+        #fake_Males += D_M_fake.mean().item()  
         
         
         #Calculating MSE loss 
@@ -35,9 +37,9 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
         D_M_loss = D_M_real_loss + D_M_fake_loss
 
         #Female discriminator
-        fake_female = gen_FM(male)                      #generating a female from a male pointcloud
-        D_FM_real = disc_FM(female)                     #putting a true female from data through the discriminator
-        D_FM_fake = disc_FM(fake_female.detach())       #putting a generated female through the discriminator
+        fake_female, _ = gen_FM(male)                      #generating a female from a male pointcloud
+        D_FM_real, _ = disc_FM(female)                     #putting a true female from data through the discriminator
+        D_FM_fake, _ = disc_FM(fake_female.detach())       #putting a generated female through the discriminator
         D_FM_real_loss = mse(D_FM_real, torch.ones_like(D_FM_real))
         D_FM_fake_loss = mse(D_FM_fake, torch.zeros_like(D_FM_fake))
         D_FM_loss = D_FM_real_loss + D_FM_fake_loss
@@ -53,14 +55,14 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
         
         
         #Adviserial loss for both generators
-        D_M_fake = disc_M(fake_male)
-        D_FM_fake = disc_FM(fake_female)
+        D_M_fake, _ = disc_M(fake_male)
+        D_FM_fake, _ = disc_FM(fake_female)
         loss_G_M = mse(D_M_fake, torch.ones_like(D_M_fake))
         loss_G_FM = mse(D_FM_fake, torch.ones_like(D_FM_fake))
 
         #Cycle loss
-        cycle_female = gen_FM(fake_male)
-        cycle_male = gen_M(fake_female)
+        cycle_female, _ = gen_FM(fake_male)
+        cycle_male, _ = gen_M(fake_female)
         cycle_female_loss = l1(female, cycle_female)
         cycle_male_loss = l1(male, cycle_male)
 
@@ -87,20 +89,26 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
         G_loss.backward()
         opt_gen.step()
        
+        if G_loss < best_G_loss:
+            best_G_loss = G_loss
 
+        if D_loss < best_D_loss:
+            best_D_loss = D_loss
         #Save a couple pcl's:
-        if idx % 300 == 0:
+        if idx % 5 == 0:
             pass
+    return gen_FM, gen_M, disc_FM, disc_M, opt_gen, opt_disc, best_G_loss, best_D_loss
 
 
 
 def main():
-    args = config.get_parser()
+    args_gen = config.get_parser_gen()
+    #args_disc = config.get_parser_disc()
 
-    disc_M = Discriminator_Point(k=40, normal_channel=True).to(config.DEVICE)
-    disc_FM = Discriminator_Point(k=40, normal_channel=True).to(config.DEVICE)
-    gen_M = Generator_Fold(args).to(config.DEVICE)
-    gen_FM = Generator_Fold(args).to(config.DEVICE)
+    disc_M = Discriminator_Point(k=2, normal_channel=False).to(config.DEVICE)
+    disc_FM = Discriminator_Point(k=2, normal_channel=False).to(config.DEVICE)
+    gen_M = Generator_Fold(args_gen).to(config.DEVICE)
+    gen_FM = Generator_Fold(args_gen).to(config.DEVICE)
 
     
     opt_disc = optim.Adam(
@@ -146,13 +154,13 @@ def main():
         )
 
     #load training dataset
-    if args.dataset == 'dataset':
+    if args_gen.dataset == 'dataset':
         dataset = PointCloudDataset(
             root_female=config.TRAIN_DIR + "/female",
             root_male=config.TRAIN_DIR + "/male",
             transform=config.transform
         )
-    elif args.dataset == 'dummy_dataset':
+    elif args_gen.dataset == 'dummy_dataset':
         dataset = PointCloudDataset(
             root_female=config.DUMMY_TRAIN_DIR + "/female",
             root_male=config.DUMMY_TRAIN_DIR + "/male",
@@ -179,17 +187,17 @@ def main():
             #collate_fn=config.collate_fn
             )
 
-
+    best_epoch_loss = 1e10
     for epoch in range(config.NUM_EPOCHS):
-        train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, l1)
-
-        if config.SAVE_MODEL:
-            save_checkpoint(epoch,gen_M, opt_gen, filename=config.CHECKPOINT_GEN_M)
-            save_checkpoint(epoch,gen_FM, opt_gen, filename=config.CHECKPOINT_GEN_FM)
-            save_checkpoint(epoch,disc_M, opt_disc, filename=config.CHECKPOINT_CRITIC_M)
-            save_checkpoint(epoch,disc_FM, opt_disc, filename=config.CHECKPOINT_CRITIC_FM)
-
-
-
+        gen_FM, gen_M, disc_FM, disc_M, opt_gen, opt_disc, best_G_loss, best_D_loss = train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, l1)
+        if config.SAVE_MODEL and best_G_loss < best_epoch_loss:
+            save_checkpoint(epoch,gen_M, opt_gen, best_G_loss, filename=config.CHECKPOINT_GEN_M)
+            save_checkpoint(epoch,gen_FM, opt_gen, best_G_loss, filename=config.CHECKPOINT_GEN_FM)
+            save_checkpoint(epoch,disc_M, opt_disc,best_D_loss, filename=config.CHECKPOINT_CRITIC_M)
+            save_checkpoint(epoch,disc_FM, opt_disc, best_D_loss, filename=config.CHECKPOINT_CRITIC_FM)
+            best_epoch_loss = best_G_loss
+    
+    print(best_G_loss)
 if __name__ == "__main__":
     main()
+   

@@ -130,7 +130,7 @@ class PointNetEncoder(nn.Module):
 
 
 class get_model(nn.Module):
-    def __init__(self, k=40, normal_channel=True):
+    def __init__(self, k=2, normal_channel=True):
         super(get_model, self).__init__()
         if normal_channel:
             channel = 6
