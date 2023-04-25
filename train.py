@@ -19,7 +19,10 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
     best_D_loss = 1e10
     training_loop = tqdm(loader, leave=True)
 
-    for idx, (female, male) in enumerate(training_loop):
+    for idx, data in enumerate(training_loop):
+        female = data['pc_female']
+        male = data['pc_male']
+        ids = data['ids']
         female = female.transpose(2,1).to(config.DEVICE)
         male = male.transpose(2,1).to(config.DEVICE)
         # Male discriminator
@@ -63,6 +66,8 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
         #Cycle loss
         cycle_female, _ = gen_FM(fake_male)
         cycle_male, _ = gen_M(fake_female)
+
+        # Set chamfer loss ind
         cycle_female_loss = l1(female, cycle_female)
         cycle_male_loss = l1(male, cycle_male)
 
@@ -95,9 +100,9 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
         if D_loss < best_D_loss:
             best_D_loss = D_loss
         #Save a couple pcl's:
-        if idx % 5 == 0:
+        if idx % 300 == 0:
             pass
-    return gen_FM, gen_M, disc_FM, disc_M, opt_gen, opt_disc, best_G_loss, best_D_loss
+    #return gen_FM, gen_M, disc_FM, disc_M, opt_gen, opt_disc, best_G_loss, best_D_loss
 
 
 
@@ -123,7 +128,7 @@ def main():
         betas=(0.5, 0.999),
     )
 
-    l1 = nn.L1Loss()
+    #l1 = nn.L1Loss()
     mse = nn.MSELoss()
 
     #load pretrained wheights from checkpoints
@@ -184,19 +189,19 @@ def main():
             shuffle=True,
             num_workers=config.NUM_WORKERS,
             pin_memory=True,
-            #collate_fn=config.collate_fn
+            collate_fn=config.collate_fn
             )
 
     best_epoch_loss = 1e10
     for epoch in range(config.NUM_EPOCHS):
-        gen_FM, gen_M, disc_FM, disc_M, opt_gen, opt_disc, best_G_loss, best_D_loss = train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, l1)
+        train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, l1)
         if config.SAVE_MODEL and best_G_loss < best_epoch_loss:
             save_checkpoint(epoch,gen_M, opt_gen, best_G_loss, filename=config.CHECKPOINT_GEN_M)
             save_checkpoint(epoch,gen_FM, opt_gen, best_G_loss, filename=config.CHECKPOINT_GEN_FM)
-            save_checkpoint(epoch,disc_M, opt_disc,best_D_loss, filename=config.CHECKPOINT_CRITIC_M)
+            save_checkpoint(epoch,disc_M, opt_disc, best_D_loss, filename=config.CHECKPOINT_CRITIC_M)
             save_checkpoint(epoch,disc_FM, opt_disc, best_D_loss, filename=config.CHECKPOINT_CRITIC_FM)
             best_epoch_loss = best_G_loss
-    
+
     print(best_G_loss)
 if __name__ == "__main__":
     main()
