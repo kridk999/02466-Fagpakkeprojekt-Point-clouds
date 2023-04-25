@@ -77,8 +77,8 @@ class CrossEntropyLoss(nn.Module):
         return loss
 
 
-def visualize(cloud):
-    name = "random pointcloud"
+def visualize(cloud,id,gender):
+    name = f"Visualization of {gender} pointcloud {id}"
     points = cloud.numpy() #takes tensor makes it into np.array [x,y,z] koordinates
     # Creating figure
     fig = plt.figure()
