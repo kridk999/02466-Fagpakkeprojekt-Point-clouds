@@ -18,6 +18,7 @@ NUM_WORKERS = 4
 NUM_EPOCHS = 10
 LOAD_MODEL = False
 SAVE_MODEL = True
+RETURN_LOSS = True
 CHECKPOINT_GEN_M = "genM.pth.tar"
 CHECKPOINT_GEN_FM = "genFM.pth.tar"
 CHECKPOINT_CRITIC_M = "criticM.pth.tar"

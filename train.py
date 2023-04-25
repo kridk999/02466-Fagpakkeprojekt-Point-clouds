@@ -12,7 +12,7 @@ from utils import save_checkpoint, load_checkpoint
 from Generator import ReconstructionNet as Generator_Fold
 from Discriminator import get_model as Discriminator_Point
 
-def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, l1):
+def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, cycleloss, return_loss):
     real_Males = 0
     fake_Males = 0
     best_G_loss = 1e10
@@ -68,8 +68,8 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
         cycle_male, _ = gen_M(fake_female)
 
         # Set chamfer loss ind
-        cycle_female_loss = l1(female, cycle_female)
-        cycle_male_loss = l1(male, cycle_male)
+        cycle_female_loss = cycleloss(female, cycle_female)
+        cycle_male_loss = cycleloss(male, cycle_male)
 
         #Identity loss - gør det en forskel?
         # identity_female = gen_FM(female)
@@ -99,9 +99,12 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
 
         if D_loss < best_D_loss:
             best_D_loss = D_loss
+
         #Save a couple pcl's:
         if idx % 300 == 0:
             pass
+    if return_loss:
+        return best_D_loss, best_G_loss
     #return gen_FM, gen_M, disc_FM, disc_M, opt_gen, opt_disc, best_G_loss, best_D_loss
 
 
@@ -115,6 +118,7 @@ def main():
     gen_M = Generator_Fold(args_gen).to(config.DEVICE)
     gen_FM = Generator_Fold(args_gen).to(config.DEVICE)
 
+    return_loss = config.RETURN_LOSS
     
     opt_disc = optim.Adam(
         list(disc_FM.parameters()) + list(disc_M.parameters()),
@@ -128,7 +132,7 @@ def main():
         betas=(0.5, 0.999),
     )
 
-    #l1 = nn.L1Loss()
+    cycleloss = Generator_Fold(args_gen).get_loss()
     mse = nn.MSELoss()
 
     #load pretrained wheights from checkpoints
@@ -194,7 +198,7 @@ def main():
 
     best_epoch_loss = 1e10
     for epoch in range(config.NUM_EPOCHS):
-        train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, l1)
+        train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, cycleloss, return_loss)
         if config.SAVE_MODEL and best_G_loss < best_epoch_loss:
             save_checkpoint(epoch,gen_M, opt_gen, best_G_loss, filename=config.CHECKPOINT_GEN_M)
             save_checkpoint(epoch,gen_FM, opt_gen, best_G_loss, filename=config.CHECKPOINT_GEN_FM)
