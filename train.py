@@ -204,7 +204,7 @@ def main():
     for epoch in range(config.NUM_EPOCHS):
         if return_loss:
             D, G = train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, return_loss)
-        else: train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, cycleloss, return_loss)
+        else: train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, return_loss)
         if config.SAVE_MODEL and G < best_epoch_loss:
             save_checkpoint(epoch,gen_M, opt_gen, G, filename=config.CHECKPOINT_GEN_M)
             save_checkpoint(epoch,gen_FM, opt_gen, G, filename=config.CHECKPOINT_GEN_FM)
