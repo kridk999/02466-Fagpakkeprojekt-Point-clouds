@@ -15,14 +15,14 @@ LEARNING_RATE = 1e-5
 LAMBDA_IDENTITY = 0.0
 LAMBDA_CYCLE = 10
 NUM_WORKERS = 4
-NUM_EPOCHS = 10
+NUM_EPOCHS = 5
 LOAD_MODEL = False
 SAVE_MODEL = True
 RETURN_LOSS = True
 CHECKPOINT_GEN_M = "genM.pth.tar"
 CHECKPOINT_GEN_FM = "genFM.pth.tar"
-CHECKPOINT_CRITIC_M = "criticM.pth.tar"
-CHECKPOINT_CRITIC_FM = "criticFM.pth.tar"
+CHECKPOINT_CRITIC_M = "discM.pth.tar"
+CHECKPOINT_CRITIC_FM = "discFM.pth.tar"
 
 def transform(female, male):
     if np.random.uniform(0,1) < 0.5:
@@ -35,8 +35,9 @@ def collate_fn(batch):
     pc_female = torch.stack(pc_female).transpose(1, 2)
     pc_male = [b["m_pcs"] for b in batch]
     pc_male = torch.stack(pc_male).transpose(1, 2)
-    ids = [b["ids"] for b in batch]
-    return dict(pc_female=pc_female,pc_male=pc_male, ids=ids)
+    female_ids = [b["id_female"] for b in batch]
+    male_ids = [b["id_male"] for b in batch]
+    return dict(pc_female=pc_female,pc_male=pc_male, f_id = female_ids, m_id = male_ids)
 
 def get_parser_gen():
     parser = argparse.ArgumentParser(description='FoldingNet as Generator')

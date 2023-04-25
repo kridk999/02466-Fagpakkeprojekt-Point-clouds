@@ -59,7 +59,7 @@ class PointCloudDataset(Dataset):
         male_pointcloud, female_pointcloud = torch.from_numpy(male_array), torch.from_numpy(female_array)
         
         #return female_pointcloud, male_pointcloud
-        return {"f_pcs": female_pointcloud,"m_pcs" : male_pointcloud, "ids":idx }
+        return {"f_pcs": female_pointcloud,"m_pcs" : male_pointcloud, "id_female":female_obj, "id_male":male_obj }
 
     #Make a function that returns the normalvector for the points in a pointcloud
     

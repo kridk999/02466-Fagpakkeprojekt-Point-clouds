@@ -12,7 +12,7 @@ from utils import save_checkpoint, load_checkpoint
 from Generator import ReconstructionNet as Generator_Fold
 from Discriminator import get_model as Discriminator_Point
 
-def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, cycleloss, return_loss):
+def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, return_loss):
     real_Males = 0
     fake_Males = 0
     best_G_loss = 1e10
@@ -22,9 +22,10 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
     for idx, data in enumerate(training_loop):
         female = data['pc_female']
         male = data['pc_male']
-        ids = data['ids']
-        female = female.transpose(2,1).to(config.DEVICE)
-        male = male.transpose(2,1).to(config.DEVICE)
+        fem_ids = data['f_id']
+        male_ids = data['m_id']
+        #female = female.transpose(2,1).to(config.DEVICE)
+        #male = male.transpose(2,1).to(config.DEVICE)
         # Male discriminator
         fake_male, _ = gen_M(female)
         D_M_real, _ = disc_M(male)
@@ -68,8 +69,9 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
         cycle_male, _ = gen_M(fake_female)
 
         # Set chamfer loss ind
-        cycle_female_loss = cycleloss(female, cycle_female)
-        cycle_male_loss = cycleloss(male, cycle_male)
+        
+        cycle_female_loss = gen_FM.get_loss(female, cycle_female)
+        cycle_male_loss = gen_M.get_loss(male, cycle_male)
 
         #Identity loss - gør det en forskel?
         # identity_female = gen_FM(female)
@@ -101,7 +103,9 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
             best_D_loss = D_loss
 
         #Save a couple pcl's:
-        if idx % 300 == 0:
+        if male_ids == 'SPRING0470.obj':
+            print('up')
+
             pass
     if return_loss:
         return best_D_loss, best_G_loss
@@ -132,7 +136,7 @@ def main():
         betas=(0.5, 0.999),
     )
 
-    cycleloss = Generator_Fold(args_gen).get_loss()
+    
     mse = nn.MSELoss()
 
     #load pretrained wheights from checkpoints
@@ -199,7 +203,7 @@ def main():
     best_epoch_loss = 1e10
     for epoch in range(config.NUM_EPOCHS):
         if return_loss:
-            D, G = train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, cycleloss, return_loss)
+            D, G = train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, return_loss)
         else: train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, cycleloss, return_loss)
         if config.SAVE_MODEL and G < best_epoch_loss:
             save_checkpoint(epoch,gen_M, opt_gen, G, filename=config.CHECKPOINT_GEN_M)
@@ -207,8 +211,8 @@ def main():
             save_checkpoint(epoch,disc_M, opt_disc, D, filename=config.CHECKPOINT_CRITIC_M)
             save_checkpoint(epoch,disc_FM, opt_disc, D, filename=config.CHECKPOINT_CRITIC_FM)
             best_epoch_loss = G
-    print(f'The best Discriminator loss for epoch {epoch} is {D}')
-    print(f'The best Generator loss for epoch {epoch} is {G}')
+        print(f'The best Discriminator loss for epoch {epoch} is {D}')
+        print(f'The best Generator loss for epoch {epoch} is {G}')
     
 if __name__ == "__main__":
     main()
