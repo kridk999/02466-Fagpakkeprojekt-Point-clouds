@@ -198,15 +198,18 @@ def main():
 
     best_epoch_loss = 1e10
     for epoch in range(config.NUM_EPOCHS):
-        train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, cycleloss, return_loss)
-        if config.SAVE_MODEL and best_G_loss < best_epoch_loss:
-            save_checkpoint(epoch,gen_M, opt_gen, best_G_loss, filename=config.CHECKPOINT_GEN_M)
-            save_checkpoint(epoch,gen_FM, opt_gen, best_G_loss, filename=config.CHECKPOINT_GEN_FM)
-            save_checkpoint(epoch,disc_M, opt_disc, best_D_loss, filename=config.CHECKPOINT_CRITIC_M)
-            save_checkpoint(epoch,disc_FM, opt_disc, best_D_loss, filename=config.CHECKPOINT_CRITIC_FM)
-            best_epoch_loss = best_G_loss
-
-    print(best_G_loss)
+        if return_loss:
+            D, G = train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, cycleloss, return_loss)
+        else: train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, cycleloss, return_loss)
+        if config.SAVE_MODEL and G < best_epoch_loss:
+            save_checkpoint(epoch,gen_M, opt_gen, G, filename=config.CHECKPOINT_GEN_M)
+            save_checkpoint(epoch,gen_FM, opt_gen, G, filename=config.CHECKPOINT_GEN_FM)
+            save_checkpoint(epoch,disc_M, opt_disc, D, filename=config.CHECKPOINT_CRITIC_M)
+            save_checkpoint(epoch,disc_FM, opt_disc, D, filename=config.CHECKPOINT_CRITIC_FM)
+            best_epoch_loss = G
+    print(f'The best Discriminator loss for epoch {epoch} is {D}')
+    print(f'The best Generator loss for epoch {epoch} is {G}')
+    
 if __name__ == "__main__":
     main()
    
