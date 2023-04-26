@@ -33,9 +33,14 @@ load_checkpoint(
             config.LEARNING_RATE,
         )
 
+data = PointCloudDataset()
 
-for params in gen_M.parameters():
-    g = params
+print(data[0]["f_pcs"])
 
-with open('readme1.txt', 'w') as f:
-    f.write(str(g))
+
+
+# for params in gen_M.parameters():
+#     g = params
+
+# with open('readme1.txt', 'w') as f:
+#     f.write(str(g))
