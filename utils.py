@@ -37,8 +37,6 @@ def load_checkpoint(checkpoint_file, models, optimizers, lr):
     # and it will lead to many hours of debugging \:
     
 
-
-
 class ChamferLoss(nn.Module):
     def __init__(self):
         super(ChamferLoss, self).__init__()

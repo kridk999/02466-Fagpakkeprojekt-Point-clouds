@@ -13,21 +13,19 @@ from Generator import ReconstructionNet as Generator_Fold
 from Discriminator import get_model as Discriminator_Point
 import wandb
 
-display_name = 'Training-loop'
+
 
 wandb.init(
     # set the wandb project where this run will be logged
-    project="Test 1"  ,
-    name = display_name
+    project=config.project,
+    name = config.display_name,
+    entity=config.user
     # track hyperparameters and run metadata
     # config={
     # "learning_rate": config.LEARNING_RATE,
     # "epochs": config.NUM_EPOCHS,
-    #}
+    # }
 )
-
-
-
 
 
 def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, return_loss):
@@ -117,7 +115,10 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
 
         #Save a couple pcl's:
         if 'SPRING0470.obj' in male_ids:
-            print('up')
+            idx_male = male_ids.index('SPRING0470.obj')
+            cycle_man = cycle_male[idx_male]
+            breakpoint()
+            pass
 
 
     if return_loss:
@@ -200,20 +201,17 @@ def main():
     for epoch in range(config.NUM_EPOCHS):
         if return_loss:
             D, G = train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, return_loss)
-            wandb.log({"LossD": D, "LossG": G, "epoch": epoch})
+            wandb.log({"LossD": D, "LossG": G, "epoch": epoch+1})
         else: train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, return_loss)
-        if config.SAVE_MODEL and G < best_epoch_loss:
-            models, opts = [disc_FM, disc_M, gen_FM, gen_M], [opt_disc, opt_gen]
+        models, opts = [disc_FM, disc_M, gen_FM, gen_M], [opt_disc, opt_gen]
+        if config.SAVE_MODEL and return_loss and G < best_epoch_loss:
             losses = [D, G] 
-            if return_loss: 
-                save_checkpoint(epoch, models, opts, losses, filename=config.CHECKPOINT_ALL)
-            else: save_checkpoint(epoch, models, opts, losses=None, filename=config.CHECKPOINT_ALL)
+            save_checkpoint(epoch, models, opts, losses, filename=config.CHECKPOINT_ALL)
             best_epoch_loss = G
-
+        else: save_checkpoint(epoch, models, opts, losses=None, filename=config.CHECKPOINT_ALL)
         print(f'The best Discriminator loss for epoch {epoch+1} is {D} and the generator loss is {G}')
     wandb.finish()
 
-    
 if __name__ == "__main__":
     main()
    
