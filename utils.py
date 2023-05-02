@@ -6,27 +6,36 @@ import copy
 import torch.nn.functional as F
 import matplotlib.pyplot as plt
 
-def save_checkpoint(epoch, model, optimizer, best_loss, filename="my_checkpoint.pth.tar"):
+def save_checkpoint(epoch, models : list, optimizers, losses, filename="my_checkpoint.pth.tar"):
     print("=> Saving checkpoint")
-    checkpoint = {
-        'epoch': epoch,
-        "state_dict": model.state_dict(),
-        "optimizer": optimizer.state_dict(),
-        'best_loss': best_loss
-    }
+    checkpoint = {}
+    checkpoint['epoch']= epoch
+    
+    for m in range(len(models)):
+        checkpoint[("state_dict_"+str(m))] = models[m].state_dict()
+    for opt in range(len(optimizers)):
+        checkpoint[("optimizer_"+str(opt))] = optimizers[opt].state_dict()
+    #"optimizer": optimizers.state_dict()
+    if losses is not None:
+        checkpoint["losses"] = losses
     torch.save(checkpoint, filename)
 
 
-def load_checkpoint(checkpoint_file, model, optimizer, lr):
+def load_checkpoint(checkpoint_file, models, optimizers, lr):
     print("=> Loading checkpoint")
     checkpoint = torch.load(checkpoint_file, map_location=config.DEVICE)
-    model.load_state_dict(checkpoint["state_dict"])
-    optimizer.load_state_dict(checkpoint["optimizer"])
-
+    for m in range(len(models)):
+        print(len(models))
+        models[m].load_state_dict(checkpoint["state_dict_"+str(m)])
+    for opt in range(len(optimizers)):
+        optimizers[opt].load_state_dict(checkpoint['optimizer_'+str(opt)])
+        for param_group in optimizers[opt].param_groups:
+            param_group["lr"] = lr
+    epoch = checkpoint["epoch"]
+    losses = checkpoint["losses"]
     # If we don't do this then it will just have learning rate of old checkpoint
     # and it will lead to many hours of debugging \:
-    for param_group in optimizer.param_groups:
-        param_group["lr"] = lr
+    
 
 
 
