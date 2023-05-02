@@ -11,6 +11,19 @@ import torch.optim as optim
 from utils import save_checkpoint, load_checkpoint
 from Generator import ReconstructionNet as Generator_Fold
 from Discriminator import get_model as Discriminator_Point
+import wandb
+
+wandb.init(
+    # set the wandb project where this run will be logged
+    project="Test 1",
+    
+    # track hyperparameters and run metadata
+    config={
+    "learning_rate": config.LEARNING_RATE,
+    "epochs": config.NUM_EPOCHS,
+    }
+)
+
 
 def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, return_loss):
     real_Males = 0
@@ -204,6 +217,7 @@ def main():
     for epoch in range(config.NUM_EPOCHS):
         if return_loss:
             D, G = train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, return_loss)
+            wandb.log({"LossD": D, "LossG": G, "epoch": epoch})
         else: train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, return_loss)
         if config.SAVE_MODEL and G < best_epoch_loss:
             save_checkpoint(epoch,gen_M, opt_gen, G, filename=config.CHECKPOINT_GEN_M)
@@ -213,6 +227,7 @@ def main():
             best_epoch_loss = G
         print(f'The best Discriminator loss for epoch {epoch} is {D}')
         print(f'The best Generator loss for epoch {epoch} is {G}')
+        
     
 if __name__ == "__main__":
     main()
