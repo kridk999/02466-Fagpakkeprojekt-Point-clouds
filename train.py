@@ -13,32 +13,24 @@ from Generator import ReconstructionNet as Generator_Fold
 from Discriminator import get_model as Discriminator_Point
 import wandb
 
+display_name = 'Training-loop'
+
 wandb.init(
     # set the wandb project where this run will be logged
-    project="Test 1",
-    
+    project="Test 1"  ,
+    name = display_name
     # track hyperparameters and run metadata
-    config={
-    "learning_rate": config.LEARNING_RATE,
-    "epochs": config.NUM_EPOCHS,
-    }
+    # config={
+    # "learning_rate": config.LEARNING_RATE,
+    # "epochs": config.NUM_EPOCHS,
+    #}
 )
 
 
 
-wandb.init(
-    # set the wandb project where this run will be logged
-    project="Test 1",
-    
-    # track hyperparameters and run metadata
-    config={
-    "learning_rate": config.LEARNING_RATE,
-    "epochs": config.NUM_EPOCHS,
-    }
-)
 
 
-def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, return_loss):
+def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, return_loss):
     real_Males = 0
     fake_Males = 0
     best_G_loss = 1e10

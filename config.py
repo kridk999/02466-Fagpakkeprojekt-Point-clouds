@@ -20,10 +20,18 @@ LOAD_MODEL = False
 SAVE_MODEL = False
 RETURN_LOSS = True
 CHECKPOINT_ALL = "MODEL_OPTS_LOSSES.pth.tar"
-CHECKPOINT_GEN_M = "genM.pth.tar"
-CHECKPOINT_GEN_FM = "genFM.pth.tar"
-CHECKPOINT_CRITIC_M = "discM.pth.tar"
-CHECKPOINT_CRITIC_FM = "discFM.pth.tar"
+# CHECKPOINT_GEN_M = "genM.pth.tar"
+# CHECKPOINT_GEN_FM = "genFM.pth.tar"
+# CHECKPOINT_CRITIC_M = "discM.pth.tar"
+# CHECKPOINT_CRITIC_FM = "discFM.pth.tar"
+
+'''
+WANDB variables:
+'''
+project = 'test1'
+user = 'JSK'
+display_name = 'training loop test'
+
 
 def transform(female, male):
     if np.random.uniform(0,1) < 0.5:
@@ -107,5 +115,3 @@ def get_parser_disc():
     args = parser.parse_args()
     return args
 
-if __name__ == "__main__":
-    pass

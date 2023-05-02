@@ -24,7 +24,6 @@ def save_checkpoint(epoch, models : list, optimizers, losses, filename="my_check
 def load_checkpoint(checkpoint_file, models, optimizers, lr):
     print("=> Loading checkpoint")
     checkpoint = torch.load(checkpoint_file, map_location=config.DEVICE)
-<<<<<<< HEAD
     for m in range(len(models)):
         print(len(models))
         models[m].load_state_dict(checkpoint["state_dict_"+str(m)])
@@ -34,12 +33,6 @@ def load_checkpoint(checkpoint_file, models, optimizers, lr):
             param_group["lr"] = lr
     epoch = checkpoint["epoch"]
     losses = checkpoint["losses"]
-=======
-    model.load_state_dict(checkpoint["state_dict"])
-    optimizer.load_state_dict(checkpoint["optimizer"])
-    epoch = checkpoint["epoch"]
-    best_loss = checkpoint["best_loss"]
->>>>>>> 4874b32a6a599645121ea1141c5cb62b9741e0fd
     # If we don't do this then it will just have learning rate of old checkpoint
     # and it will lead to many hours of debugging \:
     
@@ -56,7 +49,7 @@ class ChamferLoss(nn.Module):
         _, num_points_y, _ = y.size()
         xx = x.pow(2).sum(dim=-1)
         yy = y.pow(2).sum(dim=-1)
-        zz = torch.bmm(x, y.transpose(2, 1))
+        zz = torch.bmm(x, y.transpose(2,1))
         rx = xx.unsqueeze(1).expand_as(zz.transpose(2, 1))
         ry = yy.unsqueeze(1).expand_as(zz)
         P = (rx.transpose(2, 1) + ry - 2 * zz)
