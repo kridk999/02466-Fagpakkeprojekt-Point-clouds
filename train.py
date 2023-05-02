@@ -25,7 +25,20 @@ wandb.init(
 )
 
 
-def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, return_loss):
+
+wandb.init(
+    # set the wandb project where this run will be logged
+    project="Test 1",
+    
+    # track hyperparameters and run metadata
+    config={
+    "learning_rate": config.LEARNING_RATE,
+    "epochs": config.NUM_EPOCHS,
+    }
+)
+
+
+def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, return_loss):
     real_Males = 0
     fake_Males = 0
     best_G_loss = 1e10
@@ -206,8 +219,6 @@ def main():
             best_epoch_loss = G
 
         print(f'The best Discriminator loss for epoch {epoch+1} is {D} and the generator loss is {G}')
-        print(f'The best Discriminator loss for epoch {epoch} is {D}')
-        print(f'The best Generator loss for epoch {epoch} is {G}')
     wandb.finish()
 
     

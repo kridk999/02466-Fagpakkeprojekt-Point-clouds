@@ -24,6 +24,7 @@ def save_checkpoint(epoch, models : list, optimizers, losses, filename="my_check
 def load_checkpoint(checkpoint_file, models, optimizers, lr):
     print("=> Loading checkpoint")
     checkpoint = torch.load(checkpoint_file, map_location=config.DEVICE)
+<<<<<<< HEAD
     for m in range(len(models)):
         print(len(models))
         models[m].load_state_dict(checkpoint["state_dict_"+str(m)])
@@ -33,6 +34,12 @@ def load_checkpoint(checkpoint_file, models, optimizers, lr):
             param_group["lr"] = lr
     epoch = checkpoint["epoch"]
     losses = checkpoint["losses"]
+=======
+    model.load_state_dict(checkpoint["state_dict"])
+    optimizer.load_state_dict(checkpoint["optimizer"])
+    epoch = checkpoint["epoch"]
+    best_loss = checkpoint["best_loss"]
+>>>>>>> 4874b32a6a599645121ea1141c5cb62b9741e0fd
     # If we don't do this then it will just have learning rate of old checkpoint
     # and it will lead to many hours of debugging \:
     
