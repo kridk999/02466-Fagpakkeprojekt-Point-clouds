@@ -117,7 +117,6 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
         if 'SPRING0470.obj' in male_ids:
             idx_male = male_ids.index('SPRING0470.obj')
             cycle_man = cycle_male[idx_male]
-            breakpoint()
             pass
 
 
@@ -165,12 +164,14 @@ def main():
     
     #load training dataset
     if args_gen.dataset == 'dataset':
+        print("Loading dataset ====> training dataset")
         dataset = PointCloudDataset(
             root_female=config.TRAIN_DIR + "/female",
             root_male=config.TRAIN_DIR + "/male",
             transform=config.transform
         )
     elif args_gen.dataset == 'dummy_dataset':
+        print("Loading dataset ====> dummy dataset")
         dataset = PointCloudDataset(
             root_female=config.DUMMY_TRAIN_DIR + "/female",
             root_male=config.DUMMY_TRAIN_DIR + "/male",
@@ -210,7 +211,7 @@ def main():
             best_epoch_loss = G
         else: save_checkpoint(epoch, models, opts, losses=None, filename=config.CHECKPOINT_ALL)
         print(f'The best Discriminator loss for epoch {epoch+1} is {D} and the generator loss is {G}')
-    wandb.finish()
+    wandb.finish() 
 
 if __name__ == "__main__":
     main()
