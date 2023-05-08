@@ -42,14 +42,15 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
         male_ids = data['m_id']
         #female = female.transpose(2,1).to(config.DEVICE)
         #male = male.transpose(2,1).to(config.DEVICE)
+
+        '''''''''''
+        DISCRIMINATORS
+        '''''''''''
+
         # Male discriminator
         fake_male, _ = gen_M(female)
         D_M_real, _ = disc_M(male)
         D_M_fake, _ = disc_M(fake_male.detach())
-        
-        #real_Males += D_M_real.mean().item()   
-        #fake_Males += D_M_fake.mean().item()  
-        
         
         #Calculating MSE loss 
         D_M_real_loss = mse(D_M_real, torch.ones_like(D_M_real))
@@ -70,8 +71,10 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
         D_loss.backward()
         opt_disc.step()
 
-        #Train the generators for male and female
         
+        '''''''''
+        GENERATORS
+        '''''''''
         
         #Adviserial loss for both generators
         D_M_fake, _ = disc_M(fake_male)
@@ -103,6 +106,7 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
             #+ identity_male_loss * config.LAMBDA_IDENTITY
         )
 
+        #Update the optimizer for the generator
         opt_gen.zero_grad()
         G_loss.backward()
         opt_gen.step()
@@ -116,8 +120,15 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
         #Save a couple pcl's:
         if 'SPRING0470.obj' in male_ids:
             idx_male = male_ids.index('SPRING0470.obj')
+            original_man = male[idx_male]
+            female_male = fake_female[idx_male]
             cycle_man = cycle_male[idx_male]
-            pass
+
+        if 'SPRING0470.obj' in fem_ids:
+            idx_female = fem_ids.index('SPRING1077.obj')
+            original_woman = female[idx_female]
+            male_female = fake_male[idx_female]
+            cycle_woman = cycle_female[idx_female]
 
 
     if return_loss:
@@ -164,14 +175,12 @@ def main():
     
     #load training dataset
     if args_gen.dataset == 'dataset':
-        print("Loading dataset ====> training dataset")
         dataset = PointCloudDataset(
             root_female=config.TRAIN_DIR + "/female",
             root_male=config.TRAIN_DIR + "/male",
             transform=config.transform
         )
     elif args_gen.dataset == 'dummy_dataset':
-        print("Loading dataset ====> dummy dataset")
         dataset = PointCloudDataset(
             root_female=config.DUMMY_TRAIN_DIR + "/female",
             root_male=config.DUMMY_TRAIN_DIR + "/male",
@@ -210,8 +219,8 @@ def main():
             save_checkpoint(epoch, models, opts, losses, filename=config.CHECKPOINT_ALL)
             best_epoch_loss = G
         else: save_checkpoint(epoch, models, opts, losses=None, filename=config.CHECKPOINT_ALL)
-        print(f'The best Discriminator loss for epoch {epoch+1} is {D} and the generator loss is {G}')
-    wandb.finish() 
+        print(f'The best Discriminator loss for epoch {epoch+1} is {D} and the Generator loss is {G}')
+    wandb.finish()
 
 if __name__ == "__main__":
     main()

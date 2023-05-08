@@ -29,7 +29,7 @@ CHECKPOINT_ALL = "MODEL_OPTS_LOSSES.pth.tar"
 WANDB variables:
 '''
 project = 'training_loop_test'
-user = 'fagprojekt_pointclouds'
+user = 'jacobsk2000'
 display_name = 'training loop test'
 
 
