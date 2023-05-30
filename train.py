@@ -124,16 +124,16 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
                 female_male = fake_female[idx_male]
                 cycle_man = cycle_male[idx_male]
 
-                wandb.log({'original_male': wandb.Object3D(original_man.transpose(-2,1).numpy()),
-                        'fake_female': wandb.Object3D(female_male.detach().transpose(-2,1).numpy()),
-                        'cycle_male': wandb.Object3D(cycle_man.detach().transpose(-2,1).numpy())}, commit = False)
+                wandb.log({'original_male': wandb.Object3D(original_man.transpose(-2,1).cpu().numpy()),
+                        'fake_female': wandb.Object3D(female_male.detach().transpose(-2,1).cpu().numpy()),
+                        'cycle_male': wandb.Object3D(cycle_man.detach().transpose(-2,1).cpu().numpy())}, commit = False)
                 
                 root = os.listdir("./data/Saved_pointclouds/")
                 m = len([i for i in root if 'male' in i]) // 3
 
-                torch.save(original_man, f=f"./data/Saved_pointclouds/male_original{m}.pt")
-                torch.save(female_male, f=f"./data/Saved_pointclouds/male_female{m}.pt")
-                torch.save(cycle_man, f=f"./data/Saved_pointclouds/male_cycle{m}.pt")
+                torch.save(original_man, f=f"./Saved_pointclouds/male_original{m}.pt")
+                torch.save(female_male, f=f"./Saved_pointclouds/male_female{m}.pt")
+                torch.save(cycle_man, f=f"./Saved_pointclouds/male_cycle{m}.pt")
                 
 
             if 'SPRING1081.obj' in fem_ids:
@@ -142,16 +142,16 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
                 male_female = fake_male[idx_female]
                 cycle_woman = cycle_female[idx_female]
 
-                wandb.log({'original_female': wandb.Object3D(original_woman.transpose(-2,1).numpy()),
-                        'fake_male':wandb.Object3D(male_female.detach().transpose(-2,1).numpy()),
-                        'cycle_female':wandb.Object3D(cycle_woman.detach().transpose(-2,1).numpy()),}, commit = False)
+                wandb.log({'original_female': wandb.Object3D(original_woman.transpose(-2,1).cpu().numpy()),
+                        'fake_male':wandb.Object3D(male_female.detach().transpose(-2,1).cpu().numpy()),
+                        'cycle_female':wandb.Object3D(cycle_woman.detach().transpose(-2,1).cpu().numpy()),}, commit = False)
                 
                 root = os.listdir("./data/Saved_pointclouds/")
                 w = len([i for i in root if 'female' in i]) // 3
 
-                torch.save(original_woman, f=f"./data/Saved_pointclouds/female_original{w}.pt")
-                torch.save(male_female, f=f"./data/Saved_pointclouds/female_male{w}.pt")
-                torch.save(cycle_woman, f=f"./data/Saved_pointclouds/female_cycle{w}.pt")
+                torch.save(original_woman, f=f"./Saved_pointclouds/female_original{w}.pt")
+                torch.save(male_female, f=f"./Saved_pointclouds/female_male{w}.pt")
+                torch.save(cycle_woman, f=f"./Saved_pointclouds/female_cycle{w}.pt")
                 
 
     if return_loss:
