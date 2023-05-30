@@ -10,12 +10,13 @@ TRAIN_DIR = "data/train"
 VAL_DIR = "data/val"
 FURTHEST_DISTANCE = 1.1048446043276023
 SAMPLE_POINTS = 2025
-BATCH_SIZE = 16
+BATCH_SIZE = 4
 LEARNING_RATE = 1e-5
 LAMBDA_IDENTITY = 0.0
 LAMBDA_CYCLE = 1
 NUM_WORKERS = 4
-NUM_EPOCHS = 100
+NUM_EPOCHS = 4
+save_pointclouds = 1
 LOAD_MODEL = False
 SAVE_MODEL = False
 RETURN_LOSS = True
@@ -66,9 +67,11 @@ def get_parser_gen():
     parser.add_argument('--shape', type=str, default='plane', metavar='N',
                         choices=['plane', 'sphere', 'gaussian'],
                         help='Shape of points to input decoder, [plane, sphere, gaussian]')
+    
     parser.add_argument('--dataset', type=str, default='dummy_dataset', metavar='N',
                         choices=['dataset','dummy_dataset'],
                         help='Encoder to use, [dataset, dummy_dataset]')
+    
     # parser.add_argument('--use_rotate', action='store_true',
     #                     help='Rotate the pointcloud before training')
     # parser.add_argument('--use_translate', action='store_true',

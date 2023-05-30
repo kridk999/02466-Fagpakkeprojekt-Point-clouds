@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import open3d as o3d
 import numpy as np
 import torch
+import trimesh
 from torch.utils.data import Dataset
 import config as c
 import os
@@ -53,7 +54,6 @@ class PointCloudDataset(Dataset):
             centroid = np.mean(pcl, axis=0)
             pcl -= centroid
             pcl /= self.furthest_distance
-        
         #return a tensor pointcloud for each domain
         
         male_pointcloud, female_pointcloud = torch.from_numpy(male_array), torch.from_numpy(female_array)
@@ -64,6 +64,10 @@ class PointCloudDataset(Dataset):
     #Make a function that returns the normalvector for the points in a pointcloud
     
 
+if __name__ == "__main__":
+    data = PointCloudDataset()
+    breakpoint()
+    data[0]
 # data = PointCloudDataset()
 # female, male = data[4]
 # breakpoint()

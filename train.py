@@ -28,7 +28,7 @@ wandb.init(
 )
 
 
-def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, return_loss):
+def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, return_loss, save_pcl):
     real_Males = 0
     fake_Males = 0
     best_G_loss = 1e10
@@ -56,7 +56,7 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
         D_M_real_loss = mse(D_M_real, torch.ones_like(D_M_real))
         D_M_fake_loss = mse(D_M_fake, torch.zeros_like(D_M_fake))
         D_M_loss = D_M_real_loss + D_M_fake_loss
-
+        
         #Female discriminator
         fake_female, _ = gen_FM(male)                      #generating a female from a male pointcloud
         D_FM_real, _ = disc_FM(female)                     #putting a true female from data through the discriminator
@@ -117,19 +117,28 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
         if D_loss < best_D_loss:
             best_D_loss = D_loss
 
-        #Save a couple pcl's:
-        if 'SPRING0470.obj' in male_ids:
-            idx_male = male_ids.index('SPRING0470.obj')
-            original_man = male[idx_male]
-            female_male = fake_female[idx_male]
-            cycle_man = cycle_male[idx_male]
+        #Save pointclouds for a chosen index:
+        if save_pcl:
+            if 'SPRING0470.obj' in male_ids:
+                idx_male = male_ids.index('SPRING0470.obj')
+                original_man = male[idx_male]
+                female_male = fake_female[idx_male]
+                cycle_man = cycle_male[idx_male]
 
-        if 'SPRING0470.obj' in fem_ids:
-            idx_female = fem_ids.index('SPRING1077.obj')
-            original_woman = female[idx_female]
-            male_female = fake_male[idx_female]
-            cycle_woman = cycle_female[idx_female]
+                wandb.log({'original_male': wandb.Object3D(original_man.transpose(-2,1).numpy()),
+                        'fake_female': wandb.Object3D(female_male.detach().transpose(-2,1).numpy()),
+                        'cycle_male': wandb.Object3D(cycle_man.detach().transpose(-2,1).numpy())})
 
+            if 'SPRING1081.obj' in fem_ids:
+                idx_female = fem_ids.index('SPRING1081.obj')
+                original_woman = female[idx_female]
+                male_female = fake_male[idx_female]
+                cycle_woman = cycle_female[idx_female]
+
+        
+                wandb.log({'original_female': wandb.Object3D(original_woman.transpose(-2,1).numpy()),
+                        'fake_male':wandb.Object3D(male_female.detach().transpose(-2,1).numpy()),
+                        'cycle_female':wandb.Object3D(cycle_woman.detach().transpose(-2,1).numpy()),})
 
     if return_loss:
         return best_D_loss, best_G_loss
@@ -209,8 +218,11 @@ def main():
 
     best_epoch_loss = 1e10
     for epoch in range(config.NUM_EPOCHS):
+        if config.save_pointclouds:
+            save_pcl = True if epoch % config.save_pointclouds == 0 else False
+
         if return_loss:
-            D, G = train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, return_loss)
+            D, G = train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, return_loss, save_pcl)
             wandb.log({"LossD": D, "LossG": G, "epoch": epoch+1})
         else: train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, return_loss)
         models, opts = [disc_FM, disc_M, gen_FM, gen_M], [opt_disc, opt_gen]
