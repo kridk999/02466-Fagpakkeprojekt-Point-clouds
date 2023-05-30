@@ -146,7 +146,7 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
                         'fake_male':wandb.Object3D(male_female.detach().transpose(-2,1).cpu().numpy()),
                         'cycle_female':wandb.Object3D(cycle_woman.detach().transpose(-2,1).cpu().numpy()),}, commit = False)
                 
-                root = os.listdir("./data/Saved_pointclouds/")
+                root = os.listdir("./Saved_pointclouds/")
                 w = len([i for i in root if 'female' in i]) // 3
 
                 torch.save(original_woman, f=f"./Saved_pointclouds/female_original{w}.pt")
