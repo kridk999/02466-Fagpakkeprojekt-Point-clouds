@@ -3,11 +3,10 @@ import matplotlib.pyplot as plt
 import open3d as o3d
 import numpy as np
 import torch
-import trimesh
 from torch.utils.data import Dataset
 import config as c
 import os
-
+import trimesh as tr
 
 class PointCloudDataset(Dataset):
 
@@ -40,10 +39,25 @@ class PointCloudDataset(Dataset):
         male_path = os.path.join(self.root_male, male_obj)
         female_path = os.path.join(self.root_female, female_obj)
        
+       # load meshes 
+       
+        male_file = tr.load(male_path)
+        female_file = tr.load(female_path)
+       
+        #sample points from meshes
+        
+        pcl_male = tr.sample.sample_surface_even(male_file, 2025)
+        pcl_female = tr.sample.sample_surface_even(female_file, 2025)
+       
+        male_array, female_array = np.asarray(pcl_male[0]), np.asarray(pcl_female[0])
+        
+        
+
         #convert from .obj to torch tensor
-        pcl_male = o3d.io.read_triangle_mesh(male_path).sample_points_uniformly(number_of_points=self.sample_points) 
-        pcl_female = o3d.io.read_triangle_mesh(female_path).sample_points_uniformly(number_of_points=self.sample_points)
-        male_array, female_array = np.asarray(pcl_male.points), np.asarray(pcl_female.points)
+        #pcl_male = o3d.io.read_triangle_mesh(male_path).sample_points_uniformly(number_of_points=self.sample_points) 
+        #pcl_female = o3d.io.read_triangle_mesh(female_path).sample_points_uniformly(number_of_points=self.sample_points)
+        
+        #male_array, female_array = np.asarray(pcl_male.points), np.asarray(pcl_female.points)
         male_array, female_array = male_array.astype(np.float32), female_array.astype(np.float32)
         #perform transformation / augmentation if turned on
         if self.transform:
@@ -64,10 +78,8 @@ class PointCloudDataset(Dataset):
     #Make a function that returns the normalvector for the points in a pointcloud
     
 
-if __name__ == "__main__":
-    data = PointCloudDataset()
-    breakpoint()
-    data[0]
+# if __name__ == "__main__":
+#     data = PointCloudDataset()
 # data = PointCloudDataset()
 # female, male = data[4]
 # breakpoint()
