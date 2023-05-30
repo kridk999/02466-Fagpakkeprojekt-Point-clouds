@@ -3,7 +3,7 @@
 ### –- specify queue -- gpu køen
 # BSUB -q gpuv100 
 ### -- set the job Name -- navngiv de jobs vi har i køen
-# BSUB -J vfnet
+# BSUB -J CycleGAN-TEST1
 ### -- ask for number of cores (default: 1) -- 
 # BSUB -n 16
 ### -- Select the resources: 1 gpu in exclusive process mode --

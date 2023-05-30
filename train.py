@@ -5,10 +5,10 @@ from dataloader_dataset import PointCloudDataset
 import torch.nn as nn
 from tqdm import tqdm
 from torch.utils.data import DataLoader
-import sys
+import os
 import config
 import torch.optim as optim
-from utils import save_checkpoint, load_checkpoint, ChamferLoss
+from utils import save_checkpoint, load_checkpoint, ChamferLoss, visualize
 from Generator import ReconstructionNet as Generator_Fold
 from Discriminator import get_model as Discriminator_Point
 import wandb
@@ -28,9 +28,8 @@ wandb.init(
 )
 
 
-def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, return_loss, save_pcl):
-    real_Males = 0
-    fake_Males = 0
+
+def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, return_loss, save_pcl=None):
     best_G_loss = 1e10
     best_D_loss = 1e10
     training_loop = tqdm(loader, leave=True)
@@ -127,7 +126,15 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
 
                 wandb.log({'original_male': wandb.Object3D(original_man.transpose(-2,1).numpy()),
                         'fake_female': wandb.Object3D(female_male.detach().transpose(-2,1).numpy()),
-                        'cycle_male': wandb.Object3D(cycle_man.detach().transpose(-2,1).numpy())})
+                        'cycle_male': wandb.Object3D(cycle_man.detach().transpose(-2,1).numpy())}, commit = False)
+                
+                root = os.listdir("./data/Saved_pointclouds/")
+                m = len([i for i in root if 'male' in i]) // 3
+
+                torch.save(original_man, f=f"./data/Saved_pointclouds/male_original{m}.pt")
+                torch.save(female_male, f=f"./data/Saved_pointclouds/male_female{m}.pt")
+                torch.save(cycle_man, f=f"./data/Saved_pointclouds/male_cycle{m}.pt")
+                
 
             if 'SPRING1081.obj' in fem_ids:
                 idx_female = fem_ids.index('SPRING1081.obj')
@@ -135,10 +142,17 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
                 male_female = fake_male[idx_female]
                 cycle_woman = cycle_female[idx_female]
 
-        
                 wandb.log({'original_female': wandb.Object3D(original_woman.transpose(-2,1).numpy()),
                         'fake_male':wandb.Object3D(male_female.detach().transpose(-2,1).numpy()),
-                        'cycle_female':wandb.Object3D(cycle_woman.detach().transpose(-2,1).numpy()),})
+                        'cycle_female':wandb.Object3D(cycle_woman.detach().transpose(-2,1).numpy()),}, commit = False)
+                
+                root = os.listdir("./data/Saved_pointclouds/")
+                w = len([i for i in root if 'female' in i]) // 3
+
+                torch.save(original_woman, f=f"./data/Saved_pointclouds/female_original{w}.pt")
+                torch.save(male_female, f=f"./data/Saved_pointclouds/female_male{w}.pt")
+                torch.save(cycle_woman, f=f"./data/Saved_pointclouds/female_cycle{w}.pt")
+                
 
     if return_loss:
         return best_D_loss, best_G_loss
@@ -156,6 +170,9 @@ def main():
     gen_FM = Generator_Fold(args_gen).to(config.DEVICE)
     
     return_loss = config.RETURN_LOSS
+
+    
+    
     
     opt_disc = optim.Adam(
         list(disc_FM.parameters()) + list(disc_M.parameters()),
@@ -230,7 +247,7 @@ def main():
             losses = [D, G] 
             save_checkpoint(epoch, models, opts, losses, filename=config.CHECKPOINT_ALL)
             best_epoch_loss = G
-        else: save_checkpoint(epoch, models, opts, losses=None, filename=config.CHECKPOINT_ALL)
+        elif config.SAVE_MODEL: save_checkpoint(epoch, models, opts, losses=None, filename=config.CHECKPOINT_ALL)
         print(f'The best Discriminator loss for epoch {epoch+1} is {D} and the Generator loss is {G}')
     wandb.finish()
 

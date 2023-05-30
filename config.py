@@ -10,13 +10,13 @@ TRAIN_DIR = "data/train"
 VAL_DIR = "data/val"
 FURTHEST_DISTANCE = 1.1048446043276023
 SAMPLE_POINTS = 2025
-BATCH_SIZE = 4
+BATCH_SIZE = 16
 LEARNING_RATE = 1e-5
 LAMBDA_IDENTITY = 0.0
 LAMBDA_CYCLE = 1
 NUM_WORKERS = 4
-NUM_EPOCHS = 4
-save_pointclouds = 1
+NUM_EPOCHS = 100
+save_pointclouds = 20
 LOAD_MODEL = False
 SAVE_MODEL = False
 RETURN_LOSS = True
@@ -29,9 +29,9 @@ CHECKPOINT_ALL = "MODEL_OPTS_LOSSES.pth.tar"
 '''
 WANDB variables:
 '''
-project = 'training_loop_test'
+project = 'HPC_TEST_1'
 user = 'jacobsk2000'
-display_name = 'training loop test'
+display_name = 'HPC_runs'
 
 
 def transform(female, male):
@@ -68,7 +68,7 @@ def get_parser_gen():
                         choices=['plane', 'sphere', 'gaussian'],
                         help='Shape of points to input decoder, [plane, sphere, gaussian]')
     
-    parser.add_argument('--dataset', type=str, default='dummy_dataset', metavar='N',
+    parser.add_argument('--dataset', type=str, default='dataset', metavar='N',
                         choices=['dataset','dummy_dataset'],
                         help='Encoder to use, [dataset, dummy_dataset]')
     
