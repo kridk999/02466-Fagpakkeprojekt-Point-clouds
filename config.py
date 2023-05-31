@@ -69,7 +69,7 @@ def get_parser_gen():
                         choices=['plane', 'sphere', 'gaussian'],
                         help='Shape of points to input decoder, [plane, sphere, gaussian]')
     
-    parser.add_argument('--dataset', type=str, default='dataset', metavar='N',
+    parser.add_argument('--dataset', type=str, default='dummy_dataset', metavar='N',
                         choices=['dataset','dummy_dataset'],
                         help='Encoder to use, [dataset, dummy_dataset]')
     
