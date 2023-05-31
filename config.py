@@ -17,6 +17,7 @@ LAMBDA_CYCLE = 1
 NUM_WORKERS = 4
 NUM_EPOCHS = 100
 save_pointclouds = 20
+START_SHAPE = 'plane' #Can be 'sphere' or 'gaussian'
 LOAD_MODEL = False
 SAVE_MODEL = False
 RETURN_LOSS = True
@@ -64,7 +65,7 @@ def get_parser_gen():
                         help='Number of dims for feature ')
     parser.add_argument('--k', type=int, default=16, metavar='N',
                         help='Num of nearest neighbors to use for KNN')
-    parser.add_argument('--shape', type=str, default='plane', metavar='N',
+    parser.add_argument('--shape', type=str, default=START_SHAPE, metavar='N',
                         choices=['plane', 'sphere', 'gaussian'],
                         help='Shape of points to input decoder, [plane, sphere, gaussian]')
     
