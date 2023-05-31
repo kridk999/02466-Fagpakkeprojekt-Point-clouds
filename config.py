@@ -13,9 +13,10 @@ LEARNING_RATE = 1e-5
 LAMBDA_IDENTITY = 0.0
 LAMBDA_CYCLE = 1
 NUM_WORKERS = 4
-NUM_EPOCHS = 301
-save_pointclouds = 50
-START_SHAPE = 'sphere' #Can be 'sphere' or 'gaussian'
+NUM_EPOCHS = 5
+save_pointclouds = 2                            # Number of epochs between saving intermediate pointclouds as .pt files
+DATASET = 'dummy_dataset'                       # Choose between 'dataset' or 'dummy_dataset'
+START_SHAPE = 'sphere'                          # Can be 'plane', 'sphere' or 'gaussian'
 LOAD_MODEL = False
 SAVE_MODEL = False
 RETURN_LOSS = True
@@ -24,7 +25,7 @@ CHECKPOINT_ALL = "MODEL_OPTS_LOSSES.pth.tar"
 '''
 WANDB variables:
 '''
-project = f'HPC_TEST_{START_SHAPE}_{NUM_EPOCHS}epochs'
+project = f'PC_TEST_{START_SHAPE}_{NUM_EPOCHS}epochs'
 user = 'jacobsk2000'
 display_name = 'HPC_runs'
 
@@ -63,7 +64,7 @@ def get_parser_gen():
                         choices=['plane', 'sphere', 'gaussian'],
                         help='Shape of points to input decoder, [plane, sphere, gaussian]')
     
-    parser.add_argument('--dataset', type=str, default='dummy_dataset', metavar='N',
+    parser.add_argument('--dataset', type=str, default=DATASET, metavar='N',
                         choices=['dataset','dummy_dataset'],
                         help='Encoder to use, [dataset, dummy_dataset]')
     
