@@ -15,9 +15,9 @@ LEARNING_RATE = 1e-5
 LAMBDA_IDENTITY = 0.0
 LAMBDA_CYCLE = 1
 NUM_WORKERS = 4
-NUM_EPOCHS = 100
-save_pointclouds = 20
-START_SHAPE = 'plane' #Can be 'sphere' or 'gaussian'
+NUM_EPOCHS = 10
+save_pointclouds = 5
+START_SHAPE = 'sphere' #Can be 'sphere' or 'gaussian'
 LOAD_MODEL = False
 SAVE_MODEL = False
 RETURN_LOSS = True
@@ -69,7 +69,7 @@ def get_parser_gen():
                         choices=['plane', 'sphere', 'gaussian'],
                         help='Shape of points to input decoder, [plane, sphere, gaussian]')
     
-    parser.add_argument('--dataset', type=str, default='dataset', metavar='N',
+    parser.add_argument('--dataset', type=str, default='dummy_dataset', metavar='N',
                         choices=['dataset','dummy_dataset'],
                         help='Encoder to use, [dataset, dummy_dataset]')
     

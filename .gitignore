@@ -3,3 +3,7 @@ Fag_env/*
 Wandb/*
 
 data/*
+
+logs/*
+
+Saved_pointclouds/*
