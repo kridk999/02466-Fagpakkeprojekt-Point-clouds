@@ -1,9 +1,9 @@
 #!/bin/sh
 ### General options
 ### –- specify queue -- gpu køen
-# BSUB -q gpuv100 
+# BSUB -q gpua100 
 ### -- set the job Name -- navngiv de jobs vi har i køen
-# BSUB -J CycleGAN-TEST1
+# BSUB -J CycleGAN-TEST2
 ### -- ask for number of cores (default: 1) -- 
 # BSUB -n 16
 ### -- Select the resources: 1 gpu in exclusive process mode --
@@ -11,7 +11,7 @@
 ### -- set walltime limit: hh:mm --  maximum 24 hours for GPU-queues right now
 # BSUB -W 23:59
 # request 5GB of system-memory
-# BSUB -R "rusage[mem=16GB]"
+# BSUB -R "rusage[mem=4GB]"
 ### -- set the email address --
 # please uncomment the following line and put in your e-mail address,
 # if you want to receive e-mail notifications on a non-default address
