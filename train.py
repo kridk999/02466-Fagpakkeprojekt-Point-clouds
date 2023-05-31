@@ -29,7 +29,7 @@ wandb.init(
 
 
 
-def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, return_loss, save_pcl=None):
+def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, return_loss, save_pcl=False):
     best_G_loss = 1e10
     best_D_loss = 1e10
     training_loop = tqdm(loader, leave=True)
