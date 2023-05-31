@@ -8,7 +8,7 @@ import random
 import matplotlib.pyplot as plt
 import glob
 from torch.utils.data import Dataset, DataLoader
-import pandas as pd
+
 
 filepath = ["data/train/female", "data/train/male"]
 

@@ -147,11 +147,11 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
                         'cycle_female':wandb.Object3D(cycle_woman.detach().transpose(-2,1).cpu().numpy()),}, commit = False)
                 
                 root = os.listdir("./Saved_pointclouds/")
-                w = len([i for i in root if 'female' in i]) // 3
+                w = len([i for i in root if 'woman' in i]) // 3
 
-                torch.save(original_woman, f=f"./Saved_pointclouds/female_original{w}.pt")
-                torch.save(male_female, f=f"./Saved_pointclouds/female_male{w}.pt")
-                torch.save(cycle_woman, f=f"./Saved_pointclouds/female_cycle{w}.pt")
+                torch.save(original_woman, f=f"./Saved_pointclouds/woman_original{w}.pt")
+                torch.save(male_female, f=f"./Saved_pointclouds/woman_man{w}.pt")
+                torch.save(cycle_woman, f=f"./Saved_pointclouds/woman_cycle{w}.pt")
                 
 
     if return_loss:

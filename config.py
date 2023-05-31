@@ -15,9 +15,9 @@ LEARNING_RATE = 1e-5
 LAMBDA_IDENTITY = 0.0
 LAMBDA_CYCLE = 1
 NUM_WORKERS = 4
-NUM_EPOCHS = 100
-save_pointclouds = 20
-START_SHAPE = 'plane' #Can be 'sphere' or 'gaussian'
+NUM_EPOCHS = 20
+save_pointclouds = 5
+START_SHAPE = 'sphere' #Can be 'sphere' or 'gaussian'
 LOAD_MODEL = False
 SAVE_MODEL = False
 RETURN_LOSS = True
@@ -30,7 +30,7 @@ CHECKPOINT_ALL = "MODEL_OPTS_LOSSES.pth.tar"
 '''
 WANDB variables:
 '''
-project = 'HPC_TEST_1'
+project = f'HPC_TEST_{START_SHAPE}'
 user = 'jacobsk2000'
 display_name = 'HPC_runs'
 
@@ -52,7 +52,7 @@ def collate_fn(batch):
 
 def get_parser_gen():
     parser = argparse.ArgumentParser(description='FoldingNet as Generator')
-    parser.add_argument('--exp_name', type=str, default=None, metavar='N',
+    parser.add_argument('--exp_name', type=str, default='EXP_NAME', metavar='N',
                         help='Name of the experiment')
     # parser.add_argument('--task', type=str, default='reconstruct', metavar='N',
     #                     choices=['reconstruct', 'classify'],
