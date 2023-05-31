@@ -77,8 +77,9 @@ class PointCloudDataset(Dataset):
     #Make a function that returns the normalvector for the points in a pointcloud
     
 
-# if __name__ == "__main__":
-#     data = PointCloudDataset()
+if __name__ == "__main__":
+    data = PointCloudDataset()
+    print(data[424])
 # data = PointCloudDataset()
 # female, male = data[4]
 # breakpoint()

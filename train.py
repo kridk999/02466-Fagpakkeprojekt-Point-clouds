@@ -171,9 +171,6 @@ def main():
     
     return_loss = config.RETURN_LOSS
 
-    
-    
-    
     opt_disc = optim.Adam(
         list(disc_FM.parameters()) + list(disc_M.parameters()),
         lr=config.LEARNING_RATE,

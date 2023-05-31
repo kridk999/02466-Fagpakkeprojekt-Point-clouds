@@ -123,3 +123,7 @@ def visualize(cloud,id,gender):
 
     # show plot
     plt.show()
+
+if __name__ == "__main__":
+    pcl = torch.load("./Saved_pointclouds/male_female7.pt", map_location=torch.device('cpu'))
+    visualize(pcl.transpose(-2,1).detach(), id = '1', gender = 'male')
