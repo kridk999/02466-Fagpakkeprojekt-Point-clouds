@@ -3,10 +3,11 @@ import config as c
 import dataloader_dataset
 from utils import save_checkpoint, load_checkpoint, ChamferLoss, visualize
 from dataloader_dataset import PointCloudDataset
-import open3d as o3d
 import matplotlib.pyplot as plt
 import tqdm
-
+import numpy as np
+import pandas as pd
+from pyntcloud import PyntCloud
 
 def visualizeNY(cloud,id,gender):
     name = f"Visualization of {gender} pointcloud {id}"
@@ -24,7 +25,7 @@ def visualizeNY(cloud,id,gender):
 
 
     # Creating color map
-    my_cmap = plt.get_cmap('cool')#plt.get_cmap('cool')#plt.get_cmap('hsv')
+    my_cmap = plt.get_cmap('hsv')#plt.get_cmap('cool')#plt.get_cmap('hsv')
 
     # Creating plot
     sctt = ax.scatter3D(x, y, z,
@@ -82,14 +83,64 @@ data = PointCloudDataset()
 #         print(f"Not found at idx {i}")
 # print(data[400]["id_female"])
 
-visualizeNY(data[1042]["m_pcs"],"?","?")
+#visualizeNY(data[1042]["m_pcs"],"?","?")
 # 
 
 #print(data[528]["id_female"])
 
 
+def save_cloud_rgb(cloud, red, green, blue, filename):
+    cloud = cloud.cpu()
+    d = {'x': cloud[0],
+         'y': cloud[1],
+         'z': cloud[2],
+         'red': red,
+         'green': green,
+         'blue': blue}
+    cloud_pd = pd.DataFrame(data=d)
+    cloud_pd[['red', 'green', 'blue']] = cloud_pd[['red', 'green', 'blue']].astype(np.uint8) 
+    cloud = PyntCloud(cloud_pd)
+    cloud.to_file(filename)
 
 
 
+def color_pc(cloud):
+    point_cloud = cloud.numpy() #takes tensor makes it into np.array [x,y,z] koordinates
+
+    # normalize x-axis of point cloud to be between 0 and 1
+    normalized_x = (point_cloud[:, 0, :] - point_cloud[:, 0, :].min()) / (
+                point_cloud[:, 0, :].max() - point_cloud[:, 0, :].min())
+    normalized_x = 1 -normalized_x.squeeze()
+    
+
+    green = (0, 1, 0)  # RGB values for green
+    yellow = (1, 1, 0)  # RGB values for yellow
+    red = (1, 0, 0)  # RGB values for red
+
+    # Example of defining color ranges
+    green_to_yellow = (yellow[0] - green[0], yellow[1] - green[1], yellow[2] - green[2])
+    yellow_to_red = (red[0] - yellow[0], red[1] - yellow[1], red[2] - yellow[2])
+
+    color_per_point = []
+    for x in normalized_x:
+        if x < 0.5: # green to yellow
+            new_scale_value = x.item() / 0.5
+            new_color = green + green_to_yellow*new_scale_value
+            color_per_point.append(new_color.int().squeeze().tolist())
+        else: # yellow to red
+            new_scale_value = (x.item() - 0.5) * 2
+            new_color = yellow + yellow_to_red * new_scale_value
+            color_per_point.append(new_color.int().squeeze().tolist())
+    color_per_point = np.array(color_per_point)
+    return color_per_point
 
 
+
+def visualize_pc(point_cloud, color_per_point):
+    point_cloud = point_cloud.squeeze().cpu()
+    fig = plt.figure()
+    ax = plt.axes(projection="3d")
+    ax.scatter3D(point_cloud[:, 0], point_cloud[:, 1], point_cloud[:, 2], c=color_per_point, s=1.8)
+    plt.show()
+
+visualize_pc(data[1042]["m_pcs"],color_pc(data[1042]["m_pcs"]))
