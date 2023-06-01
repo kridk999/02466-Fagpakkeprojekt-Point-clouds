@@ -20,7 +20,7 @@ wandb.init(
     project=config.project,
     name = config.display_name,
     entity=config.user,
-    mode='disabled'
+    mode=config.WANDB_mode
     # track hyperparameters and run metadata
     # config={
     # "learning_rate": config.LEARNING_RATE,
