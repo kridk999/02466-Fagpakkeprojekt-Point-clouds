@@ -19,7 +19,8 @@ wandb.init(
     # set the wandb project where this run will be logged
     project=config.project,
     name = config.display_name,
-    entity=config.user
+    entity=config.user,
+    mode='disabled'
     # track hyperparameters and run metadata
     # config={
     # "learning_rate": config.LEARNING_RATE,
@@ -85,9 +86,10 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
         cycle_female, _ = gen_FM(fake_male)
         cycle_male, _ = gen_M(fake_female)
 
+       
         # Set chamfer loss ind
-        cycle_female_loss = chamferloss(cycle_female, female)
-        cycle_male_loss = chamferloss(cycle_male, male)
+        cycle_female_loss = chamferloss(cycle_female.transpose(2,1), female.transpose(2,1))
+        cycle_male_loss = chamferloss(cycle_male.transpose(2,1), male.transpose(2,1))
 
         #Identity loss - gør det en forskel?
         # identity_female = gen_FM(female)
@@ -131,9 +133,9 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
                 root = os.listdir("./Saved_pointclouds/")
                 m = len([i for i in root if 'male' in i]) // 3
 
-                torch.save(original_man, f=f"./Saved_pointclouds/male_original{m}.pt")
-                torch.save(female_male, f=f"./Saved_pointclouds/male_female{m}.pt")
-                torch.save(cycle_man, f=f"./Saved_pointclouds/male_cycle{m}.pt")
+                torch.save(original_man, f=f"./Saved_pointclouds/male_original{m}_{config.START_SHAPE}.pt")
+                torch.save(female_male, f=f"./Saved_pointclouds/male_female{m}_{config.START_SHAPE}.pt")
+                torch.save(cycle_man, f=f"./Saved_pointclouds/male_cycle{m}_{config.START_SHAPE}.pt")
                 
 
             if 'SPRING1081.obj' in fem_ids:
@@ -149,9 +151,9 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
                 root = os.listdir("./Saved_pointclouds/")
                 w = len([i for i in root if 'woman' in i]) // 3
 
-                torch.save(original_woman, f=f"./Saved_pointclouds/woman_original{w}.pt")
-                torch.save(male_female, f=f"./Saved_pointclouds/woman_man{w}.pt")
-                torch.save(cycle_woman, f=f"./Saved_pointclouds/woman_cycle{w}.pt")
+                torch.save(original_woman, f=f"./Saved_pointclouds/woman_original{w}_{config.START_SHAPE}.pt")
+                torch.save(male_female, f=f"./Saved_pointclouds/woman_man{w}_{config.START_SHAPE}.pt")
+                torch.save(cycle_woman, f=f"./Saved_pointclouds/woman_cycle{w}_{config.START_SHAPE}.pt")
                 
 
     if return_loss:
@@ -171,9 +173,6 @@ def main():
     
     return_loss = config.RETURN_LOSS
 
-    
-    
-    
     opt_disc = optim.Adam(
         list(disc_FM.parameters()) + list(disc_M.parameters()),
         lr=config.LEARNING_RATE,

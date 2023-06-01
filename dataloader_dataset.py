@@ -45,8 +45,8 @@ class PointCloudDataset(Dataset):
        
         #sample points from meshes
         
-        pcl_male = tr.sample.sample_surface_even(male_file, 2025)
-        pcl_female = tr.sample.sample_surface_even(female_file, 2025)
+        pcl_male = tr.sample.sample_surface_even(male_file, self.sample_points)
+        pcl_female = tr.sample.sample_surface_even(female_file, self.sample_points)
        
         male_array, female_array = np.asarray(pcl_male[0]), np.asarray(pcl_female[0])
         
@@ -77,8 +77,9 @@ class PointCloudDataset(Dataset):
     #Make a function that returns the normalvector for the points in a pointcloud
     
 
-# if __name__ == "__main__":
-#     data = PointCloudDataset()
+if __name__ == "__main__":
+    data = PointCloudDataset()
+    print(data[424])
 # data = PointCloudDataset()
 # female, male = data[4]
 # breakpoint()

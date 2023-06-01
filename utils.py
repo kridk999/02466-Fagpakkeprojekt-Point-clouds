@@ -56,9 +56,9 @@ class ChamferLoss(nn.Module):
     def forward(self, preds, gts):
         P = self.batch_pairwise_dist(gts, preds)
         mins, _ = torch.min(P, 1)
-        loss_1 = torch.sum(mins)
+        loss_1 = torch.mean(mins)
         mins, _ = torch.min(P, 2)
-        loss_2 = torch.sum(mins)
+        loss_2 = torch.mean(mins)
         return loss_1 + loss_2
 
 class CrossEntropyLoss(nn.Module):
@@ -123,3 +123,7 @@ def visualize(cloud,id,gender):
 
     # show plot
     plt.show()
+
+if __name__ == "__main__":
+    pcl = torch.load("./Saved_pointclouds/male_cycle2.pt", map_location=torch.device('cpu'))
+    visualize(pcl.transpose(-2,1).detach(), id = '1', gender = 'male')

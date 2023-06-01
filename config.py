@@ -1,36 +1,32 @@
 import torch
 import numpy as np
 import argparse
-#import albumentations as A
-#from albumentations.pytorch import ToTensorV2
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 DUMMY_TRAIN_DIR = "data/dummy"
 TRAIN_DIR = "data/train"
 VAL_DIR = "data/val"
 FURTHEST_DISTANCE = 1.1048446043276023
-SAMPLE_POINTS = 2025
+SAMPLE_POINTS = 2048
 BATCH_SIZE = 16
-LEARNING_RATE = 1e-5
+LEARNING_RATE = 1e-4
 LAMBDA_IDENTITY = 0.0
 LAMBDA_CYCLE = 1
 NUM_WORKERS = 4
-NUM_EPOCHS = 20
-save_pointclouds = 5
-START_SHAPE = 'sphere' #Can be 'sphere' or 'gaussian'
+NUM_EPOCHS = 2
+save_pointclouds = 1                            # Number of epochs between saving intermediate pointclouds as .pt files
+DATASET = 'dummy_dataset'                       # Choose between 'dataset' or 'dummy_dataset'
+START_SHAPE = 'plane'                           # Can be 'plane', 'sphere' or 'gaussian'
 LOAD_MODEL = False
 SAVE_MODEL = False
 RETURN_LOSS = True
 CHECKPOINT_ALL = "MODEL_OPTS_LOSSES.pth.tar"
-# CHECKPOINT_GEN_M = "genM.pth.tar"
-# CHECKPOINT_GEN_FM = "genFM.pth.tar"
-# CHECKPOINT_CRITIC_M = "discM.pth.tar"
-# CHECKPOINT_CRITIC_FM = "discFM.pth.tar"
 
 '''
 WANDB variables:
 '''
-project = f'HPC_TEST_{START_SHAPE}'
+WANDB_mode = 'online'                               # Can be 'offline or 'disabled'
+project = f'PC_TEST_{START_SHAPE}_{NUM_EPOCHS}epochs'
 user = 'jacobsk2000'
 display_name = 'HPC_runs'
 
@@ -69,7 +65,7 @@ def get_parser_gen():
                         choices=['plane', 'sphere', 'gaussian'],
                         help='Shape of points to input decoder, [plane, sphere, gaussian]')
     
-    parser.add_argument('--dataset', type=str, default='dummy_dataset', metavar='N',
+    parser.add_argument('--dataset', type=str, default=DATASET, metavar='N',
                         choices=['dataset','dummy_dataset'],
                         help='Encoder to use, [dataset, dummy_dataset]')
     
@@ -99,23 +95,4 @@ def get_parser_gen():
     args = parser.parse_args()
     return args
 
-def get_parser_disc():
-    '''PARAMETERS'''
-    parser = argparse.ArgumentParser('training')
-    parser.add_argument('--use_cpu', action='store_true', default=False, help='use cpu mode')
-    parser.add_argument('--gpu', type=str, default='0', help='specify gpu device')
-    parser.add_argument('--batch_size', type=int, default=BATCH_SIZE, help='batch size in training')
-    #parser.add_argument('--model', default='pointnet_cls', help='model name [default: pointnet_cls]')
-    parser.add_argument('--num_category', default=40, type=int, choices=[10, 40],  help='training on ModelNet10/40')
-    #parser.add_argument('--epoch', default=NUM_EPOCHS, type=int, help='number of epoch in training')
-    parser.add_argument('--learning_rate', default=LEARNING_RATE, type=float, help='learning rate in training')
-    parser.add_argument('--num_point', type=int, default=1024, help='Point Number')
-    #parser.add_argument('--optimizer', type=str, default='Adam', help='optimizer for training')
-    #parser.add_argument('--log_dir', type=str, default=None, help='experiment root')
-    parser.add_argument('--decay_rate', type=float, default=1e-4, help='decay rate')
-    parser.add_argument('--use_normals', action='store_true', default=False, help='use normals')
-    parser.add_argument('--process_data', action='store_true', default=False, help='save data offline')
-    parser.add_argument('--use_uniform_sample', action='store_true', default=False, help='use uniform sampiling')
-    args = parser.parse_args()
-    return args
 
