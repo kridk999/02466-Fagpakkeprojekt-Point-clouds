@@ -91,11 +91,6 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
         cycle_female_loss = chamferloss(cycle_female.transpose(2,1), female.transpose(2,1))
         cycle_male_loss = chamferloss(cycle_male.transpose(2,1), male.transpose(2,1))
 
-        #Identity loss - gør det en forskel?
-        # identity_female = gen_FM(female)
-        # identity_male = gen_M(male)
-        # identity_female_loss = l1(female, identity_female)
-        # identity_male_loss = l1(male, identity_male)
 
         #Adding all generative losses together:
         G_loss = (
@@ -103,8 +98,6 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
             + loss_G_M
             + cycle_female_loss * config.LAMBDA_CYCLE
             + cycle_male_loss * config.LAMBDA_CYCLE
-            #+ identity_female_loss * config.LAMBDA_IDENTITY
-            #+ identity_male_loss * config.LAMBDA_IDENTITY
         )
 
         #Update the optimizer for the generator

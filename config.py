@@ -25,7 +25,7 @@ CHECKPOINT_ALL = "MODEL_OPTS_LOSSES.pth.tar"
 '''
 WANDB variables:
 '''
-WANDB_mode = 'online'                               # Can be 'offline or 'disabled'
+WANDB_mode = 'disabled'                               # Can be 'offline or 'disabled'
 project = f'PC_TEST_{START_SHAPE}_{NUM_EPOCHS}epochs'
 user = 'jacobsk2000'
 display_name = 'HPC_runs'
