@@ -52,8 +52,8 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
         D_M_fake, _ = disc_M(fake_male.detach())
         
         #Calculating MSE loss for male
-        D_M_real_loss = mse(D_M_real[:,0], torch.ones_like(D_M_real[:,0]))          #Added [:,0] as an experiment
-        D_M_fake_loss = mse(D_M_fake[:,0], torch.zeros_like(D_M_fake[:,0]))         #Added [:,0] as an experiment
+        D_M_real_loss = mse(D_M_real, torch.ones_like(D_M_real))          
+        D_M_fake_loss = mse(D_M_fake, torch.zeros_like(D_M_fake))         
         D_M_loss = D_M_real_loss + D_M_fake_loss
         
         #Female discriminator
@@ -62,8 +62,8 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
         D_FM_fake, _ = disc_FM(fake_female.detach())       # Putting a generated female through the discriminator
 
         #Calculate MSE loss for female
-        D_FM_real_loss = mse(D_FM_real[:,0], torch.ones_like(D_FM_real[:,0]))           #Added [:,0] as an experiment
-        D_FM_fake_loss = mse(D_FM_fake[:,0], torch.zeros_like(D_FM_fake[:,0]))          #Added [:,0] as an experiment
+        D_FM_real_loss = mse(D_FM_real, torch.ones_like(D_FM_real))           
+        D_FM_fake_loss = mse(D_FM_fake, torch.zeros_like(D_FM_fake))          
         D_FM_loss = D_FM_real_loss + D_FM_fake_loss
 
         #Total discriminator loss
@@ -80,8 +80,8 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
         #Adviserial loss for both generators
         D_M_fake, _ = disc_M(fake_male)
         D_FM_fake, _ = disc_FM(fake_female)
-        loss_G_M = mse(D_M_fake[:,0], torch.ones_like(D_M_fake[:,0]))          #Added [:,0] as an experiment                
-        loss_G_FM = mse(D_FM_fake[:,0], torch.ones_like(D_FM_fake[:,0]))            #Added [:,0] as an experiment 
+        loss_G_M = mse(D_M_fake, torch.ones_like(D_M_fake))                          
+        loss_G_FM = mse(D_FM_fake, torch.ones_like(D_FM_fake))             
 
         #Cycle loss
         cycle_female, _ = gen_FM(fake_male)
