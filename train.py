@@ -19,7 +19,8 @@ wandb.init(
     # set the wandb project where this run will be logged
     project=config.project,
     name = config.display_name,
-    entity=config.user
+    entity=config.user,
+    mode='disabled'
     # track hyperparameters and run metadata
     # config={
     # "learning_rate": config.LEARNING_RATE,
@@ -85,9 +86,10 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
         cycle_female, _ = gen_FM(fake_male)
         cycle_male, _ = gen_M(fake_female)
 
+       
         # Set chamfer loss ind
-        cycle_female_loss = chamferloss(cycle_female, female)
-        cycle_male_loss = chamferloss(cycle_male, male)
+        cycle_female_loss = chamferloss(cycle_female.transpose(2,1), female.transpose(2,1))
+        cycle_male_loss = chamferloss(cycle_male.transpose(2,1), male.transpose(2,1))
 
         #Identity loss - gør det en forskel?
         # identity_female = gen_FM(female)

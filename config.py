@@ -7,16 +7,16 @@ DUMMY_TRAIN_DIR = "data/dummy"
 TRAIN_DIR = "data/train"
 VAL_DIR = "data/val"
 FURTHEST_DISTANCE = 1.1048446043276023
-SAMPLE_POINTS = 2025
+SAMPLE_POINTS = 2048
 BATCH_SIZE = 16
-LEARNING_RATE = 1e-5
+LEARNING_RATE = 1e-4
 LAMBDA_IDENTITY = 0.0
 LAMBDA_CYCLE = 1
 NUM_WORKERS = 4
-NUM_EPOCHS = 5
-save_pointclouds = 2                            # Number of epochs between saving intermediate pointclouds as .pt files
+NUM_EPOCHS = 2
+save_pointclouds = 1                            # Number of epochs between saving intermediate pointclouds as .pt files
 DATASET = 'dummy_dataset'                       # Choose between 'dataset' or 'dummy_dataset'
-START_SHAPE = 'sphere'                          # Can be 'plane', 'sphere' or 'gaussian'
+START_SHAPE = 'plane'                           # Can be 'plane', 'sphere' or 'gaussian'
 LOAD_MODEL = False
 SAVE_MODEL = False
 RETURN_LOSS = True
@@ -25,6 +25,7 @@ CHECKPOINT_ALL = "MODEL_OPTS_LOSSES.pth.tar"
 '''
 WANDB variables:
 '''
+WANDB_mode = 'online'                               # Can be 'offline or 'disabled'
 project = f'PC_TEST_{START_SHAPE}_{NUM_EPOCHS}epochs'
 user = 'jacobsk2000'
 display_name = 'HPC_runs'
