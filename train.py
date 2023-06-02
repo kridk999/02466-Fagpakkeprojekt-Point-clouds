@@ -114,8 +114,8 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
 
         #Save pointclouds for a chosen index:
         if save_pcl:
-            if 'SPRING0470.obj' in male_ids:
-                idx_male = male_ids.index('SPRING0470.obj')
+            if 'SPRING1234.obj' in male_ids:
+                idx_male = male_ids.index('SPRING1234.obj')
                 original_man = male[idx_male]
                 female_male = fake_female[idx_male]
                 cycle_man = cycle_male[idx_male]
@@ -132,8 +132,8 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
                 torch.save(cycle_man, f=f"./Saved_pointclouds/male_cycle{m}_{config.START_SHAPE}.pt")
                 
 
-            if 'SPRING1081.obj' in fem_ids:
-                idx_female = fem_ids.index('SPRING1081.obj')
+            if 'SPRING1084.obj' in fem_ids:
+                idx_female = fem_ids.index('SPRING1084.obj')
                 original_woman = female[idx_female]
                 male_female = fake_male[idx_female]
                 cycle_woman = cycle_female[idx_female]

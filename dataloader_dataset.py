@@ -45,8 +45,8 @@ class PointCloudDataset(Dataset):
        
         #sample points from meshes
         
-        pcl_male = tr.sample.sample_surface_even(male_file, self.sample_points)
-        pcl_female = tr.sample.sample_surface_even(female_file, self.sample_points)
+        pcl_male = tr.sample.sample_surface(male_file, self.sample_points)
+        pcl_female = tr.sample.sample_surface(female_file, self.sample_points)
        
         male_array, female_array = np.asarray(pcl_male[0]), np.asarray(pcl_female[0])
         

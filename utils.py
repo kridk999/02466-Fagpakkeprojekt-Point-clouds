@@ -5,6 +5,7 @@ import config
 import copy
 import torch.nn.functional as F
 import matplotlib.pyplot as plt
+from dataloader_dataset import PointCloudDataset
 
 def save_checkpoint(epoch, models : list, optimizers, losses, filename="my_checkpoint.pth.tar"):
     print("=> Saving checkpoint")
@@ -125,5 +126,7 @@ def visualize(cloud,id,gender):
     plt.show()
 
 if __name__ == "__main__":
-    pcl = torch.load("./Saved_pointclouds/male_cycle2.pt", map_location=torch.device('cpu'))
-    visualize(pcl.transpose(-2,1).detach(), id = '1', gender = 'male')
+    #pcl = torch.load("./Saved_pointclouds/male_cycle2.pt", map_location=torch.device('cpu'))
+    data = PointCloudDataset()
+    pcl = data[3]['m_pcs']
+    visualize(pcl, id = '1', gender = 'male')
