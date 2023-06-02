@@ -8,6 +8,8 @@ import tqdm
 import numpy as np
 import pandas as pd
 from pyntcloud import PyntCloud
+import torch
+from matplotlib import colors
 
 def visualizeNY(cloud,id,gender):
     name = f"Visualization of {gender} pointcloud {id}"
@@ -105,21 +107,21 @@ def save_cloud_rgb(cloud, red, green, blue, filename):
 
 
 def color_pc(cloud):
-    point_cloud = cloud.numpy() #takes tensor makes it into np.array [x,y,z] koordinates
+    point_cloud = cloud.unsqueeze(1) #takes tensor makes it into np.array [x,y,z] koordinates
 
     # normalize x-axis of point cloud to be between 0 and 1
-    normalized_x = (point_cloud[:, 0, :] - point_cloud[:, 0, :].min()) / (
-                point_cloud[:, 0, :].max() - point_cloud[:, 0, :].min())
+    normalized_x = (point_cloud[:, 0,:] - point_cloud[:, 0,:].min()) / (
+                point_cloud[:, 0,:].max() - point_cloud[:, 0,:].min())
     normalized_x = 1 -normalized_x.squeeze()
     
 
-    green = (0, 1, 0)  # RGB values for green
-    yellow = (1, 1, 0)  # RGB values for yellow
-    red = (1, 0, 0)  # RGB values for red
+    green = torch.Tensor([int(x*255) for x in colors.to_rgb('forestgreen')]).unsqueeze(1)#.to("cuda")  # RGB values for green
+    yellow = torch.Tensor([int(x*255) for x in colors.to_rgb('gold')]).unsqueeze(1)#.to("cuda") # RGB values for yellow
+    red = torch.Tensor([255,0,0]).unsqueeze(1)#.to("cuda")  # RGB values for red
 
     # Example of defining color ranges
-    green_to_yellow = (yellow[0] - green[0], yellow[1] - green[1], yellow[2] - green[2])
-    yellow_to_red = (red[0] - yellow[0], red[1] - yellow[1], red[2] - yellow[2])
+    green_to_yellow = yellow - green
+    yellow_to_red = red - yellow
 
     color_per_point = []
     for x in normalized_x:
@@ -132,7 +134,9 @@ def color_pc(cloud):
             new_color = yellow + yellow_to_red * new_scale_value
             color_per_point.append(new_color.int().squeeze().tolist())
     color_per_point = np.array(color_per_point)
+  
     return color_per_point
+
 
 
 
@@ -142,5 +146,7 @@ def visualize_pc(point_cloud, color_per_point):
     ax = plt.axes(projection="3d")
     ax.scatter3D(point_cloud[:, 0], point_cloud[:, 1], point_cloud[:, 2], c=color_per_point, s=1.8)
     plt.show()
+
+
 
 visualize_pc(data[1042]["m_pcs"],color_pc(data[1042]["m_pcs"]))
