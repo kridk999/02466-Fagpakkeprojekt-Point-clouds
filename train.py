@@ -65,6 +65,8 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
         D_FM_real_loss = mse(D_FM_real, torch.ones_like(D_FM_real))           
         D_FM_fake_loss = mse(D_FM_fake, torch.zeros_like(D_FM_fake))          
         D_FM_loss = D_FM_real_loss + D_FM_fake_loss
+        
+        breakpoint()
 
         #Total discriminator loss
         D_loss = (D_M_loss + D_FM_loss) / 2
@@ -106,11 +108,6 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
         G_loss.backward()
         opt_gen.step()
        
-        if G_loss < best_G_loss:
-            best_G_loss = G_loss
-
-        if D_loss < best_D_loss:
-            best_D_loss = D_loss
 
         #Save pointclouds for a chosen index:
         if save_pcl:
@@ -151,7 +148,7 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
                 
 
     if return_loss:
-        return best_D_loss, best_G_loss
+        return D_loss, G_loss, cycle_female_loss + cycle_male_loss, loss_G_FM + loss_G_M
     
 
 
@@ -232,8 +229,8 @@ def main():
             save_pcl = True if epoch % config.save_pointclouds == 0 else False
 
         if return_loss:
-            D, G = train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, return_loss, save_pcl)
-            wandb.log({"LossD": D, "LossG": G, "epoch": epoch+1})
+            D, G, cycle, adv = train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, return_loss, save_pcl)
+            wandb.log({"LossD": D, "LossG": G,"Adviserial_loss": adv, "Cycle_loss": cycle, "epoch": epoch+1})
         else: train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, return_loss)
         models, opts = [disc_FM, disc_M, gen_FM, gen_M], [opt_disc, opt_gen]
         if config.SAVE_MODEL and return_loss and G < best_epoch_loss:

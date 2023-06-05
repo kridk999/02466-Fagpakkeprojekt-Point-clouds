@@ -116,9 +116,9 @@ class FoldNet_Encoder(nn.Module):
 class FoldNet_Decoder(nn.Module):
     def __init__(self, args):
         super(FoldNet_Decoder, self).__init__()
-        self.m = 2025  # 45 * 45.
+        self.m = config.DECODE_M  # 45 * 45.
         self.shape = args.shape
-        self.meshgrid = [[-1, 1, 45], [-1, 1, 45]]
+        self.meshgrid = [[-1, 1, int(np.sqrt(self.m))], [-1, 1, int(np.sqrt(self.m))]]
         self.sphere = np.load("sphere.npy")
         self.gaussian = np.load("gaussian.npy")
         if self.shape == 'plane':
@@ -190,9 +190,9 @@ class ReconstructionNet(nn.Module):
         # output shape (batch_size, 2025, 3)
         return self.loss(input, output)
 
-# if __name__ == '__main__':
-#     args = config.get_parser()
-#     data = PointCloudDataset()
+if __name__ == '__main__':
+    print(np.sqrt(4096))
+
     
 #     female, male = data[1]
 #     print(female.shape)
