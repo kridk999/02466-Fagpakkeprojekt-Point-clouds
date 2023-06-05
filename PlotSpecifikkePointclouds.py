@@ -189,7 +189,7 @@ def visualize_pc(point_cloud, color_per_point, visualize = False):
 #color_per_point = color_pc(data[1042]["m_pcs"])
 data = PointCloudDataset()
 
-test = data[1042]["m_pcs"]
+test = data[493]["f_pcs"]
 
 #test_cycle = torch.load(f='./Saved_pointclouds/male_cycle0_plane.pt') 
 #test_original = torch.load(f='./Saved_pointclouds/male_original0_plane.pt')
