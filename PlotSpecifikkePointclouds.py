@@ -134,6 +134,7 @@ def color_pc(cloud):
     green_to_yellow = yellow - green
     yellow_to_red = red - yellow
 
+
     color_per_point = []
     for x, y in zip(normalized_x,normalized_y):
         if x < 0.5: # green to yellow
@@ -173,6 +174,12 @@ def visualize_pc(point_cloud, color_per_point, visualize = False):
     ax.set_xlim3d(-0.75,0.75)
     ax.set_ylim3d(-0.75,0.75)
     ax.set_zlim3d(-0.75,0.75)
+    ax.grid(False)
+    ax.view_init(elev=20,azim=-170,roll=0)
+    # Hide axes ticks
+    ax.set_xticks([])
+    ax.set_yticks([])
+    ax.set_zticks([])
     if visualize:
         plt.show()
     return ax
@@ -184,9 +191,10 @@ data = PointCloudDataset()
 
 test = data[1042]["m_pcs"]
 
-test_cycle = torch.load(f='./Saved_pointclouds/male_cycle0_plane.pt') 
-test_original = torch.load(f='./Saved_pointclouds/male_original0_plane.pt')
+#test_cycle = torch.load(f='./Saved_pointclouds/male_cycle0_plane.pt') 
+#test_original = torch.load(f='./Saved_pointclouds/male_original0_plane.pt')
 
-test_original.detach().transpose(-2,1)
+#test_original.detach().transpose(-2,1)
 
-visualize_pc(test_original.detach().transpose(-2,1),color_pc(test_original.detach().transpose(-2,1)),visualize=True)
+#visualize_pc(test_original.detach().transpose(-2,1),color_pc(test_original.detach().transpose(-2,1)),visualize=True)
+visualize_pc(test,color_pc(test),visualize=True)
