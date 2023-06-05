@@ -125,6 +125,15 @@ def visualize(cloud,id,gender):
     # show plot
     plt.show()
 
+
+def isqrt(n):
+    x = n
+    y = (x + 1) // 2
+    while y < x:
+        x = y
+        y = (x + n // x) // 2
+    return x
+
 if __name__ == "__main__":
     #pcl = torch.load("./Saved_pointclouds/male_cycle2.pt", map_location=torch.device('cpu'))
     data = PointCloudDataset()

@@ -65,8 +65,6 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
         D_FM_real_loss = mse(D_FM_real, torch.ones_like(D_FM_real))           
         D_FM_fake_loss = mse(D_FM_fake, torch.zeros_like(D_FM_fake))          
         D_FM_loss = D_FM_real_loss + D_FM_fake_loss
-        
-        breakpoint()
 
         #Total discriminator loss
         D_loss = (D_M_loss + D_FM_loss) / 2
