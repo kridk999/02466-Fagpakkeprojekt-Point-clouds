@@ -33,6 +33,7 @@ wandb.init(
 def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, return_loss, save_pcl=False):
     best_G_loss = 1e10
     best_D_loss = 1e10
+    D_correct = 0
     training_loop = tqdm(loader, leave=True)
 
     for idx, data in enumerate(training_loop):
@@ -51,6 +52,9 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
         D_M_real, _ = disc_M(male)
         D_M_fake, _ = disc_M(fake_male.detach())
         
+        if D_M_real.detach()[:,0] > 0.5:
+            D_correct += 1
+
         #Calculating MSE loss for male
         D_M_real_loss = mse(D_M_real, torch.ones_like(D_M_real))          
         D_M_fake_loss = mse(D_M_fake, torch.zeros_like(D_M_fake))         
