@@ -21,7 +21,7 @@ START_SHAPE = 'sphere'                     # Can be 'plane', 'sphere' or 'gaussi
 LOAD_MODEL = False
 SAVE_MODEL = False
 RETURN_LOSS = True
-CHECKPOINT_ALL = "MODEL_OPTS_LOSSES.pth.tar"
+
 
 '''
 WANDB variables:

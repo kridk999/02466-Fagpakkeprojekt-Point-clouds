@@ -228,11 +228,10 @@ def main():
             wandb.log({"LossD": D, "LossG": G,"Adviserial_loss": adv, "Cycle_loss": cycle, "epoch": epoch+1})
         else: train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, return_loss)
         models, opts = [disc_FM, disc_M, gen_FM, gen_M], [opt_disc, opt_gen]
-        if config.SAVE_MODEL and return_loss and G < best_epoch_loss:
+        if config.SAVE_MODEL and return_loss and epoch < 1000 and save_pcl:
             losses = [D, G] 
-            save_checkpoint(epoch, models, opts, losses, filename=config.CHECKPOINT_ALL)
-            best_epoch_loss = G
-        elif config.SAVE_MODEL: save_checkpoint(epoch, models, opts, losses=None, filename=config.CHECKPOINT_ALL)
+            save_checkpoint(epoch, models, opts, losses, filename=f"MODEL_OPTS_LOSSES_{epoch+1}.pth.tar")
+        #elif config.SAVE_MODEL: save_checkpoint(epoch, models, opts, losses=None, filename=f"MODEL_OPTS_LOSSES_{epoch+1}.pth.tar")
         print(f'The best Discriminator loss for epoch {epoch+1} is {D} and the Generator loss is {G}')
     wandb.finish()
 
