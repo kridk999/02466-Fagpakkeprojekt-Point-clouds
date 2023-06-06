@@ -137,6 +137,6 @@ def isqrt(n):
 if __name__ == "__main__":
     #pcl = torch.load("./Saved_pointclouds/male_cycle2.pt", map_location=torch.device('cpu'))
     print(isqrt(2048))
-    # data = PointCloudDataset()
-    # pcl = data[3]['m_pcs']
-    # visualize(pcl, id = '1', gender = 'male')
+    data = PointCloudDataset()
+    pcl = data[3]['m_pcs']
+    visualize(pcl, id = '1', gender = 'male')

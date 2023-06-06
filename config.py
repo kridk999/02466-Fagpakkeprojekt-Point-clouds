@@ -1,22 +1,23 @@
 import torch
 import numpy as np
 import argparse
+#from utils import isqrt
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 DUMMY_TRAIN_DIR = "data/dummy"
 TRAIN_DIR = "data/train"
 VAL_DIR = "data/val"
 FURTHEST_DISTANCE = 1.1048446043276023
-SAMPLE_POINTS = 4096
-DECODE_M = 4096                             # kvrod(2025)
-BATCH_SIZE = 32
+SAMPLE_POINTS = 2048
+DECODE_M = 2025 #isqrt(SAMPLE_POINTS)                             # kvrod(2025)
+BATCH_SIZE = 5
 LEARNING_RATE = 1e-4
 LAMBDA_CYCLE = 10
 NUM_WORKERS = 4
-NUM_EPOCHS = 501
-save_pointclouds = 20                     # Number of epochs between saving intermediate pointclouds as .pt files
+NUM_EPOCHS = 10
+save_pointclouds = 2                    # Number of epochs between saving intermediate pointclouds as .pt files
 DATASET = 'dummy_dataset'                       # Choose between 'dataset' or 'dummy_dataset'
-START_SHAPE = 'plane'                     # Can be 'plane', 'sphere' or 'gaussian'
+START_SHAPE = 'sphere'                     # Can be 'plane', 'sphere' or 'gaussian'
 LOAD_MODEL = False
 SAVE_MODEL = False
 RETURN_LOSS = True
