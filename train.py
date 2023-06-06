@@ -205,17 +205,7 @@ def main():
             transform=config.transform
         )
     #load test dataset
-    val_dataset = PointCloudDataset(
-        root_female=config.VAL_DIR + "/female_test",
-        root_male=config.VAL_DIR + "/male_test",
-        transform=config.transform
-    )
 
-    val_loader = DataLoader(val_dataset,
-            batch_size=1,
-            shuffle=False,
-            pin_memory=True
-            )
 
     loader = DataLoader(dataset,
             batch_size=config.BATCH_SIZE,

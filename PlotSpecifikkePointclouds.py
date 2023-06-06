@@ -110,7 +110,7 @@ def save_cloud_rgb(cloud, red, green, blue, filename):
 
 def color_pc(cloud):
     #point_cloud = cloud.unsqueeze(1) #takes tensor makes it into np.array [x,y,z] koordinates
-    if cloud.requires_grad: cloud = pcloud.detach()
+    if cloud.requires_grad: cloud = cloud.detach()
     # normalize x-axis of point cloud to be between 0 and 1
     normalized_x = (cloud[:, 2] - cloud[:, 2].min()) / (
                 cloud[:, 2].max() - cloud[:, 2].min())
@@ -186,7 +186,7 @@ data = PointCloudDataset()
 
 test = data[1042]["m_pcs"]
 
-test_cycle = torch.load(f='./Saved_pointclouds/male_cycle0_plane.pt') 
+test_cycle = torch.load(f='./Saved_pointclouds/male_cycle0_plane.pt', map_location=torch.device('cpu')) 
 test_original = torch.load(f='./Saved_pointclouds/male_original0_plane.pt')
 
 visualize_pc(test_original.transpose(-2,1),visualize=True)
