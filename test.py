@@ -16,7 +16,7 @@ import numpy as np
 
 file = config.CHECKPOINT_GEN_M
 
-def validation(gen_FM, gen_M, POINTNET_classifier, val_loader, opt_disc, opt_gen):
+def validation(gen_FM, gen_M, POINTNET_classifier, val_loader, opt_disc, opt_gen, vis_list_female, vis_list_male):
     val_loop = tqdm(val_loader, leave=True)
     TF, TM, FF, FM = 0
 
@@ -64,8 +64,11 @@ def validation(gen_FM, gen_M, POINTNET_classifier, val_loader, opt_disc, opt_gen
     plt.show()
 
     # Visualize chosen pointclouds
-    if 
-    visualize_pc(cycle_female)
+    if vis_list_female in fem_ids:
+        visualize_pc(cycle_female)
+    if vis_list_male in male_ids:
+        visualize_pc(cycle_female)
+    return array
 
 
 
@@ -74,7 +77,7 @@ def main():
     args_gen = config.get_parser_gen()
     gen_M = Generator_Fold(args_gen).to(config.DEVICE)
     gen_FM = Generator_Fold(args_gen).to(config.DEVICE)
-
+    
     #Pointnet classifier
     POINTNET_classifier = Discriminator_Point(k=2, normal_channel=False).to(config.DEVICE)
 
@@ -94,12 +97,7 @@ def main():
     
     disc_FM, disc_M, opt_disc = 0
 
-    load_checkpoint(
-        config.CHECKPOINT_ALL,
-        models=[disc_FM, disc_M, gen_FM, gen_M],
-        optimizers=[opt_disc, opt_gen],
-        lr=config.LEARNING_RATE,
-    )
+    
 
     load_checkpoint(
         "POINTNET_classifier",
@@ -121,20 +119,32 @@ def main():
             )
 
     # list of pointclouds we wish to visualize:
-    vis_list = ['SP']
+    vis_list_female = ['SPRING380.obj','SPRING400.obj','SPRING469.obj','SPRING600.obj','SPRING1050.obj']
+    vis_list_male = ['SPRING223.obj','SPRING300.obj','SPRING320.obj','SPRING420.obj','SPRING450.obj']
 
-    validation(disc_FM,
-          disc_M,
-          gen_FM,
-          gen_M,
-          POINTNET_classifier,
-          val_loader,
-          opt_disc,
-          opt_gen)
+    for shape in ['plane', 'sphere', 'gaussian']:
+        load_checkpoint(
+            f"MODEL_OPTS_LOSSES_{shape}_1000.pth.tar",
+            models=[disc_FM, disc_M, gen_FM, gen_M],
+            optimizers=[opt_disc, opt_gen],
+            lr=config.LEARNING_RATE,
+        )
+
+        cf_mat = validation(disc_FM,
+                disc_M,
+                gen_FM,
+                gen_M,
+                POINTNET_classifier,
+                val_loader,
+                opt_disc,
+                opt_gen,
+                vis_list_female,
+                vis_list_male)
 
 
 if __name__ == "__main__":
     main()
+
 
 # for params in gen_M.parameters():
 #     g = params

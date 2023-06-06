@@ -230,7 +230,7 @@ def main():
         models, opts = [disc_FM, disc_M, gen_FM, gen_M], [opt_disc, opt_gen]
         if config.SAVE_MODEL and return_loss and epoch < 1000 and save_pcl:
             losses = [D, G] 
-            save_checkpoint(epoch, models, opts, losses, filename=f"MODEL_OPTS_LOSSES_{epoch+1}.pth.tar")
+            save_checkpoint(epoch, models, opts, losses, filename=f"MODEL_OPTS_LOSSES_{config.START_SHAPE}_{epoch+1}.pth.tar")
         #elif config.SAVE_MODEL: save_checkpoint(epoch, models, opts, losses=None, filename=f"MODEL_OPTS_LOSSES_{epoch+1}.pth.tar")
         print(f'The best Discriminator loss for epoch {epoch+1} is {D} and the Generator loss is {G}')
     wandb.finish()
