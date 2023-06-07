@@ -116,7 +116,7 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
 
         #Save pointclouds for a chosen index:
         if save_pcl:
-            if 'SPRING1234.obj' in male_ids:
+            if ['SPRING1234.obj','SPRING1228.obj'] in male_ids:
                 idx_male = male_ids.index('SPRING1234.obj')
                 original_man = male[idx_male]
                 female_male = fake_female[idx_male]
@@ -228,7 +228,7 @@ def main():
             wandb.log({"LossD": D, "LossG": G,"Adviserial_loss": adv, "Cycle_loss": cycle, "epoch": epoch+1})
         else: train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, return_loss)
         models, opts = [disc_FM, disc_M, gen_FM, gen_M], [opt_disc, opt_gen]
-        if config.SAVE_MODEL and return_loss and epoch < 1000 and save_pcl:
+        if config.SAVE_MODEL and return_loss and epoch < 1000 and (epoch+1-1000) % 100 == 0:
             losses = [D, G] 
             save_checkpoint(epoch, models, opts, losses, filename=f"MODEL_OPTS_LOSSES_{config.START_SHAPE}_{epoch+1}.pth.tar")
         #elif config.SAVE_MODEL: save_checkpoint(epoch, models, opts, losses=None, filename=f"MODEL_OPTS_LOSSES_{epoch+1}.pth.tar")

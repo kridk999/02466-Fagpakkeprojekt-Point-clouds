@@ -57,7 +57,7 @@ def validation(gen_FM, gen_M, POINTNET_classifier, val_loader, opt_disc, opt_gen
 
     # Visualize confusion matrix
     array = [[TF, FF],
-             [FM,TM]]
+             [FM, TM]]
     df_cm = pd.DataFrame(array, index=['Female','Male'], columns=['Female_True','Male_true'])
     plt.figure(figsize=(10,7))
     sn.heatmap(df_cm,annot=True)
@@ -77,7 +77,7 @@ def main():
     args_gen = config.get_parser_gen()
     gen_M = Generator_Fold(args_gen).to(config.DEVICE)
     gen_FM = Generator_Fold(args_gen).to(config.DEVICE)
-    
+
     #Pointnet classifier
     POINTNET_classifier = Discriminator_Point(k=2, normal_channel=False).to(config.DEVICE)
 

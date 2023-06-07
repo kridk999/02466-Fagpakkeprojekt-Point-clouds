@@ -45,16 +45,16 @@ class PointCloudDataset(Dataset):
        
         #sample points from meshes
         
-        pcl_male,_ = tr.sample.sample_surface_even(male_file, self.sample_points-1)
-        pcl_female,_ = tr.sample.sample_surface_even(female_file, self.sample_points-1)
+        pcl_male,_ = tr.sample.sample_surface_even(male_file, self.sample_points)
+        pcl_female,_ = tr.sample.sample_surface_even(female_file, self.sample_points)
         if len(pcl_male[0])<self.sample_points:
             pcl_male,_ = tr.sample.sample_surface_even(male_file, self.sample_points+50)
             pcl_male = pcl_male[:self.sample_points,:]
-            print('augmented male')
+            print('rejectionsampling male')
         if len(pcl_female[0])<self.sample_points:
             pcl_female,_ = tr.sample.sample_surface_even(female_file, self.sample_points+50)
             pcl_female = pcl_female[:self.sample_points,:]
-            print('augmented female')
+            print('rejectionsampling female')
        
         male_array, female_array = np.asarray(pcl_male), np.asarray(pcl_female)
         
