@@ -6,7 +6,7 @@ from Discriminator import get_model as Discriminator_Point
 import torch.optim as optim
 #from torcheval.metrics import BinaryConfussionMatrix
 from PlotSpecifikkePointclouds import visualize_pc
-import tqdm
+from tqdm import tqdm
 import seaborn as sn
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -14,25 +14,25 @@ from torch.utils.data import DataLoader
 from dataloader_dataset import PointCloudDataset
 import numpy as np
 
-file = config.CHECKPOINT_GEN_M
 
-def validation(gen_FM, gen_M, POINTNET_classifier, val_loader, opt_disc, opt_gen, vis_list_female, vis_list_male):
+
+def validation(disc_FM, disc_M, gen_FM, gen_M, POINTNET_classifier, val_loader, opt_disc, opt_gen, vis_list_female, vis_list_male):
     val_loop = tqdm(val_loader, leave=True)
-    TF, TM, FF, FM = 0
+    TF, TM, FF, FM = 0,0,0,0
 
     for idx, data in enumerate(val_loop):
-        female = data['pc_female'].to(config.DEVICE)
-        male = data['pc_male'].to(config.DEVICE)
-        fem_ids = data['f_id']
-        male_ids = data['m_id']
+        female = data['f_pcs'].to(config.DEVICE)
+        male = data['m_pcs'].to(config.DEVICE)
+        fem_ids = data['id_female']
+        male_ids = data['id_male']
 
         # Generating fakes
-        fake_female = gen_FM(male)
-        fake_male = gen_M(female)
+        fake_female = gen_FM(male)[0]
+        fake_male = gen_M(female)[0]
 
         # Generate cycles
-        cycle_female = gen_FM(fake_male)
-        cycle_male = gen_M(fake_female)
+        cycle_female = gen_FM(fake_male)[0]
+        cycle_male = gen_M(fake_female)[0]
 
         # Classify fakes and cycles - female
         True_female = POINTNET_classifier(female)
@@ -63,11 +63,15 @@ def validation(gen_FM, gen_M, POINTNET_classifier, val_loader, opt_disc, opt_gen
     sn.heatmap(df_cm,annot=True)
     plt.show()
 
+
+    #(val in x  for x in lst)
     # Visualize chosen pointclouds
-    if vis_list_female in fem_ids:
-        visualize_pc(cycle_female)
-    if vis_list_male in male_ids:
-        visualize_pc(cycle_female)
+    if (vis_list_female in x for x in fem_ids):
+        indices = [index for index, content in enumerate(fem_ids) if vis_list_female in content]
+
+        visualize_pc(x)
+    if (vis_list_male in x for x in male_ids):
+        visualize_pc(x)
     return array
 
 
@@ -75,11 +79,19 @@ def validation(gen_FM, gen_M, POINTNET_classifier, val_loader, opt_disc, opt_gen
 def main():
     ### Initialize model and optimizer ###
     args_gen = config.get_parser_gen()
+    disc_M = Discriminator_Point(k=2, normal_channel=False).to(config.DEVICE)
+    disc_FM = Discriminator_Point(k=2, normal_channel=False).to(config.DEVICE)
     gen_M = Generator_Fold(args_gen).to(config.DEVICE)
     gen_FM = Generator_Fold(args_gen).to(config.DEVICE)
 
     #Pointnet classifier
     POINTNET_classifier = Discriminator_Point(k=2, normal_channel=False).to(config.DEVICE)
+
+    opt_disc = optim.Adam(
+        list(disc_FM.parameters()) + list(disc_M.parameters()),
+        lr=config.LEARNING_RATE,
+        betas=(0.5, 0.999),
+    )
 
     opt_gen = optim.Adam(
         list(gen_FM.parameters()) + list(gen_M.parameters()),
@@ -88,23 +100,23 @@ def main():
     )
 
     opt_class = optim.Adam(
-        list(gen_FM.parameters()) + list(gen_M.parameters()),
+        list(POINTNET_classifier.parameters()),
         lr=config.LEARNING_RATE,
         betas=(0.5, 0.999),
     )
 
     ### Load model ### 
     
-    disc_FM, disc_M, opt_disc = 0
+    
 
     
 
-    load_checkpoint(
-        "POINTNET_classifier",
-        models=[POINTNET_classifier],
-        optimizers=[opt_class],
-        lr=config.LEARNING_RATE
-    )
+    # load_checkpoint(
+    #     "POINTNET_classifier",
+    #     models=[POINTNET_classifier],
+    #     optimizers=[opt_class],
+    #     lr=config.LEARNING_RATE
+    # )
     
     val_dataset = PointCloudDataset(
         root_female=config.VAL_DIR + "/female_test",
@@ -113,7 +125,7 @@ def main():
     )
 
     val_loader = DataLoader(val_dataset,
-            batch_size=1,
+            batch_size=3,
             shuffle=False,
             pin_memory=True
             )
@@ -124,22 +136,13 @@ def main():
 
     for shape in ['plane', 'sphere', 'gaussian']:
         load_checkpoint(
-            f"MODEL_OPTS_LOSSES_{shape}_1000.pth.tar",
+            f"MODEL_OPTS_LOSSES_sphere_100.pth.tar",
             models=[disc_FM, disc_M, gen_FM, gen_M],
             optimizers=[opt_disc, opt_gen],
             lr=config.LEARNING_RATE,
         )
 
-        cf_mat = validation(disc_FM,
-                disc_M,
-                gen_FM,
-                gen_M,
-                POINTNET_classifier,
-                val_loader,
-                opt_disc,
-                opt_gen,
-                vis_list_female,
-                vis_list_male)
+        cf_mat = validation(disc_FM, disc_M, gen_FM, gen_M, POINTNET_classifier, val_loader, opt_disc, opt_gen, vis_list_female, vis_list_male)
 
 
 if __name__ == "__main__":

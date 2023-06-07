@@ -10,13 +10,13 @@ VAL_DIR = "data/val"
 FURTHEST_DISTANCE = 1.1048446043276023
 SAMPLE_POINTS = 2048
 DECODE_M = 2025 #isqrt(SAMPLE_POINTS)                             # kvrod(2025)
-BATCH_SIZE = 32
+BATCH_SIZE = 5
 LEARNING_RATE = 1e-4
 LAMBDA_CYCLE = 10
 NUM_WORKERS = 7
 NUM_EPOCHS = 1201
 save_pointclouds = 50                    # Number of epochs between saving intermediate pointclouds as .pt files
-DATASET = 'dataset'                       # Choose between 'dataset' or 'dummy_dataset'
+DATASET = 'dummy_dataset'                       # Choose between 'dataset' or 'dummy_dataset'
 START_SHAPE = 'sphere'                     # Can be 'plane', 'sphere' or 'gaussian'
 LOAD_MODEL = False
 SAVE_MODEL = True
@@ -26,7 +26,7 @@ RETURN_LOSS = True
 '''
 WANDB variables:
 '''
-WANDB_mode = 'online'                               # Can be 'offline or 'disabled'
+WANDB_mode = 'disabled'                               # Can be 'offline or 'disabled'
 project = f'HPC_TRAIN_MODELS' #f'HPC_RUN_{START_SHAPE}_{NUM_EPOCHS}epochs'
 user = 'Jacobsk2000'
 display_name = f'HPC_RUN_{START_SHAPE}_SAVEMODEL'

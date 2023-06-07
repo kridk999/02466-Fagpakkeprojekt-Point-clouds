@@ -88,6 +88,7 @@ class PointCloudDataset(Dataset):
 if __name__ == "__main__":
     data = PointCloudDataset()
     print(data[424])
+    data
 # data = PointCloudDataset()
 # female, male = data[4]
 # breakpoint()

@@ -7,3 +7,5 @@ data/*
 logs/*
 
 Saved_pointclouds/*
+
+*.pth.tar

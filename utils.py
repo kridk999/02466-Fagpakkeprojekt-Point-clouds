@@ -26,7 +26,7 @@ def load_checkpoint(checkpoint_file, models, optimizers, lr):
     print("=> Loading checkpoint")
     checkpoint = torch.load(checkpoint_file, map_location=config.DEVICE)
     for m in range(len(models)):
-        print(len(models))
+        
         models[m].load_state_dict(checkpoint["state_dict_"+str(m)])
     for opt in range(len(optimizers)):
         optimizers[opt].load_state_dict(checkpoint['optimizer_'+str(opt)])

@@ -34,9 +34,9 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
     best_G_loss = 1e10
     best_D_loss = 1e10
     D_correct = 0
-    training_loop = tqdm(loader, leave=True)
-
-    for idx, data in enumerate(training_loop):
+    train_loop = tqdm(loader, leave=True)
+    
+    for idx, data in enumerate(train_loop):
         female = data['pc_female'].to(config.DEVICE)
         male = data['pc_male'].to(config.DEVICE)
         fem_ids = data['f_id']
@@ -84,7 +84,7 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
         '''''''''
         
         #Adviserial loss for both generators
-        D_M_fake = disc_M(fake_male)
+        D_M_fake = disc_M(fake_male)[0]
         D_FM_fake = disc_FM(fake_female)
         loss_G_M = mse(D_M_fake, torch.ones_like(D_M_fake))                          
         loss_G_FM = mse(D_FM_fake, torch.ones_like(D_FM_fake))             
@@ -207,7 +207,7 @@ def main():
             transform=config.transform
         )
     #load test dataset
-
+    
 
     loader = DataLoader(dataset,
             batch_size=config.BATCH_SIZE,
