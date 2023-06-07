@@ -1,7 +1,7 @@
 
 #import of relevant modules and scripts
 import torch
-from classifier_data import PointCloudDataset
+from dataloader_dataset import PointCloudDataset
 import torch.nn as nn
 from tqdm import tqdm
 from torch.utils.data import DataLoader
