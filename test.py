@@ -21,10 +21,10 @@ def validation(disc_FM, disc_M, gen_FM, gen_M, POINTNET_classifier, val_loader, 
     TF, TM, FF, FM = 0,0,0,0
 
     for idx, data in enumerate(val_loop):
-        female = data['f_pcs'].to(config.DEVICE)
-        male = data['m_pcs'].to(config.DEVICE)
-        fem_ids = data['id_female']
-        male_ids = data['id_male']
+        female = data['pc_female'].to(config.DEVICE)
+        male = data['pc_male'].to(config.DEVICE)
+        fem_ids = data['f_id']
+        male_ids = data['m_id']
 
         # Generating fakes
         fake_female = gen_FM(male)[0]
@@ -35,25 +35,18 @@ def validation(disc_FM, disc_M, gen_FM, gen_M, POINTNET_classifier, val_loader, 
         cycle_male = gen_M(fake_female)[0]
 
         # Classify fakes and cycles - female
-        True_female = POINTNET_classifier(female)
-        False_female = POINTNET_classifier(fake_female)
-        cycle_False_female = POINTNET_classifier(cycle_female)
+        True_female = POINTNET_classifier(female)[0]
+        False_female = POINTNET_classifier(fake_female)[0]
+        cycle_False_female = POINTNET_classifier(cycle_female)[0]
 
         # Classify fakes and cycles - male
-        True_male = POINTNET_classifier(male)
-        False_male = POINTNET_classifier(fake_male)
-        cycle_False_male = POINTNET_classifier(cycle_male)
+        True_male = POINTNET_classifier(male)[0]
+        False_male = POINTNET_classifier(fake_male)[0]
+        cycle_False_male = POINTNET_classifier(cycle_male)[0]
 
         
         #Calculate predictions
-        if cycle_False_female[0] > 0.5:
-            TF += 1
-        if cycle_False_male[0] > 0.5:
-            TM += 1
-        elif cycle_False_female[0] <= 0.5:
-            FF += 1
-        elif cycle_False_male[0] <= 0.5:
-            FM += 1
+        pred_choice = True_female.data.max(1)[1]
 
     # Visualize confusion matrix
     array = [[TF, FF],
@@ -127,7 +120,8 @@ def main():
     val_loader = DataLoader(val_dataset,
             batch_size=3,
             shuffle=False,
-            pin_memory=True
+            pin_memory=True,
+            collate_fn=config.collate_fn
             )
 
     # list of pointclouds we wish to visualize:

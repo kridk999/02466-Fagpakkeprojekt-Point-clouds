@@ -1,15 +1,15 @@
 #!/bin/sh
 ### General options
 ### –- specify queue -- gpu køen
-# BSUB -q gpua100 
+# BSUB -q gpuv100 
 ### -- set the job Name -- navngiv de jobs vi har i køen
-# BSUB -J cGAN-RUN-PLANE-300e
+# BSUB -J HPC_TESTRUN_CLASSIFIER
 ### -- ask for number of cores (default: 1) -- 
-# BSUB -n 4
+# BSUB -n 7
 ### -- Select the resources: 1 gpu in exclusive process mode --
 # BSUB -gpu "num=1:mode=exclusive_process"
 ### -- set walltime limit: hh:mm --  maximum 24 hours for GPU-queues right now
-# BSUB -W 10:00
+# BSUB -W 23:59
 # request 5GB of system-memory
 # BSUB -R "rusage[mem=6GB]"
 ### -- set the email address --
