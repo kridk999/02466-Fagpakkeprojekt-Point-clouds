@@ -116,22 +116,22 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
 
         #Save pointclouds for a chosen index:
         if save_pcl:
-            if ['SPRING1234.obj','SPRING1228.obj'] in male_ids:
+            if 'SPRING1234.obj' in male_ids:
                 idx_male = male_ids.index('SPRING1234.obj')
                 original_man = male[idx_male]
                 female_male = fake_female[idx_male]
                 cycle_man = cycle_male[idx_male]
 
-                wandb.log({'original_male': wandb.Object3D(original_man.transpose(-2,1).cpu().numpy()),
-                        'fake_female': wandb.Object3D(female_male.detach().transpose(-2,1).cpu().numpy()),
-                        'cycle_male': wandb.Object3D(cycle_man.detach().transpose(-2,1).cpu().numpy())}, commit = False)
+                wandb.log({'original_male_1234': wandb.Object3D(original_man.transpose(-2,1).cpu().numpy()),
+                        'fake_female_1234': wandb.Object3D(female_male.detach().transpose(-2,1).cpu().numpy()),
+                        'cycle_male_1234': wandb.Object3D(cycle_man.detach().transpose(-2,1).cpu().numpy())}, commit = False)
                 
                 root = os.listdir("./Saved_pointclouds/")
-                m = len([i for i in root if 'male' in i]) // 3
+                m = len([i for i in root if f'male_{config.START_SHAPE}' in i]) // 3
 
-                torch.save(original_man, f=f"./Saved_pointclouds/male_original{m}_{config.START_SHAPE}.pt")
-                torch.save(female_male, f=f"./Saved_pointclouds/male_female{m}_{config.START_SHAPE}.pt")
-                torch.save(cycle_man, f=f"./Saved_pointclouds/male_cycle{m}_{config.START_SHAPE}.pt")
+                torch.save(original_man, f=f"./Saved_pointclouds/male_{config.START_SHAPE}_original_{m*config.save_pointclouds}.pt")
+                torch.save(female_male, f=f"./Saved_pointclouds/male_{config.START_SHAPE}_female_{m*config.save_pointclouds}.pt")
+                torch.save(cycle_man, f=f"./Saved_pointclouds/male_{config.START_SHAPE}_cycle_{m*config.save_pointclouds}.pt")
                 
 
             if 'SPRING1084.obj' in fem_ids:
@@ -140,16 +140,16 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
                 male_female = fake_male[idx_female]
                 cycle_woman = cycle_female[idx_female]
 
-                wandb.log({'original_female': wandb.Object3D(original_woman.transpose(-2,1).cpu().numpy()),
-                        'fake_male':wandb.Object3D(male_female.detach().transpose(-2,1).cpu().numpy()),
-                        'cycle_female':wandb.Object3D(cycle_woman.detach().transpose(-2,1).cpu().numpy()),}, commit = False)
+                wandb.log({'original_female_1084': wandb.Object3D(original_woman.transpose(-2,1).cpu().numpy()),
+                        'fake_male_1084':wandb.Object3D(male_female.detach().transpose(-2,1).cpu().numpy()),
+                        'cycle_female_1084':wandb.Object3D(cycle_woman.detach().transpose(-2,1).cpu().numpy()),}, commit = False)
                 
                 root = os.listdir("./Saved_pointclouds/")
-                w = len([i for i in root if 'woman' in i]) // 3
+                w = len([i for i in root if f'woman_{config.START_SHAPE}' in i]) // 3
 
-                torch.save(original_woman, f=f"./Saved_pointclouds/woman_original{w}_{config.START_SHAPE}.pt")
-                torch.save(male_female, f=f"./Saved_pointclouds/woman_man{w}_{config.START_SHAPE}.pt")
-                torch.save(cycle_woman, f=f"./Saved_pointclouds/woman_cycle{w}_{config.START_SHAPE}.pt")
+                torch.save(original_woman, f=f"./Saved_pointclouds/woman_{config.START_SHAPE}_original{w*config.save_pointclouds}.pt")
+                torch.save(male_female, f=f"./Saved_pointclouds/woman_{config.START_SHAPE}_man{w*config.save_pointclouds}.pt")
+                torch.save(cycle_woman, f=f"./Saved_pointclouds/woman_{config.START_SHAPE}_cycle{w*config.save_pointclouds}.pt")
                 
 
     if return_loss:
@@ -228,7 +228,7 @@ def main():
             wandb.log({"LossD": D, "LossG": G,"Adviserial_loss": adv, "Cycle_loss": cycle, "epoch": epoch+1})
         else: train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, return_loss)
         models, opts = [disc_FM, disc_M, gen_FM, gen_M], [opt_disc, opt_gen]
-        if config.SAVE_MODEL and return_loss and epoch < 1000 and (epoch+1-1000) % 100 == 0:
+        if config.SAVE_MODEL and return_loss and epoch < 100 and (epoch+1-100) % 100 == 0:
             losses = [D, G] 
             save_checkpoint(epoch, models, opts, losses, filename=f"MODEL_OPTS_LOSSES_{config.START_SHAPE}_{epoch+1}.pth.tar")
         #elif config.SAVE_MODEL: save_checkpoint(epoch, models, opts, losses=None, filename=f"MODEL_OPTS_LOSSES_{epoch+1}.pth.tar")
@@ -237,4 +237,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+    print('test')
    
