@@ -136,8 +136,8 @@ def isqrt(n):
 
 if __name__ == "__main__":
     #pcl = torch.load("./Saved_pointclouds/male_cycle2.pt", map_location=torch.device('cpu'))
-    if ['yes','no'] in ['yes']:
-        print(['yes','no'].index('yes'))
+    #any(val in x  for x in lst)
+    print(['yes','no'].index('yes'))
     # print(isqrt(2048))
     # data = PointCloudDataset()
     # pcl = data[3]['m_pcs']

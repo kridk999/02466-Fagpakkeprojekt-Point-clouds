@@ -49,8 +49,8 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
 
         # Male discriminator
         fake_male, _ = gen_M(female)
-        D_M_real = disc_M(male)[0][:,0]
-        D_M_fake = disc_M(fake_male.detach())[0][:,0]
+        D_M_real = disc_M(male)[0]
+        D_M_fake = disc_M(fake_male.detach())[0]
         
         #if D_M_real.detach()[:,0] > 0.5:
             #D_correct += 1
@@ -62,8 +62,8 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
         
         #Female discriminator
         fake_female, _ = gen_FM(male)                      # Generating a female from a male pointcloud
-        D_FM_real = disc_FM(female)[0][:,0]                     # Putting a true female from data through the discriminator
-        D_FM_fake = disc_FM(fake_female.detach())[0][:,0]       # Putting a generated female through the discriminator
+        D_FM_real = disc_FM(female)[0]                    # Putting a true female from data through the discriminator
+        D_FM_fake = disc_FM(fake_female.detach())[0]       # Putting a generated female through the discriminator
 
         #Calculate MSE loss for female
         D_FM_real_loss = mse(D_FM_real, torch.ones_like(D_FM_real))           
@@ -72,7 +72,11 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
 
         #Total discriminator loss
         D_loss = (D_M_loss + D_FM_loss) / 2
-        
+
+        #Update the optimizer for the discriminator
+        opt_disc.zero_grad()
+        D_loss.backward()
+        opt_disc.step()        
 
         
         '''''''''
@@ -80,8 +84,8 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
         '''''''''
         
         #Adviserial loss for both generators
-        D_M_fake = disc_M(fake_male)[0][:,0]
-        D_FM_fake = disc_FM(fake_female)[0][:,0]
+        D_M_fake = disc_M(fake_male)
+        D_FM_fake = disc_FM(fake_female)
         loss_G_M = mse(D_M_fake, torch.ones_like(D_M_fake))                          
         loss_G_FM = mse(D_FM_fake, torch.ones_like(D_FM_fake))             
 
@@ -107,11 +111,6 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
         opt_gen.zero_grad()
         G_loss.backward()
         opt_gen.step()
-
-        #Update the optimizer for the discriminator
-        opt_disc.zero_grad()
-        D_loss.backward()
-        opt_disc.step()
        
 
         #Save pointclouds for a chosen index:
