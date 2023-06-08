@@ -171,7 +171,7 @@ def visualize_pc(point_cloud, visualize = False):
     if point_cloud.requires_grad: point_cloud = point_cloud.detach()
     fig = plt.figure()
     ax = fig.add_subplot(projection="3d")
-    ax.scatter(point_cloud[:, 0], point_cloud[:, 1], point_cloud[:, 2], c=color_per_point/255.0, s=1.8)
+    ax.scatter(point_cloud[:, 0], point_cloud[:, 1]*config.FURTHEST_DISTANCE, point_cloud[:, 2], c=color_per_point/255.0, s=1.8)
     ax.set_xlim3d(-0.75,0.75)
     ax.set_ylim3d(-0.75,0.75)
     ax.set_zlim3d(-0.75,0.75)

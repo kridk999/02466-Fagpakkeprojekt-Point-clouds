@@ -90,7 +90,6 @@ class FoldNet_Encoder(nn.Module):
             nn.ReLU(),
             nn.Conv1d(args.feat_dims, args.feat_dims, 1),
         )
-        
 
     def graph_layer(self, x, idx):           
         x = local_maxpool(x, idx)    

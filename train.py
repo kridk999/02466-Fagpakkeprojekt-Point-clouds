@@ -85,7 +85,7 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
         
         #Adviserial loss for both generators
         D_M_fake = disc_M(fake_male)[0]
-        D_FM_fake = disc_FM(fake_female)
+        D_FM_fake = disc_FM(fake_female)[0]
         loss_G_M = mse(D_M_fake, torch.ones_like(D_M_fake))                          
         loss_G_FM = mse(D_FM_fake, torch.ones_like(D_FM_fake))             
 

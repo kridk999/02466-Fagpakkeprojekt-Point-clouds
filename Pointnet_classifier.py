@@ -35,23 +35,36 @@ def test(model, loader, num_class=40):
     mean_correct = []
     class_acc = np.zeros((num_class, 3))
     classifier = model.eval()
+    test_loop = tqdm(loader)
 
-    for j, (points, target) in tqdm(enumerate(loader), total=len(loader)):
+    for j, data in enumerate(test_loop):
+        female = data['pc_female'].to(config.DEVICE)
+        male = data['pc_male'].to(config.DEVICE)
+        fem_ids = data['f_id']
+        male_ids = data['m_id']
+
+        test_points = torch.cat((female, male), 0)
+        test_ids = np.concatenate((fem_ids, male_ids))
+        test_targets = torch.cat((torch.ones(len(fem_ids)),torch.zeros(len(male_ids))),0)
+
+        indices = torch.randperm(test_targets.size()[0])
+        test_points = test_points[indices]
+        test_ids = test_ids[indices]
+        test_targets = test_targets[indices]
 
         if config.DEVICE == 'cuda':
-            points, target = points.cuda(), target.cuda()
+            test_points, test_targets = test_points.cuda(), test_targets.cuda()
 
-        points = points.transpose(2, 1)
-        pred, _ = classifier(points)
+        pred, _ = classifier(test_points)
         pred_choice = pred.data.max(1)[1]
 
-        for cat in np.unique(target.cpu()):
-            classacc = pred_choice[target == cat].eq(target[target == cat].long().data).cpu().sum()
-            class_acc[cat, 0] += classacc.item() / float(points[target == cat].size()[0])
+        for cat in np.unique(test_targets.long().cpu()):
+            classacc = pred_choice[test_targets == cat].eq(test_targets[test_targets == cat].long().data).cpu().sum()
+            class_acc[cat, 0] += classacc.item() / float(test_points[test_targets == cat].size()[0])
             class_acc[cat, 1] += 1
 
-        correct = pred_choice.eq(target.long().data).cpu().sum()
-        mean_correct.append(correct.item() / float(points.size()[0]))
+        correct = pred_choice.eq(test_targets.long().data).cpu().sum()
+        mean_correct.append(correct.item() / float(test_points.size()[0]))
 
     class_acc[:, 2] = class_acc[:, 0] / class_acc[:, 1]
     class_acc = np.mean(class_acc[:, 2])
@@ -141,18 +154,51 @@ def main():
             collate_fn=config.collate_fn
             )
     
+    val_dataset = PointCloudDataset(
+        root_female=config.VAL_DIR + "/female_test",
+        root_male=config.VAL_DIR + "/male_test",
+        transform=False
+    )
+
+    val_loader = DataLoader(val_dataset,
+            batch_size=3,
+            shuffle=False,
+            pin_memory=True,
+            collate_fn=config.collate_fn
+            )
+    best_instance_acc = 0.0
+    best_class_acc = 0.0
     EPOCHS = 100
     for epoch in range(EPOCHS):
         scheduler.step()
         Classifier = Classifier.train()
         acc = train(Classifier, Criterion, optimizer, loader)
-        wandb.log({'epoch':epoch+1, 'Accuracy':acc})
+        wandb.log({'epoch':epoch+1, 'train_accuracy':acc})
         print(f'the accuracy for epoch {epoch+1} is {acc}')
+        
+        if epoch % 5 == 0:
+            with torch.no_grad():
+                instance_acc, class_acc = test(Classifier.eval(), val_loader, num_class=2)
 
+                if (instance_acc >= best_instance_acc):
+                    best_instance_acc = instance_acc
+                    best_epoch = epoch + 1
 
+                if (class_acc >= best_class_acc):
+                    best_class_acc = class_acc
+                print('Test Instance Accuracy: %f, Class Accuracy: %f' % (instance_acc, class_acc))
+                print('Best Instance Accuracy: %f, Class Accuracy: %f' % (best_instance_acc, best_class_acc))
+                wandb.log({'test instance accuracy': instance_acc, 'Class accuracy': class_acc})
 
-        if epoch+1 == EPOCHS:
-            save_checkpoint(epoch=epoch, models=[Classifier],optimizers=optimizer, losses=acc, filename=f"CLASSIFIER_MODEL{epoch+1}.pth.tar")
+                if (instance_acc >= best_instance_acc):
+                    print('Save model...')
+                    filename=f"CLASSIFIER_MODEL{epoch+1}.pth.tar"
+                    #savepath = str(checkpoints_dir) + '/best_model.pth'
+                    print(f'Saving as {filename} with an instance accuracy of {instance_acc}')
+                    save_checkpoint(epoch=epoch, models=[Classifier],optimizers=optimizer, losses=acc, filename=filename)
+
+        
+            
     wandb.finish()
         
 if __name__ == '__main__':
