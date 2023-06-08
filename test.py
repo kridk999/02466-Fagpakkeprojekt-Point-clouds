@@ -18,7 +18,10 @@ import numpy as np
 
 def validation(disc_FM, disc_M, gen_FM, gen_M, POINTNET_classifier, val_loader, opt_disc, opt_gen, vis_list_female, vis_list_male):
     val_loop = tqdm(val_loader, leave=True)
-    TF, TM, FF, FM = 0,0,0,0
+    #TF, TM, FF, FM = []
+    cf_mat = dict()
+    for type in ['TF','FF','TM','FM']:
+        cf_mat[type] = [[] for i in range(3)]
 
     for idx, data in enumerate(val_loop):
         female = data['pc_female'].to(config.DEVICE)
@@ -29,6 +32,8 @@ def validation(disc_FM, disc_M, gen_FM, gen_M, POINTNET_classifier, val_loader, 
         # Generating fakes
         fake_female = gen_FM(male)[0]
         fake_male = gen_M(female)[0]
+        visualize_pc(fake_female.transpose(2,1)[0])
+        breakpoint()
 
         # Generate cycles
         cycle_female = gen_FM(fake_male)[0]
@@ -37,16 +42,33 @@ def validation(disc_FM, disc_M, gen_FM, gen_M, POINTNET_classifier, val_loader, 
         # Classify fakes and cycles - female
         True_female = POINTNET_classifier(female)[0]
         False_female = POINTNET_classifier(fake_female)[0]
-        cycle_False_female = POINTNET_classifier(cycle_female)[0]
+        c_female = POINTNET_classifier(cycle_female)[0]
 
         # Classify fakes and cycles - male
         True_male = POINTNET_classifier(male)[0]
         False_male = POINTNET_classifier(fake_male)[0]
-        cycle_False_male = POINTNET_classifier(cycle_male)[0]
+        c_male = POINTNET_classifier(cycle_male)[0]
 
         
         #Calculate predictions
-        pred_choice = True_female.data.max(1)[1]
+        pred_choice_female = True_female.data.max(1)[1]
+        pred_choice_ffemale = False_female.data.max(1)[1]
+        pred_choice_cfemale = c_female.data.max(1)[1]
+
+        pred_choice_male = True_male.data.max(1)[1]
+        pred_choice_fmale = False_male.data.max(1)[1]
+        pred_choice_cmale = c_male.data.max(1)[1]
+
+        #True male and female matrix:
+        for type in [original, generated, cycle]:
+            TF += pred_choice_female.sum()
+            FM += pred_choice_male.sum()
+            TM += (len(pred_choice_male)-pred_choice_male.sum())
+            FF += (len(pred_choice_female)-pred_choice_female.sum())
+
+        #Generated male and female matrix:
+
+
 
     # Visualize confusion matrix
     array = [[TF, FF],

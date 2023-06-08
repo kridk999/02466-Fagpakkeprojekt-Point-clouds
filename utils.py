@@ -42,7 +42,7 @@ class ChamferLoss(nn.Module):
     def __init__(self):
         super(ChamferLoss, self).__init__()
         self.use_cuda = torch.cuda.is_available()
-
+    
     def batch_pairwise_dist(self, x, y):
         bs, num_points_x, points_dim = x.size()
         _, num_points_y, _ = y.size()
