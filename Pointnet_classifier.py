@@ -15,9 +15,9 @@ import wandb
 wandb.init(
     # set the wandb project where this run will be logged
     project='Classifier_training',
-    name = 'Classifier_testrun_1',
+    name = 'Classifier_train_run_1',
     entity=config.user,
-    mode='disabled'
+    mode='online'
     # track hyperparameters and run metadata
     # config={
     # "learning_rate": config.LEARNING_RATE,

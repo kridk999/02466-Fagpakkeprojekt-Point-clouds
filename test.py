@@ -22,6 +22,8 @@ def validation(disc_FM, disc_M, gen_FM, gen_M, POINTNET_classifier, val_loader, 
     cf_mat = dict()
     for type in ['TF','FF','TM','FM']:
         cf_mat[type] = [0 for i in range(3)]
+    vis_female = dict()
+    vis_male = dict()
 
     for idx, data in enumerate(val_loop):
         female = data['pc_female'].to(config.DEVICE)
@@ -70,13 +72,13 @@ def validation(disc_FM, disc_M, gen_FM, gen_M, POINTNET_classifier, val_loader, 
         #Generated male and female matrix:
         for i in range(len(vis_list_female)):
             if vis_list_female[i] in fem_ids:
-                visualize_pc(cycle_female[fem_ids.index(vis_list_female[i])])
+                vis_female[str(vis_list_female[i])] = cycle_female[fem_ids.index(vis_list_female[i])]
 
         for i in range(len(vis_list_male)):
             if vis_list_male[i] in male_ids:
-                visualize_pc(cycle_male[male_ids.index(vis_list_male[i])])
+                vis_male[str(vis_list_male[i])] = cycle_male[male_ids.index(vis_list_male[i])]
 
-    return cf_mat
+    return cf_mat, (vis_female, vis_male)
     # Visualize confusion matrix
     
     
@@ -161,7 +163,7 @@ def main():
             lr=config.LEARNING_RATE,
         )
 
-        cf_mat = validation(disc_FM, disc_M, gen_FM, gen_M, POINTNET_classifier, val_loader, opt_disc, opt_gen, vis_list_female, vis_list_male)
+        cf_mat, visualizations = validation(disc_FM, disc_M, gen_FM, gen_M, POINTNET_classifier, val_loader, opt_disc, opt_gen, vis_list_female, vis_list_male)
 
         for i in range(3):
 
