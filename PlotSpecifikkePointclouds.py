@@ -49,9 +49,9 @@ def visualizeNY(cloud,id,gender):
     ax.set_xlim(-0.65,0.65) # Set x-axis range
     ax.set_ylim(-0.65,0.65) # Set y-axis range
     ax.set_zlim(-0.65,0.65) # Set z-axis range
-    fig.colorbar(sctt, ax = ax, shrink = 0.5, aspect = 5)
+    #fig.colorbar(sctt, ax = ax, shrink = 0.5, aspect = 5)
 
-    plt.axis('off')
+    #plt.axis('off')
 
     # Hide axes ticks
     ax.set_xticks([])
@@ -65,27 +65,7 @@ def visualizeNY(cloud,id,gender):
 
 #print(data[0]["f_pcs"])
 
-#FEMALES:
-#SPRING1084.obj  has index: 493
 
-#SPRING1640.obj = 528
-
-#SPRING1157.obj  has index: 63
-
-#MALES:
-#SPRING1234.obj  has index: 5
-#SPRING0513.obj  has index: 56
-#SPRING1228.obj  has index: 1042
-
-
-# for i in range(0,1531):
-#     if data[i]["id_male"]=="SPRING1228.obj":
-#         print("###################################")
-#         print(f"SPRING1228.obj  has index: {i}")
-#         break
-#     else:
-#         print(f"Not found at idx {i}")
-# print(data[400]["id_female"])
 
 #visualizeNY(data[1042]["m_pcs"],"?","?")
 # 
@@ -171,10 +151,17 @@ def visualize_pc(point_cloud, visualize = False):
     if point_cloud.requires_grad: point_cloud = point_cloud.detach()
     fig = plt.figure()
     ax = fig.add_subplot(projection="3d")
-    ax.scatter(point_cloud[:, 0], point_cloud[:, 1], point_cloud[:, 2], c=color_per_point/255.0, s=1.8)
-    ax.set_xlim3d(-0.75,0.75)
-    ax.set_ylim3d(-0.75,0.75)
-    ax.set_zlim3d(-0.75,0.75)
+    ax.scatter(point_cloud[:, 0], point_cloud[:, 1], point_cloud[:, 2], c=color_per_point/255.0, s=5)
+    ax.set_xlim3d(-0.67,0.67)
+    ax.set_ylim3d(-0.67,0.67)
+    ax.set_zlim3d(-0.67,0.67)
+    ax.set_box_aspect((1,1,1)) 
+    ax.view_init(elev=17,azim=-170,roll=0)
+    # Hide axes ticks
+    ax.set_xticks([])
+    ax.set_yticks([])
+    ax.set_zticks([])
+    #breakpoint()
     if visualize:
         plt.show()
     return ax
@@ -187,7 +174,30 @@ if __name__=='__main__':
 
     test = data[1042]["m_pcs"]
 
-    test_cycle = torch.load(f='./Saved_pointclouds/male_cycle0_plane.pt', map_location=torch.device('cpu')) 
-    test_original = torch.load(f='./Saved_pointclouds/male_original0_plane.pt')
+    #test_cycle = torch.load(f='./Saved_pointclouds/male_cycle0_plane.pt', map_location=torch.device('cpu')) 
+    #test_original = torch.load(f='./Saved_pointclouds/male_original0_plane.pt')
 
-    visualize_pc(test_original.transpose(-2,1),visualize=True)
+    visualize_pc(test,visualize=True)
+
+    #FEMALES:
+    #SPRING1084.obj  has index: 493
+    #SPRING1640.obj = 528
+    #SPRING1157.obj  has index: 63
+
+    #MALES:
+    #SPRING1234.obj  has index: 5
+    #SPRING0513.obj  has index: 56 
+    #SPRING1228.obj  has index: 1042 
+
+
+    # for i in range(0,1531):
+    #     if data[i]["id_male"]=="SPRING1234.obj":
+    #         print("###################################")
+    #         print(f"SPRING1234.obj  has index: {i}")
+    #         break
+    #     else:
+    #         print(f"Not found at idx {i}")
+
+
+
+    
