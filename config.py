@@ -26,7 +26,7 @@ RETURN_LOSS = True
 '''
 WANDB variables:
 '''
-WANDB_mode = 'disabled'                               # Can be 'offline or 'disabled'
+WANDB_mode = 'online'                               # Can be 'offline or 'disabled'
 project = f'HPC_TRAIN_MODELS' #f'HPC_RUN_{START_SHAPE}_{NUM_EPOCHS}epochs'
 user = 'Jacobsk2000'
 display_name = f'HPC_RUN_{START_SHAPE}_SAVEMODEL'
