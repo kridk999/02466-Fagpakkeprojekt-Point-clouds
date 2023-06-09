@@ -69,7 +69,7 @@ def validation(disc_FM, disc_M, gen_FM, gen_M, POINTNET_classifier, val_loader, 
 
         
 
-        #Generated male and female matrix:
+        #Cycle male and female visualizations:
         for i in range(len(vis_list_female)):
             if vis_list_female[i] in fem_ids:
                 vis_female[str(vis_list_female[i])] = cycle_female[fem_ids.index(vis_list_female[i])]
@@ -82,18 +82,6 @@ def validation(disc_FM, disc_M, gen_FM, gen_M, POINTNET_classifier, val_loader, 
     # Visualize confusion matrix
     
     
-
-
-    #(val in x  for x in lst)
-    # Visualize chosen pointclouds
-    if (vis_list_female in x for x in fem_ids):
-        indices = [index for index, content in enumerate(fem_ids) if vis_list_female in content]
-
-        visualize_pc(x)
-    if (vis_list_male in x for x in male_ids):
-        visualize_pc(x)
-    return array
-
 
 
 def main():
@@ -166,12 +154,14 @@ def main():
         cf_mat, visualizations = validation(disc_FM, disc_M, gen_FM, gen_M, POINTNET_classifier, val_loader, opt_disc, opt_gen, vis_list_female, vis_list_male)
 
         for i in range(3):
-
             df_cm = pd.DataFrame(np.array([[cf_mat['TF'][i],cf_mat['FM'][i]],[cf_mat['FF'][i],cf_mat['TM'][i]]]), index=['Female','Male'], columns=['Female_True','Male_true'])
             plt.figure(figsize=(10,7))
             sn.heatmap(df_cm,annot=True)
             plt.show()
 
+        for i in range(len(vis_list_female)):
+            visualize_pc(visualizations[0][vis_list_female[i]].transpose(-2,1))
+            visualize_pc(visualizations[1][vis_list_male[i]].transpose(-2,1))
         
 
 if __name__ == "__main__":

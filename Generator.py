@@ -7,6 +7,7 @@ import numpy as np
 import itertools
 from utils import ChamferLoss, CrossEntropyLoss
 import config
+from PlotSpecifikkePointclouds import visualize_pc
 from dataloader_dataset import PointCloudDataset
 
 
@@ -90,6 +91,7 @@ class FoldNet_Encoder(nn.Module):
             nn.ReLU(),
             nn.Conv1d(args.feat_dims, args.feat_dims, 1),
         )
+        
 
     def graph_layer(self, x, idx):           
         x = local_maxpool(x, idx)    
@@ -107,6 +109,8 @@ class FoldNet_Encoder(nn.Module):
         idx = knn(pts, k=self.k)
         x = local_cov(pts, idx)                 # (batch_size, 3, num_points) -> (batch_size, 12, num_points])            
         x = self.mlp1(x)                        # (batch_size, 12, num_points) -> (batch_size, 64, num_points])
+        global feature_shape
+        feature_shape = x 
         x = self.graph_layer(x, idx)            # (batch_size, 64, num_points) -> (batch_size, 1024, num_points)
         x = torch.max(x, 2, keepdim=True)[0]    # (batch_size, 1024, num_points) -> (batch_size, 1024, 1)
         x = self.mlp2(x)                        # (batch_size, 1024, 1) -> (batch_size, feat_dims, 1)
@@ -116,8 +120,9 @@ class FoldNet_Encoder(nn.Module):
 class FoldNet_Decoder(nn.Module):
     def __init__(self, args):
         super(FoldNet_Decoder, self).__init__()
-        self.m = config.DECODE_M  # 45 * 45.
+        self.m = 2025  # 45 * 45.
         self.shape = args.shape
+        if self.shape == 'feature_shape': self.m = 2048
         self.meshgrid = [[-1, 1, int(np.sqrt(self.m))], [-1, 1, int(np.sqrt(self.m))]]
         self.sphere = np.load("sphere.npy")
         self.gaussian = np.load("gaussian.npy")
@@ -144,6 +149,15 @@ class FoldNet_Decoder(nn.Module):
             nn.ReLU(),
             nn.Conv1d(args.feat_dims, 3, 1),
         )
+        # MLP for our experiment with a new shape, which is created based on the given input
+        self.mlp3 = nn.Sequential(
+            nn.Conv1d(64, 64, 1),
+            nn.ReLU(),
+            nn.Conv1d(64, 64, 1),
+            nn.ReLU(),
+            nn.Conv1d(64, 3, 1),
+            nn.Tanh(),
+        )
 
     def build_grid(self, batch_size):
         if self.shape == 'plane':
@@ -154,6 +168,9 @@ class FoldNet_Decoder(nn.Module):
             points = self.sphere
         elif self.shape == 'gaussian':
             points = self.gaussian
+        elif self.shape == 'feature_shape':
+            points = self.mlp3(feature_shape).detach()
+            return points.transpose(2,1).float()
         points = np.repeat(points[np.newaxis, ...], repeats=batch_size, axis=0)
         points = torch.tensor(points)
         return points.float()
@@ -191,11 +208,11 @@ class ReconstructionNet(nn.Module):
         return self.loss(input, output)
 
 if __name__ == '__main__':
-    print(np.sqrt(4096))
-
     
-#     female, male = data[1]
-#     print(female.shape)
-#     breakpoint()
-#     Gen = ReconstructionNet(args)
-#     Gen(female).to(config.DEVICE)
+    data = PointCloudDataset()
+    female = data[0]['f_pcs']
+    
+    args = config.get_parser_gen()
+    Gen = ReconstructionNet(args)
+    Gen(female.unsqueeze(0).transpose(2,1))
+    female

@@ -195,7 +195,7 @@ def main():
                     filename=f"CLASSIFIER_MODEL{epoch+1}.pth.tar"
                     #savepath = str(checkpoints_dir) + '/best_model.pth'
                     print(f'Saving as {filename} with an instance accuracy of {instance_acc}')
-                    save_checkpoint(epoch=epoch, models=[Classifier],optimizers=optimizer, losses=acc, filename=filename)
+                    save_checkpoint(epoch=epoch, models=[Classifier],optimizers=[optimizer], losses=acc, filename=filename)
 
         
             
