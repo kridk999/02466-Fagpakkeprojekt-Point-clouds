@@ -183,6 +183,7 @@ def main():
     mse = nn.MSELoss()
     chamferloss = ChamferLoss()
     
+    
     #load pretrained wheights from checkpoints
     if config.LOAD_MODEL:
         load_checkpoint(

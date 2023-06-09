@@ -27,7 +27,7 @@ def load_checkpoint(checkpoint_file, models, optimizers, lr):
     checkpoint = torch.load(checkpoint_file, map_location=config.DEVICE)
     for m in range(len(models)):
         
-        models[m].load_state_dict(checkpoint["state_dict_"+str(m)])
+        models[m].load_state_dict(checkpoint["state_dict_"+str(m)],strict = False)
     for opt in range(len(optimizers)):
         optimizers[opt].load_state_dict(checkpoint['optimizer_'+str(opt)])
         for param_group in optimizers[opt].param_groups:

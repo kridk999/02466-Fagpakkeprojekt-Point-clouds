@@ -144,8 +144,11 @@ def main():
     vis_list_male = ['SPRING0223.obj','SPRING0300.obj','SPRING0320.obj','SPRING0420.obj','SPRING0450.obj']
 
     for shape in ['plane', 'sphere', 'gaussian']:
+        args_gen.shape = shape
+        gen_M = Generator_Fold(args_gen).to(config.DEVICE)
+        gen_FM = Generator_Fold(args_gen).to(config.DEVICE)
         load_checkpoint(
-            f"MODEL_OPTS_LOSSES_sphere_100.pth.tar",
+            f"MODEL_OPTS_LOSSES_{shape}_1201.pth.tar",
             models=[disc_FM, disc_M, gen_FM, gen_M],
             optimizers=[opt_disc, opt_gen],
             lr=config.LEARNING_RATE,

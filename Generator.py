@@ -150,14 +150,15 @@ class FoldNet_Decoder(nn.Module):
             nn.Conv1d(args.feat_dims, 3, 1),
         )
         # MLP for our experiment with a new shape, which is created based on the given input
-        self.mlp3 = nn.Sequential(
-            nn.Conv1d(64, 64, 1),
-            nn.ReLU(),
-            nn.Conv1d(64, 64, 1),
-            nn.ReLU(),
-            nn.Conv1d(64, 3, 1),
-            nn.Tanh(),
-        )
+        if self.shape == 'feature_shape':
+            self.mlp3 = nn.Sequential(
+                nn.Conv1d(64, 256, 1),
+                nn.ReLU(),
+                nn.Conv1d(256, 256, 1),
+                nn.ReLU(),
+                nn.Conv1d(256, 3, 1),
+                nn.Tanh(),
+            )
 
     def build_grid(self, batch_size):
         if self.shape == 'plane':
@@ -169,7 +170,7 @@ class FoldNet_Decoder(nn.Module):
         elif self.shape == 'gaussian':
             points = self.gaussian
         elif self.shape == 'feature_shape':
-            points = self.mlp3(feature_shape).detach()
+            points = self.mlp3(feature_shape)
             return points.transpose(2,1).float()
         points = np.repeat(points[np.newaxis, ...], repeats=batch_size, axis=0)
         points = torch.tensor(points)
