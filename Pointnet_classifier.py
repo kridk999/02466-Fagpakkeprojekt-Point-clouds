@@ -96,7 +96,7 @@ def train(Classifier, Criterion, optimizer, loader):
             train_points, train_targets = train_points.cuda(), train_targets.cuda()
 
         pred, trans_feat = Classifier(train_points)
-        loss = Criterion(pred[:,0], train_targets)
+        loss = Criterion(pred, train_targets.long().unsqueeze(0).transpose(0,1))
         pred_choice = pred.data.max(1)[1]
     
         correct = pred_choice.eq(train_targets.long().data).cpu().sum()
