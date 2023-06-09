@@ -17,7 +17,7 @@ wandb.init(
     project='Classifier_training',
     name = 'Classifier_train_run_1',
     entity=config.user,
-    mode='online'
+    mode='disabled'
     # track hyperparameters and run metadata
     # config={
     # "learning_rate": config.LEARNING_RATE,
@@ -96,7 +96,7 @@ def train(Classifier, Criterion, optimizer, loader):
             train_points, train_targets = train_points.cuda(), train_targets.cuda()
 
         pred, trans_feat = Classifier(train_points)
-        loss = Criterion(pred, train_targets.long(), trans_feat)
+        loss = Criterion(pred[:,0], train_targets)
         pred_choice = pred.data.max(1)[1]
     
         correct = pred_choice.eq(train_targets.long().data).cpu().sum()
@@ -116,7 +116,7 @@ def train(Classifier, Criterion, optimizer, loader):
 def main():
 
     Classifier = Pointnet_model(k=2, normal_channel=False).to(config.DEVICE)
-    Criterion = Pointnet_loss()
+    Criterion = nn.MSELoss()
     Classifier.apply(inplace_relu)
     
     if config.DEVICE == 'cuda':

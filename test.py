@@ -119,12 +119,12 @@ def main():
 
     
 
-    # load_checkpoint(
-    #     "POINTNET_classifier",
-    #     models=[POINTNET_classifier],
-    #     optimizers=[opt_class],
-    #     lr=config.LEARNING_RATE
-    # )
+    load_checkpoint(
+        "CLASSIFIER_MODEL46.pth.tar",
+        models=[POINTNET_classifier],
+        optimizers=[opt_class],
+        lr=config.LEARNING_RATE
+    )
     
     val_dataset = PointCloudDataset(
         root_female=config.VAL_DIR + "/female_test",
