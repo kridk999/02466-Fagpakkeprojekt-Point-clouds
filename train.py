@@ -184,7 +184,7 @@ def main():
     chamferloss = ChamferLoss()
 
     if args_gen.shape == 'feature_shape':
-        chamferloss = lambda x, y : torch.sqrt((x - y)**2).sum()
+        chamferloss = nn.MSELoss()
     
     
     #load pretrained wheights from checkpoints
