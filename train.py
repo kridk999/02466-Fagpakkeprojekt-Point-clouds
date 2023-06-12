@@ -95,9 +95,10 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
 
        
         # Set chamfer loss ind
-        if config.START_SHAPE == 'feature_shape':
-            cycle_female_loss = torch.mean(chamferloss(cycle_female, female))
-            cycle_male_loss = torch.mean(chamferloss(cycle_male, male))
+        # if config.START_SHAPE == 'feature_shape':
+        #     cycle_female_loss = torch.mean(chamferloss(cycle_female, female))
+        #     cycle_male_loss = torch.mean(chamferloss(cycle_male, male))
+        if False: pass
 
         else: 
             cycle_female_loss = chamferloss(cycle_female.transpose(2,1), female.transpose(2,1))

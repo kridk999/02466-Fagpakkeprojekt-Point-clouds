@@ -167,9 +167,9 @@ def main():
             sn.heatmap(df_cm,annot=True)
             plt.show()
 
-        # for i in range(len(vis_list_female)):
-        #     visualize_pc(visualizations[0][vis_list_female[i]].transpose(-2,1))
-        #     visualize_pc(visualizations[1][vis_list_male[i]].transpose(-2,1))
+        for i in range(len(vis_list_female)):
+            visualize_pc(visualizations[0][vis_list_female[i]].transpose(-2,1))
+            visualize_pc(visualizations[1][vis_list_male[i]].transpose(-2,1))
         
 
 if __name__ == "__main__":
