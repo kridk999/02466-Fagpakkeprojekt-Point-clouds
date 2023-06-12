@@ -122,7 +122,7 @@ class FoldNet_Decoder(nn.Module):
         super(FoldNet_Decoder, self).__init__()
         self.m = 2025  # 45 * 45.
         self.shape = args.shape
-        #if self.shape == 'feature_shape': self.m = 2048
+        if self.shape == 'feature_shape': self.m = 2048
         self.meshgrid = [[-1, 1, int(np.sqrt(self.m))], [-1, 1, int(np.sqrt(self.m))]]
         self.sphere = np.load("sphere.npy")
         self.gaussian = np.load("gaussian.npy")

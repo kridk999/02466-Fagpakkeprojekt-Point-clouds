@@ -17,10 +17,12 @@ NUM_WORKERS = 7
 NUM_EPOCHS = 1201
 save_pointclouds = 50                    # Number of epochs between saving intermediate pointclouds as .pt files
 DATASET = 'dataset'                       # Choose between 'dataset' or 'dummy_dataset'
-START_SHAPE = 'plane'                     # Can be 'plane', 'sphere' or 'gaussian'
+START_SHAPE = 'feature_shape'                     # Can be 'plane', 'sphere' or 'gaussian'
 LOAD_MODEL = False
 SAVE_MODEL = True
 RETURN_LOSS = True
+if START_SHAPE == 'feature_shape':
+    LAMBDA_CYCLE = 0.1
 
 
 '''
@@ -29,7 +31,7 @@ WANDB variables:
 WANDB_mode = 'online'                               # Can be 'offline or 'disabled'
 project = f'HPC_TRAIN_MODELS' #f'HPC_RUN_{START_SHAPE}_{NUM_EPOCHS}epochs'
 user = 'Jacobsk2000'
-display_name = f'HPC_RUN_{START_SHAPE}_MSELOSS2'
+display_name = f'HPC_RUN_{START_SHAPE}_pairwise_euclid'
 
 
 def transform(female, male):

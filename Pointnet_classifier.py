@@ -17,7 +17,7 @@ wandb.init(
     project='Classifier_training',
     name = 'Classifier_run_monday_mseloss',
     entity=config.user,
-    mode='online'
+    mode='disabled'
     # track hyperparameters and run metadata
     # config={
     # "learning_rate": config.LEARNING_RATE,
@@ -195,7 +195,7 @@ def main():
             )
     best_instance_acc = 0.0
     best_class_acc = 0.0
-    EPOCHS = 100
+    EPOCHS = 1
     for epoch in range(EPOCHS):
         #scheduler.step()
         Classifier = Classifier.train()
