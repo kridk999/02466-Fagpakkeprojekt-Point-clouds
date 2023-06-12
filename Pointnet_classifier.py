@@ -15,7 +15,7 @@ import wandb
 wandb.init(
     # set the wandb project where this run will be logged
     project='Classifier_training',
-    name = 'Classifier_testrun_monday',
+    name = 'Classifier_run_monday_mseloss',
     entity=config.user,
     mode='online'
     # track hyperparameters and run metadata
@@ -89,32 +89,52 @@ def train(Classifier, Criterion, optimizer, loader):
         train_targets = torch.cat((torch.ones(len(fem_ids)),torch.zeros(len(male_ids))),0)
 
         indices = torch.randperm(train_targets.size()[0])
-        train_points = train_points[indices]
-        train_targets = train_targets[indices]
+        points = train_points[indices]
+        targets = train_targets[indices]
 
-        if config.DEVICE == 'cuda':
-            train_points, train_targets = train_points.cuda(), train_targets.cuda()
+        optimizer.zero_grad()
 
-        pred, trans_feat = Classifier(train_points)
-        train_reverse = train_targets.long()
+        train_reverse = targets.long().cpu().numpy()
         train_reverse = np.where((train_reverse==0)|(train_reverse==1), train_reverse^1, train_reverse)
 
-        if config.DEVICE == 'cuda':
-            train_reverse = train_reverse.cuda()
+        target = np.concatenate((np.expand_dims(train_reverse, axis=0),targets.unsqueeze(0),),axis=0)
+        target = torch.from_numpy(target)
 
-        train_target = np.concatenate((np.expand_dims(train_reverse, axis=0),train_targets.unsqueeze(0),),axis=0)
-        loss = Criterion(pred, torch.tensor(train_target).transpose(0,1).float())
+        if not config.DEVICE == 'cpu':
+            points, target = points.cuda(), target.cuda()
+
+        pred, trans_feat = Classifier(points)
+        loss = Criterion(pred.transpose(-2,1),target.float())
+
         pred_choice = pred.data.max(1)[1]
-    
-        correct = pred_choice.eq(train_targets.long().data).cpu().sum()
 
-
-        mean_correct.append(correct.item() / float(train_points.size()[0]))
-
-        #Update the optimizer for the discriminator
-        optimizer.zero_grad()
+        correct = pred_choice.eq(targets.long().data).cpu().sum()
+        mean_correct.append(correct.item() / float(points.size()[0]))
         loss.backward()
         optimizer.step()
+
+
+
+        # if config.DEVICE == 'cuda':
+        #     train_points, train_targets = train_points.cuda(), train_targets.cuda()
+
+        # pred, trans_feat = Classifier(train_points)
+        # train_reverse = train_targets.long().cpu().numpy()
+        # train_reverse = np.where((train_reverse==0)|(train_reverse==1), train_reverse^1, train_reverse)
+
+        # train_target = np.concatenate((np.expand_dims(train_reverse, axis=0),train_targets.unsqueeze(0),),axis=0)
+        # loss = Criterion(pred, torch.tensor(train_target).transpose(0,1).float())
+        # pred_choice = pred.data.max(1)[1]
+    
+        # correct = pred_choice.eq(train_targets.long().data).cpu().sum()
+
+
+        # mean_correct.append(correct.item() / float(train_points.size()[0]))
+
+        # #Update the optimizer for the discriminator
+        # optimizer.zero_grad()
+        # loss.backward()
+        # optimizer.step()
 
     return np.mean(mean_correct)
 
@@ -137,7 +157,7 @@ def main():
         eps=1e-08,
         weight_decay=1e-4
     )
-    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=20, gamma=0.7)
+    #scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=20, gamma=0.7)
 
     '''LOAD DATA'''
     # if config.DATASET == 'dataset':
@@ -154,7 +174,7 @@ def main():
     #     )
     
     loader = DataLoader(dataset,
-            batch_size=8,
+            batch_size=32,
             shuffle=True,
             num_workers=config.NUM_WORKERS,
             pin_memory=True,
@@ -177,7 +197,7 @@ def main():
     best_class_acc = 0.0
     EPOCHS = 100
     for epoch in range(EPOCHS):
-        scheduler.step()
+        #scheduler.step()
         Classifier = Classifier.train()
         acc = train(Classifier, Criterion, optimizer, loader)
         wandb.log({'epoch':epoch+1, 'train_accuracy':acc})
@@ -199,7 +219,7 @@ def main():
 
                 if (instance_acc >= best_instance_acc):
                     print('Save model...')
-                    filename=f"CLASSIFIER_MODEL{epoch+1}.pth.tar"
+                    filename=f"CLASSIFIER_MODEL_{epoch+1}_accuracy_{instance_acc}.pth.tar"
                     #savepath = str(checkpoints_dir) + '/best_model.pth'
                     print(f'Saving as {filename} with an instance accuracy of {instance_acc}')
                     save_checkpoint(epoch=epoch, models=[Classifier],optimizers=[optimizer], losses=acc, filename=filename)

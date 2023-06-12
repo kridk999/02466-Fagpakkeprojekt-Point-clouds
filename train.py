@@ -185,6 +185,7 @@ def main():
 
     if args_gen.shape == 'feature_shape':
         chamferloss = nn.MSELoss()
+        
     
     
     #load pretrained wheights from checkpoints
