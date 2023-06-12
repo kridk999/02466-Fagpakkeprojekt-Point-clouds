@@ -15,9 +15,9 @@ import wandb
 wandb.init(
     # set the wandb project where this run will be logged
     project='Classifier_training',
-    name = 'Classifier_train_run_1',
+    name = 'Classifier_testrun_monday',
     entity=config.user,
-    mode='disabled'
+    mode='online'
     # track hyperparameters and run metadata
     # config={
     # "learning_rate": config.LEARNING_RATE,
@@ -96,7 +96,10 @@ def train(Classifier, Criterion, optimizer, loader):
             train_points, train_targets = train_points.cuda(), train_targets.cuda()
 
         pred, trans_feat = Classifier(train_points)
-        loss = Criterion(pred, train_targets.long().unsqueeze(0).transpose(0,1))
+        a = train_targets.long()
+        a = np.where((a==0)|(a==1), a^1, a)
+        train_target = np.concatenate((np.expand_dims(a, axis=0),train_targets.unsqueeze(0),),axis=0)
+        loss = Criterion(pred, torch.tensor(train_target).transpose(0,1).float())
         pred_choice = pred.data.max(1)[1]
     
         correct = pred_choice.eq(train_targets.long().data).cpu().sum()
@@ -176,7 +179,7 @@ def main():
         wandb.log({'epoch':epoch+1, 'train_accuracy':acc})
         print(f'the accuracy for epoch {epoch+1} is {acc}')
         
-        if epoch % 5 == 0:
+        if epoch % 1 == 0:
             with torch.no_grad():
                 instance_acc, class_acc = test(Classifier.eval(), val_loader, num_class=2)
 

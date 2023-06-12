@@ -62,10 +62,10 @@ def validation(disc_FM, disc_M, gen_FM, gen_M, POINTNET_classifier, val_loader, 
 
         #True male and female matrix:
         for i, pred_male, pred_female in zip(range(3),[pred_choice_male,pred_choice_fmale,pred_choice_cmale],[pred_choice_female,pred_choice_ffemale,pred_choice_cfemale]):
-            cf_mat['TF'][i] += pred_female.sum()
-            cf_mat['FM'][i] += pred_male.sum()
-            cf_mat['TM'][i] += (len(pred_male)-pred_male.sum())
-            cf_mat['FF'][i] += (len(pred_female)-pred_female.sum())
+            cf_mat['TF'][i] += pred_female[0]
+            cf_mat['FM'][i] += pred_male[0]
+            cf_mat['TM'][i] += pred_male[1]
+            cf_mat['FF'][i] += pred_female[1]
 
         
 
@@ -120,7 +120,7 @@ def main():
     
 
     load_checkpoint(
-        "CLASSIFIER_MODEL46.pth.tar",
+        "CLASSIFIER_MODEL6.pth.tar",
         models=[POINTNET_classifier],
         optimizers=[opt_class],
         lr=config.LEARNING_RATE
@@ -133,7 +133,7 @@ def main():
     )
 
     val_loader = DataLoader(val_dataset,
-            batch_size=2,
+            batch_size=10,
             shuffle=False,
             pin_memory=True,
             collate_fn=config.collate_fn
