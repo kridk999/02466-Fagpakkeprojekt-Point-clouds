@@ -96,9 +96,13 @@ def train(Classifier, Criterion, optimizer, loader):
             train_points, train_targets = train_points.cuda(), train_targets.cuda()
 
         pred, trans_feat = Classifier(train_points)
-        a = train_targets.long()
-        a = np.where((a==0)|(a==1), a^1, a)
-        train_target = np.concatenate((np.expand_dims(a, axis=0),train_targets.unsqueeze(0),),axis=0)
+        train_reverse = train_targets.long()
+        train_reverse = np.where((train_reverse==0)|(train_reverse==1), train_reverse^1, train_reverse)
+
+        if config.DEVICE == 'cuda':
+            train_reverse = train_reverse.cuda()
+
+        train_target = np.concatenate((np.expand_dims(train_reverse, axis=0),train_targets.unsqueeze(0),),axis=0)
         loss = Criterion(pred, torch.tensor(train_target).transpose(0,1).float())
         pred_choice = pred.data.max(1)[1]
     
