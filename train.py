@@ -95,14 +95,14 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
 
        
         # Set chamfer loss ind
-        # if config.START_SHAPE == 'feature_shape':
-        #     cycle_female_loss = torch.mean(chamferloss(cycle_female, female))
-        #     cycle_male_loss = torch.mean(chamferloss(cycle_male, male))
-        if False: pass
+        if config.START_SHAPE == 'feature_shape':
+            cycle_female_loss = torch.mean(chamferloss(cycle_female, female))
+            cycle_male_loss = torch.mean(chamferloss(cycle_male, male))
+        #if False: pass
 
-        else: 
-            cycle_female_loss = chamferloss(cycle_female.transpose(2,1), female.transpose(2,1))
-            cycle_male_loss = chamferloss(cycle_male.transpose(2,1), male.transpose(2,1))
+        # else: 
+        #     cycle_female_loss = chamferloss(cycle_female.transpose(2,1), female.transpose(2,1))
+        #     cycle_male_loss = chamferloss(cycle_male.transpose(2,1), male.transpose(2,1))
 
 
         #Adding all generative losses together:
@@ -189,8 +189,8 @@ def main():
     mse = nn.MSELoss()
     chamferloss = ChamferLoss()
 
-    # if args_gen.shape == 'feature_shape':
-    #     chamferloss = nn.PairwiseDistance()
+    if args_gen.shape == 'feature_shape':
+        chamferloss = nn.PairwiseDistance()
     
     
     #load pretrained wheights from checkpoints
