@@ -152,11 +152,11 @@ class FoldNet_Decoder(nn.Module):
         # MLP for our experiment with a new shape, which is created based on the given input
         if self.shape == 'feature_shape':
             self.mlp3 = nn.Sequential(
-                nn.Conv1d(64, 256, 1),
+                nn.Conv1d(64, 128, 1),
                 nn.ReLU(),
-                nn.Conv1d(256, 256, 1),
+                nn.Conv1d(128, 64, 1),
                 nn.ReLU(),
-                nn.Conv1d(256, 3, 1),
+                nn.Conv1d(64, 3, 1),
                 nn.Tanh(),
             )
 

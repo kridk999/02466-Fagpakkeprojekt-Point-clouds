@@ -13,7 +13,7 @@ DECODE_M = 2025 #isqrt(SAMPLE_POINTS)                             # kvrod(2025)
 BATCH_SIZE = 32
 LEARNING_RATE = 1e-4
 LAMBDA_CYCLE = 10
-NUM_WORKERS = 4
+NUM_WORKERS = 7
 NUM_EPOCHS = 1201
 save_pointclouds = 50                    # Number of epochs between saving intermediate pointclouds as .pt files
 DATASET = 'dataset'                       # Choose between 'dataset' or 'dummy_dataset'
@@ -29,7 +29,7 @@ WANDB variables:
 WANDB_mode = 'online'                               # Can be 'offline or 'disabled'
 project = f'HPC_TRAIN_MODELS' #f'HPC_RUN_{START_SHAPE}_{NUM_EPOCHS}epochs'
 user = 'Jacobsk2000'
-display_name = f'HPC_RUN_{START_SHAPE}_MSELOSS1'
+display_name = f'HPC_RUN_{START_SHAPE}_MSELOSS2'
 
 
 def transform(female, male):
