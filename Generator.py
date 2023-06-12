@@ -122,7 +122,7 @@ class FoldNet_Decoder(nn.Module):
         super(FoldNet_Decoder, self).__init__()
         self.m = 2025  # 45 * 45.
         self.shape = args.shape
-        if self.shape == 'feature_shape': self.m = 2048
+        #if self.shape == 'feature_shape': self.m = 2048
         self.meshgrid = [[-1, 1, int(np.sqrt(self.m))], [-1, 1, int(np.sqrt(self.m))]]
         self.sphere = np.load("sphere.npy")
         self.gaussian = np.load("gaussian.npy")
@@ -152,11 +152,11 @@ class FoldNet_Decoder(nn.Module):
         # MLP for our experiment with a new shape, which is created based on the given input
         if self.shape == 'feature_shape':
             self.mlp3 = nn.Sequential(
-                nn.Conv1d(64, 128, 1),
+                nn.Conv1d(64, 256, 1),
                 nn.ReLU(),
-                nn.Conv1d(128, 64, 1),
+                nn.Conv1d(256, 256, 1),
                 nn.ReLU(),
-                nn.Conv1d(64, 3, 1),
+                nn.Conv1d(256, 3, 1),
                 nn.Tanh(),
             )
 

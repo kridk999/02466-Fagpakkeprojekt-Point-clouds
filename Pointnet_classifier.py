@@ -101,7 +101,7 @@ def train(Classifier, Criterion, optimizer, loader):
         target = torch.from_numpy(target)
 
         if not config.DEVICE == 'cpu':
-            points, target = points.cuda(), target.cuda()
+            points, target, targets = points.cuda(), target.cuda(), targets.cuda()
 
         pred, trans_feat = Classifier(points)
         loss = Criterion(pred.transpose(-2,1),target.float())
