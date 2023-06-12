@@ -189,8 +189,8 @@ def main():
     mse = nn.MSELoss()
     chamferloss = ChamferLoss()
 
-    if args_gen.shape == 'feature_shape':
-        chamferloss = nn.PairwiseDistance()
+    # if args_gen.shape == 'feature_shape':
+    #     chamferloss = nn.PairwiseDistance()
     
     
     #load pretrained wheights from checkpoints
