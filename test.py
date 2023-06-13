@@ -16,15 +16,14 @@ import numpy as np
 
 
 
-def validation(disc_FM, disc_M, gen_FM, gen_M, POINTNET_classifier, val_loader, opt_disc, opt_gen, vis_list_female, vis_list_male):
+def validation(gen_FM, gen_M, POINTNET_classifier, val_loader, vis_list_female, vis_list_male, shape):
     val_loop = tqdm(val_loader, leave=True)
     classifier = POINTNET_classifier.eval()
     #TF, TM, FF, FM = []
     cf_mat = dict()
     for type in ['TP','FP','FN','TN']:
         cf_mat[type] = [0 for i in range(3)]
-    vis_female = dict()
-    vis_male = dict()
+
 
     for idx, data in enumerate(val_loop):
         female = data['pc_female'].to(config.DEVICE)
@@ -66,24 +65,20 @@ def validation(disc_FM, disc_M, gen_FM, gen_M, POINTNET_classifier, val_loader, 
                 elif pred_choice[i] != targets[i] == 0:
                     cf_mat['FP'][j] += 1
 
-        #True male and female matrix:
-             
-            # cf_mat['FM'][i] += pred_male[0]
-            # cf_mat['TM'][i] += pred_male[1]
-            # cf_mat['FF'][i] += pred_female[1]
-
-        
-
-        #Cycle male and female visualizations:
+        #save pointclouds for visualization purposes
         for i in range(len(vis_list_female)):
-            if vis_list_female[i] in fem_ids:
-                vis_female[str(vis_list_female[i])] = cycle_female[fem_ids.index(vis_list_female[i])]
+            torch.save(female, f=f"./Test-pointclouds/original_female_{i+1}_{shape}.pt")
+            torch.save(cycle_female, f=f"./Test-pointclouds/cycle_female_{i+1}_{shape}.pt")
+            torch.save(fake_male, f=f"./Test-pointclouds/gen_from_female_{i+1}_{shape}.pt")
 
         for i in range(len(vis_list_male)):
-            if vis_list_male[i] in male_ids:
-                vis_male[str(vis_list_male[i])] = cycle_male[male_ids.index(vis_list_male[i])]
+            torch.save(male, f=f"./Test-pointclouds/original_male_{i+1}_{shape}.pt")
+            torch.save(cycle_male, f=f"./Test-pointclouds/cycle_male_{i+1}_{shape}.pt")
+            torch.save(fake_female, f=f"./Test-pointclouds/gen_from_male_{i+1}_{shape}.pt")
+  
 
-    return cf_mat, (vis_female, vis_male)
+
+    return cf_mat
     # Visualize confusion matrix
     
     
@@ -145,8 +140,8 @@ def main():
             )
 
     # list of pointclouds we wish to visualize:
-    vis_list_female = ['SPRING0380.obj','SPRING0400.obj','SPRING0469.obj','SPRING0600.obj','SPRING1050.obj']
-    vis_list_male = ['SPRING0223.obj','SPRING0300.obj','SPRING0320.obj','SPRING0420.obj','SPRING0450.obj']
+    vis_list_female = ['SPRING0380.obj','SPRING0400.obj','SPRING0469.obj']
+    vis_list_male = ['SPRING0223.obj','SPRING0300.obj','SPRING0320.obj']
 
     for shape in ['plane', 'sphere', 'gaussian','feature_shape']:
         args_gen.shape = shape
@@ -159,7 +154,7 @@ def main():
             lr=config.LEARNING_RATE,
         )
 
-        cf_mat, visualizations = validation(disc_FM, disc_M, gen_FM, gen_M, POINTNET_classifier, val_loader, opt_disc, opt_gen, vis_list_female, vis_list_male)
+        cf_mat = validation(gen_FM, gen_M, POINTNET_classifier, val_loader, vis_list_female, vis_list_male, shape)
 
         for i in range(3):
             df_cm = pd.DataFrame(np.array([[cf_mat['TP'][i],cf_mat['FP'][i]],[cf_mat['FN'][i],cf_mat['TN'][i]]]), index=['Female','Male'], columns=['Female_True','Male_true'])
@@ -167,9 +162,7 @@ def main():
             sn.heatmap(df_cm,annot=True)
             plt.show()
 
-        for i in range(len(vis_list_female)):
-            visualize_pc(visualizations[0][vis_list_female[i]].transpose(-2,1))
-            visualize_pc(visualizations[1][vis_list_male[i]].transpose(-2,1))
+        
         
 
 if __name__ == "__main__":
