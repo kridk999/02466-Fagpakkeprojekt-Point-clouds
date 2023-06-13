@@ -8,6 +8,7 @@ import config
 from utils import ChamferLoss
 import math
 import numpy as np
+import scipy
 
 def train_one_epoch(loader):
 
@@ -30,7 +31,22 @@ def chamf_mean(pcs, chamferloss):
         del pcs[-1]
     out = [torch.sqrt(chamferloss(x.transpose(2,1), y.transpose(2,1))) for i, x in enumerate(pcs) for j, y in enumerate(pcs) if i != j]
     
-    return torch.mean(torch.tensor(out)), out
+    return torch.mean(torch.tensor(out)), torch.tensor(out)
+
+def torch_compute_confidence_interval(data, confidence = 0.95):
+
+    """
+    Computes the confidence interval for a given survey of a data set.
+    """
+    n = len(data)
+    mean = data.mean()
+    # se: Tensor = scipy.stats.sem(data)  # compute standard error
+    # se, mean: Tensor = torch.std_mean(data, unbiased=True)  # compute standard error
+    se = data.std(unbiased=True) / (n**0.5)
+    t_p: float = float(scipy.stats.t.ppf((1 + confidence) / 2., n - 1))
+    ci = t_p * se
+    return mean, ci
+
 
 def main():
     args_gen = config.get_parser_gen()
@@ -80,10 +96,12 @@ def main():
     
     mean_male, out_male = chamf_mean(male, chamferloss)
     mean_female, out_female = chamf_mean(female, chamferloss)
-
+    
+    
     print(mean_male, mean_female)
     print(out_male, out_female)
-    
+    print(torch_compute_confidence_interval(out_male))
+    print(torch_compute_confidence_interval(out_female))
         
 if __name__ == "__main__":
     
