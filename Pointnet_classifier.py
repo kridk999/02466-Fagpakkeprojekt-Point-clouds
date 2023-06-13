@@ -8,9 +8,13 @@ import config
 import numpy as np
 import torch.optim as optim
 from utils import save_checkpoint, load_checkpoint, ChamferLoss, visualize
-from Discriminator import get_model as Pointnet_model
-from Discriminator import get_loss as Pointnet_loss
+
+#from Disc_classifier import get_loss as Pointnet_loss
 import wandb
+
+
+
+from Disc_classifier import get_model as Pointnet_model
 
 wandb.init(
     # set the wandb project where this run will be logged
