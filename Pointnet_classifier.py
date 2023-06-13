@@ -116,7 +116,7 @@ def train(Classifier, Criterion, optimizer, loader):
         mean_correct.append(correct.item() / float(points.size()[0]))
         loss.backward()
         optimizer.step()
-
+        
 
 
         # if config.DEVICE == 'cuda':
