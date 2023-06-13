@@ -146,13 +146,13 @@ def color_pc(cloud):
 
 
 
-def visualize_pc(point_cloud, visualize = False, axisoff = True,axislim=0.67):
+def visualize_pc(point_cloud, visualize = False, axisoff = True,axislim=0.67,dotsize=5):
     color_per_point = color_pc(point_cloud)
     point_cloud = point_cloud.squeeze().cpu()
     if point_cloud.requires_grad: point_cloud = point_cloud.detach()
     fig = plt.figure()
     ax = fig.add_subplot(projection="3d")
-    ax.scatter(point_cloud[:, 0], point_cloud[:, 1], point_cloud[:, 2], c=color_per_point/255.0, s=5)
+    ax.scatter(point_cloud[:, 0], point_cloud[:, 1], point_cloud[:, 2], c=color_per_point/255.0, s=dotsize)
     ax.set_xlim3d(-axislim,axislim)
     ax.set_ylim3d(-axislim,axislim)
     ax.set_zlim3d(-axislim,axislim)
