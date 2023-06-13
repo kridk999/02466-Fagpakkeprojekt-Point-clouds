@@ -148,7 +148,7 @@ def main():
     vis_list_female = ['SPRING0380.obj','SPRING0400.obj','SPRING0469.obj','SPRING0600.obj','SPRING1050.obj']
     vis_list_male = ['SPRING0223.obj','SPRING0300.obj','SPRING0320.obj','SPRING0420.obj','SPRING0450.obj']
 
-    for shape in ['plane', 'sphere', 'gaussian','feature']:
+    for shape in ['plane', 'sphere', 'gaussian','feature_shape']:
         args_gen.shape = shape
         gen_M = Generator_Fold(args_gen).to(config.DEVICE)
         gen_FM = Generator_Fold(args_gen).to(config.DEVICE)
