@@ -10,6 +10,7 @@ import pandas as pd
 from pyntcloud import PyntCloud
 import torch
 from matplotlib import colors
+import itertools
 np.random.seed(42)
 
 
@@ -145,18 +146,20 @@ def color_pc(cloud):
 
 
 
-def visualize_pc(point_cloud, visualize = False):
+def visualize_pc(point_cloud, visualize = False, axisoff = True,axislim=0.67):
     color_per_point = color_pc(point_cloud)
     point_cloud = point_cloud.squeeze().cpu()
     if point_cloud.requires_grad: point_cloud = point_cloud.detach()
     fig = plt.figure()
     ax = fig.add_subplot(projection="3d")
     ax.scatter(point_cloud[:, 0], point_cloud[:, 1], point_cloud[:, 2], c=color_per_point/255.0, s=5)
-    ax.set_xlim3d(-0.67,0.67)
-    ax.set_ylim3d(-0.67,0.67)
-    ax.set_zlim3d(-0.67,0.67)
+    ax.set_xlim3d(-axislim,axislim)
+    ax.set_ylim3d(-axislim,axislim)
+    ax.set_zlim3d(-axislim,axislim)
     ax.set_box_aspect((1,1,1)) 
-    ax.view_init(elev=17,azim=-170,roll=0)
+    ax.view_init(elev=20,azim=-170,roll=0)
+    if axisoff:
+        plt.axis('off')
     # Hide axes ticks
     ax.set_xticks([])
     ax.set_yticks([])
@@ -172,13 +175,28 @@ def visualize_pc(point_cloud, visualize = False):
 if __name__=='__main__':
     data = PointCloudDataset()
 
-    test = data[1042]["m_pcs"]
+    original = data[5]["m_pcs"]
+
+    sphere = torch.from_numpy(np.load('sphere.npy')).float()
+    gauss = torch.from_numpy(np.load('gaussian.npy')).float()
+
+ 
+    #create plane
+    meshgrid = [[-1, 1, int(np.sqrt(2025))], [-1, 1, int(np.sqrt(2025))]]
+    x = np.linspace(*meshgrid[0])
+    y = np.linspace(*meshgrid[1])
+    plane = np.array(list(itertools.product(x,[0],y)))
+    plane = torch.from_numpy(plane).float()
+ 
+    
+    test = torch.load(f='./Saved_pointclouds/male_gaussian_female_1200.pt',map_location=torch.device('cpu'))
 
     #test_cycle = torch.load(f='./Saved_pointclouds/male_cycle0_plane.pt', map_location=torch.device('cpu')) 
     #test_original = torch.load(f='./Saved_pointclouds/male_original0_plane.pt')
 
-    visualize_pc(test,visualize=True)
+    visualize_pc(test.transpose(-2,1),visualize=True, axisoff=True,axislim=0.67)
 
+    #visualize_pc(original,visualize=True, axisoff=True,axislim=0.67)
     #FEMALES:
     #SPRING1084.obj  has index: 493
     #SPRING1640.obj = 528
