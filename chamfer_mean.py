@@ -6,8 +6,8 @@ from tqdm import tqdm
 from torch.utils.data import DataLoader
 import config
 from utils import ChamferLoss
+import math
 import numpy as np
-
 
 def train_one_epoch(loader):
 
@@ -28,7 +28,7 @@ def train_one_epoch(loader):
 def chamf_mean(pcs, chamferloss):
     if pcs[-1].size()[0] != pcs[-2].size()[0]:
         del pcs[-1]
-    out = [np.sqrt(chamferloss(x.transpose(2,1), y.transpose(2,1))) for i, x in enumerate(pcs) for j, y in enumerate(pcs) if i != j]
+    out = [torch.sqrt(chamferloss(x.transpose(2,1), y.transpose(2,1))) for i, x in enumerate(pcs) for j, y in enumerate(pcs) if i != j]
 
     return np.mean(out), out
 
@@ -67,7 +67,7 @@ def main():
     
 
     loader = DataLoader(dataset,
-            batch_size=32,
+            batch_size=2,
             shuffle=True,
             num_workers=config.NUM_WORKERS,
             pin_memory=True,
