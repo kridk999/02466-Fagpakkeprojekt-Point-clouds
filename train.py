@@ -8,9 +8,10 @@ from torch.utils.data import DataLoader
 import os
 import config
 import torch.optim as optim
-from utils import save_checkpoint, load_checkpoint, ChamferLoss, visualize
+from utils import save_checkpoint, load_checkpoint, ChamferLoss
 from Generator import ReconstructionNet as Generator_Fold
 from Discriminator import get_model as Discriminator_Point
+from PlotSpecifikkePointclouds import visualize_pc
 import wandb
 
 
@@ -100,9 +101,9 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
             cycle_male_loss = torch.mean(chamferloss(cycle_male.transpose(2,1), male.transpose(2,1))**2)
         #if False: pass
 
-        # else: 
-        #     cycle_female_loss = chamferloss(cycle_female.transpose(2,1), female.transpose(2,1))
-        #     cycle_male_loss = chamferloss(cycle_male.transpose(2,1), male.transpose(2,1))
+        else:
+            cycle_female_loss = chamferloss(cycle_female.transpose(2,1), female.transpose(2,1))
+            cycle_male_loss = chamferloss(cycle_male.transpose(2,1), male.transpose(2,1))
 
 
         #Adding all generative losses together:
@@ -134,9 +135,9 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
                 root = os.listdir("./Saved_pointclouds/")
                 m = len([i for i in root if f'male_{config.START_SHAPE}' in i]) // 3
 
-                torch.save(original_man, f=f"./Saved_pointclouds/male_{config.START_SHAPE}_original_{m*config.save_pointclouds}.pt")
-                torch.save(female_male, f=f"./Saved_pointclouds/male_{config.START_SHAPE}_female_{m*config.save_pointclouds}.pt")
-                torch.save(cycle_man, f=f"./Saved_pointclouds/male_{config.START_SHAPE}_cycle_{m*config.save_pointclouds}.pt")
+                torch.save(original_man, f=f"./Saved_pointclouds_new/male_{config.START_SHAPE}_original_{m*config.save_pointclouds}.pt")
+                torch.save(female_male, f=f"./Saved_pointclouds_new/male_{config.START_SHAPE}_female_{m*config.save_pointclouds}.pt")
+                torch.save(cycle_man, f=f"./Saved_pointclouds_new/male_{config.START_SHAPE}_cycle_{m*config.save_pointclouds}.pt")
                 
 
             if 'SPRING1084.obj' in fem_ids:
@@ -152,9 +153,9 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
                 root = os.listdir("./Saved_pointclouds/")
                 w = len([i for i in root if f'woman_{config.START_SHAPE}' in i]) // 3
 
-                torch.save(original_woman, f=f"./Saved_pointclouds/woman_{config.START_SHAPE}_original{w*config.save_pointclouds}.pt")
-                torch.save(male_female, f=f"./Saved_pointclouds/woman_{config.START_SHAPE}_man{w*config.save_pointclouds}.pt")
-                torch.save(cycle_woman, f=f"./Saved_pointclouds/woman_{config.START_SHAPE}_cycle{w*config.save_pointclouds}.pt")
+                torch.save(original_woman, f=f"./Saved_pointclouds_new/woman_{config.START_SHAPE}_original{w*config.save_pointclouds}.pt")
+                torch.save(male_female, f=f"./Saved_pointclouds_new/woman_{config.START_SHAPE}_man{w*config.save_pointclouds}.pt")
+                torch.save(cycle_woman, f=f"./Saved_pointclouds_new/woman_{config.START_SHAPE}_cycle{w*config.save_pointclouds}.pt")
                 
 
     if return_loss:
@@ -237,7 +238,7 @@ def main():
             wandb.log({"LossD": D, "LossG": G,"Adviserial_loss": adv, "Cycle_loss": cycle, "epoch": epoch+1})
         else: train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, return_loss)
         models, opts = [disc_FM, disc_M, gen_FM, gen_M], [opt_disc, opt_gen]
-        if config.SAVE_MODEL and return_loss and epoch+1 == config.NUM_EPOCHS:
+        if config.SAVE_MODEL and return_loss and epoch+1 % 200==0:
             losses = [D, G] 
             save_checkpoint(epoch, models, opts, losses, filename=f"MODEL_OPTS_LOSSES_{config.START_SHAPE}_{epoch+1}.pth.tar")
         #elif config.SAVE_MODEL: save_checkpoint(epoch, models, opts, losses=None, filename=f"MODEL_OPTS_LOSSES_{epoch+1}.pth.tar")
