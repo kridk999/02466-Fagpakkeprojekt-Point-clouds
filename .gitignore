@@ -2,9 +2,9 @@ Fag_env/*
 
 Wandb/*
 
-data/*
-
 logs/*
+
+data/*
 
 Saved_pointclouds/*
 
