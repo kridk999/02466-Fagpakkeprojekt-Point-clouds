@@ -195,7 +195,7 @@ def main():
             )
     best_instance_acc = 0.0
     best_class_acc = 0.0
-    EPOCHS = 1
+    EPOCHS = 30
     for epoch in range(EPOCHS):
         #scheduler.step()
         Classifier = Classifier.train()

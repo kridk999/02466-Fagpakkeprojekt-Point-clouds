@@ -125,7 +125,7 @@ def main():
     
 
     load_checkpoint(
-        "CLASSIFIER_MODEL_1.pth.tar",
+        "CLASSIFIER_MODEL_4.pth.tar",
         models=[POINTNET_classifier],
         optimizers=[opt_class],
         lr=config.LEARNING_RATE
