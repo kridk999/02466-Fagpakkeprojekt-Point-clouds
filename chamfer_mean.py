@@ -29,8 +29,8 @@ def chamf_mean(pcs, chamferloss):
     if pcs[-1].size()[0] != pcs[-2].size()[0]:
         del pcs[-1]
     out = [torch.sqrt(chamferloss(x.transpose(2,1), y.transpose(2,1))) for i, x in enumerate(pcs) for j, y in enumerate(pcs) if i != j]
-
-    return np.mean(out), out
+    
+    return torch.mean(torch.tensor(out)), out
 
 def main():
     args_gen = config.get_parser_gen()
