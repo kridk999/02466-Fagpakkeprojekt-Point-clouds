@@ -32,7 +32,7 @@ WANDB variables:
 WANDB_mode = 'online'                               # Can be 'offline or 'disabled'
 project = f'HPC_TRAIN_MODELS_FINAL' #f'HPC_RUN_{START_SHAPE}_{NUM_EPOCHS}epochs'
 user = 'Jacobsk2000'
-display_name = f'HPC_RUN_{START_SHAPE}_with_scheduler'
+display_name = f'HPC_RUN_{START_SHAPE}_FINAL'
 
 
 def transform(female, male):

@@ -105,6 +105,8 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
         cycle_female_loss = chamferloss(cycle_female.transpose(2,1), female.transpose(2,1))
         cycle_male_loss = chamferloss(cycle_male.transpose(2,1), male.transpose(2,1))
 
+        #mode_collapse_female_loss = chamferloss(female[0:config.BATCH_SIZE/2].transpose(2,1),female[config.BATCH_SIZE/2:config.BATCH_SIZE].transpose(2,1))
+
 
         #Adding all generative losses together:
         G_loss = (
@@ -133,11 +135,11 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
                         'cycle_male_1234': wandb.Object3D(cycle_man.detach().transpose(-2,1).cpu().numpy())}, commit = False)
                 
                 root = os.listdir("./Saved_pointclouds_new/")
-                m = len([i for i in root if f'male_{config.START_SHAPE}' in i]) // 3
+                m = len([i for i in root if f'fmale_{config.START_SHAPE}' in i]) // 3
 
-                torch.save(original_man, f=f"./Saved_pointclouds_new/male_{config.START_SHAPE}_original_{m*config.save_pointclouds}.pt")
-                torch.save(female_male, f=f"./Saved_pointclouds_new/male_{config.START_SHAPE}_female_{m*config.save_pointclouds}.pt")
-                torch.save(cycle_man, f=f"./Saved_pointclouds_new/male_{config.START_SHAPE}_cycle_{m*config.save_pointclouds}.pt")
+                torch.save(original_man, f=f"./Saved_pointclouds_new/fmale_{config.START_SHAPE}_original_{m*config.save_pointclouds}.pt")
+                torch.save(female_male, f=f"./Saved_pointclouds_new/fmale_{config.START_SHAPE}_female_{m*config.save_pointclouds}.pt")
+                torch.save(cycle_man, f=f"./Saved_pointclouds_new/fmale_{config.START_SHAPE}_cycle_{m*config.save_pointclouds}.pt")
                 
 
             if 'SPRING1084.obj' in fem_ids:
@@ -151,11 +153,11 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
                         'cycle_female_1084':wandb.Object3D(cycle_woman.detach().transpose(-2,1).cpu().numpy()),}, commit = False)
                 
                 root = os.listdir("./Saved_pointclouds_new/")
-                w = len([i for i in root if f'woman_{config.START_SHAPE}' in i]) // 3
+                w = len([i for i in root if f'fwoman_{config.START_SHAPE}' in i]) // 3
 
-                torch.save(original_woman, f=f"./Saved_pointclouds_new/woman_{config.START_SHAPE}_original{w*config.save_pointclouds}.pt")
-                torch.save(male_female, f=f"./Saved_pointclouds_new/woman_{config.START_SHAPE}_man{w*config.save_pointclouds}.pt")
-                torch.save(cycle_woman, f=f"./Saved_pointclouds_new/woman_{config.START_SHAPE}_cycle{w*config.save_pointclouds}.pt")
+                torch.save(original_woman, f=f"./Saved_pointclouds_new/fwoman_{config.START_SHAPE}_original{w*config.save_pointclouds}.pt")
+                torch.save(male_female, f=f"./Saved_pointclouds_new/fwoman_{config.START_SHAPE}_man{w*config.save_pointclouds}.pt")
+                torch.save(cycle_woman, f=f"./Saved_pointclouds_new/fwoman_{config.START_SHAPE}_cycle{w*config.save_pointclouds}.pt")
                 
     
     if return_loss:
@@ -187,8 +189,8 @@ def main():
         betas=(0.5, 0.999),
     )
 
-    scheduler_disc = torch.optim.lr_scheduler.StepLR(opt_disc, step_size=40, gamma=0.7)
-    scheduler_gen = torch.optim.lr_scheduler.StepLR(opt_gen, step_size=40, gamma=0.7)
+    #scheduler_disc = torch.optim.lr_scheduler.StepLR(opt_disc, step_size=40, gamma=0.7)
+    #scheduler_gen = torch.optim.lr_scheduler.StepLR(opt_gen, step_size=40, gamma=0.7)
 
     mse = nn.MSELoss()
     chamferloss = ChamferLoss()
@@ -241,12 +243,12 @@ def main():
             wandb.log({"LossD": D, "LossG": G,"Adviserial_loss": adv, "Cycle_loss": cycle, "epoch": epoch+1})
         else: train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, return_loss)
         models, opts = [disc_FM, disc_M, gen_FM, gen_M], [opt_disc, opt_gen]
-        if config.SAVE_MODEL and return_loss and (epoch+1) % 200 == 0:
+        if config.SAVE_MODEL and return_loss and (epoch+1) % 100 == 0:
             losses = [D, G] 
             save_checkpoint(epoch, models, opts, losses, filename=f"MODEL_OPTS_LOSSES_{config.START_SHAPE}_{epoch+1}.pth.tar")
         #elif config.SAVE_MODEL: save_checkpoint(epoch, models, opts, losses=None, filename=f"MODEL_OPTS_LOSSES_{epoch+1}.pth.tar")
-        scheduler_disc.step()
-        scheduler_gen.step()
+        #scheduler_disc.step()
+        #scheduler_gen.step()
         print(f'The best Discriminator loss for epoch {epoch+1} is {D} and the Generator loss is {G}')
     wandb.finish()
 
