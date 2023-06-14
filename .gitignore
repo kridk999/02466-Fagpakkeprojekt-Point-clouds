@@ -2,9 +2,14 @@ Fag_env/*
 
 Wandb/*
 
+<<<<<<< HEAD
 data/*
 
+=======
+>>>>>>> e394706b3550ba120354221ae398109850c28b2a
 logs/*
+
+data/*
 
 Saved_pointclouds/*
 
