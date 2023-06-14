@@ -157,7 +157,7 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
                 torch.save(male_female, f=f"./Saved_pointclouds_new/woman_{config.START_SHAPE}_man{w*config.save_pointclouds}.pt")
                 torch.save(cycle_woman, f=f"./Saved_pointclouds_new/woman_{config.START_SHAPE}_cycle{w*config.save_pointclouds}.pt")
                 
-
+    
     if return_loss:
         return D_loss, G_loss, cycle_female_loss + cycle_male_loss, loss_G_FM + loss_G_M
     
@@ -186,6 +186,9 @@ def main():
         lr=config.LEARNING_RATE,
         betas=(0.5, 0.999),
     )
+
+    scheduler_disc = torch.optim.lr_scheduler.StepLR(opt_disc, step_size=40, gamma=0.7)
+    scheduler_gen = torch.optim.lr_scheduler.StepLR(opt_gen, step_size=40, gamma=0.7)
 
     mse = nn.MSELoss()
     chamferloss = ChamferLoss()
@@ -242,6 +245,8 @@ def main():
             losses = [D, G] 
             save_checkpoint(epoch, models, opts, losses, filename=f"MODEL_OPTS_LOSSES_{config.START_SHAPE}_{epoch+1}.pth.tar")
         #elif config.SAVE_MODEL: save_checkpoint(epoch, models, opts, losses=None, filename=f"MODEL_OPTS_LOSSES_{epoch+1}.pth.tar")
+        scheduler_disc.step()
+        scheduler_gen.step()
         print(f'The best Discriminator loss for epoch {epoch+1} is {D} and the Generator loss is {G}')
     wandb.finish()
 
