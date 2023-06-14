@@ -96,14 +96,14 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
 
        
         # Set chamfer loss ind
-        if config.START_SHAPE == 'feature_shape':
-            cycle_female_loss = torch.mean(chamferloss(cycle_female.transpose(2,1), female.transpose(2,1))**2)
-            cycle_male_loss = torch.mean(chamferloss(cycle_male.transpose(2,1), male.transpose(2,1))**2)
-        #if False: pass
+        # if config.START_SHAPE == 'feature_shape':
+        #     cycle_female_loss = torch.mean(chamferloss(cycle_female.transpose(2,1), female.transpose(2,1))**2)
+        #     cycle_male_loss = torch.mean(chamferloss(cycle_male.transpose(2,1), male.transpose(2,1))**2)
+        # #if False: pass
 
-        else:
-            cycle_female_loss = chamferloss(cycle_female.transpose(2,1), female.transpose(2,1))
-            cycle_male_loss = chamferloss(cycle_male.transpose(2,1), male.transpose(2,1))
+        #else:
+        cycle_female_loss = chamferloss(cycle_female.transpose(2,1), female.transpose(2,1))
+        cycle_male_loss = chamferloss(cycle_male.transpose(2,1), male.transpose(2,1))
 
 
         #Adding all generative losses together:
@@ -132,7 +132,7 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
                         'fake_female_1234': wandb.Object3D(female_male.detach().transpose(-2,1).cpu().numpy()),
                         'cycle_male_1234': wandb.Object3D(cycle_man.detach().transpose(-2,1).cpu().numpy())}, commit = False)
                 
-                root = os.listdir("./Saved_pointclouds/")
+                root = os.listdir("./Saved_pointclouds_new/")
                 m = len([i for i in root if f'male_{config.START_SHAPE}' in i]) // 3
 
                 torch.save(original_man, f=f"./Saved_pointclouds_new/male_{config.START_SHAPE}_original_{m*config.save_pointclouds}.pt")
@@ -150,7 +150,7 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
                         'fake_male_1084':wandb.Object3D(male_female.detach().transpose(-2,1).cpu().numpy()),
                         'cycle_female_1084':wandb.Object3D(cycle_woman.detach().transpose(-2,1).cpu().numpy()),}, commit = False)
                 
-                root = os.listdir("./Saved_pointclouds/")
+                root = os.listdir("./Saved_pointclouds_new/")
                 w = len([i for i in root if f'woman_{config.START_SHAPE}' in i]) // 3
 
                 torch.save(original_woman, f=f"./Saved_pointclouds_new/woman_{config.START_SHAPE}_original{w*config.save_pointclouds}.pt")
@@ -190,8 +190,8 @@ def main():
     mse = nn.MSELoss()
     chamferloss = ChamferLoss()
 
-    if args_gen.shape == 'feature_shape':
-        chamferloss = nn.PairwiseDistance()
+    # if args_gen.shape == 'feature_shape':
+    #     chamferloss = nn.PairwiseDistance()
     
     
     #load pretrained wheights from checkpoints
@@ -238,7 +238,7 @@ def main():
             wandb.log({"LossD": D, "LossG": G,"Adviserial_loss": adv, "Cycle_loss": cycle, "epoch": epoch+1})
         else: train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, return_loss)
         models, opts = [disc_FM, disc_M, gen_FM, gen_M], [opt_disc, opt_gen]
-        if config.SAVE_MODEL and return_loss and epoch+1 % 200==0:
+        if config.SAVE_MODEL and return_loss and (epoch+1) % 200 == 0:
             losses = [D, G] 
             save_checkpoint(epoch, models, opts, losses, filename=f"MODEL_OPTS_LOSSES_{config.START_SHAPE}_{epoch+1}.pth.tar")
         #elif config.SAVE_MODEL: save_checkpoint(epoch, models, opts, losses=None, filename=f"MODEL_OPTS_LOSSES_{epoch+1}.pth.tar")

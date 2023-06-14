@@ -2,7 +2,8 @@ import torch
 from utils import save_checkpoint, load_checkpoint
 import config
 from Generator import ReconstructionNet as Generator_Fold
-from Discriminator import get_model as Discriminator_Point
+from Disc_classifier import get_model as Discriminator_Point
+from Discriminator import get_model as Disc_load
 import torch.optim as optim
 #from torcheval.metrics import BinaryConfussionMatrix
 from PlotSpecifikkePointclouds import visualize_pc
@@ -101,8 +102,8 @@ def validation(gen_FM, gen_M, POINTNET_classifier, val_loader, vis_list_female, 
 def main():
     ### Initialize model and optimizer ###
     args_gen = config.get_parser_gen()
-    disc_M = Discriminator_Point(k=2, normal_channel=False).to(config.DEVICE)
-    disc_FM = Discriminator_Point(k=2, normal_channel=False).to(config.DEVICE)
+    disc_M = Disc_load(k=2, normal_channel=False).to(config.DEVICE)
+    disc_FM = Disc_load(k=2, normal_channel=False).to(config.DEVICE)
     gen_M = Generator_Fold(args_gen).to(config.DEVICE)
     gen_FM = Generator_Fold(args_gen).to(config.DEVICE)
 
@@ -134,7 +135,7 @@ def main():
     
 
     load_checkpoint(
-        "CLASSIFIER_MODEL_4.pth.tar",
+        "CLASSIFIER_MODEL_3_accuracy_0.65.pth.tar",
         models=[POINTNET_classifier],
         optimizers=[opt_class],
         lr=config.LEARNING_RATE

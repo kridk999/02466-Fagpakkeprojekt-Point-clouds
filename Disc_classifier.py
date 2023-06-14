@@ -10,15 +10,15 @@ scaler = SCALE
 class STN3d(nn.Module):
     def __init__(self, channel):
         super(STN3d, self).__init__()
-        self.conv1 = torch.nn.Conv1d(channel, 64, 1)
-        self.conv2 = torch.nn.Conv1d(64, 128, 1)
+        self.conv1 = torch.nn.Conv1d(channel, int(64*scaler), 1)
+        self.conv2 = torch.nn.Conv1d(int(64*scaler), 128, 1)
         self.conv3 = torch.nn.Conv1d(128, 1024, 1)
         self.fc1 = nn.Linear(1024, 512)
         self.fc2 = nn.Linear(512, 256)
         self.fc3 = nn.Linear(256, 9)
         self.relu = nn.ReLU()
 
-        self.bn1 = nn.BatchNorm1d(64)
+        self.bn1 = nn.BatchNorm1d(int(64*scaler))
         self.bn2 = nn.BatchNorm1d(128)
         self.bn3 = nn.BatchNorm1d(1024)
         self.bn4 = nn.BatchNorm1d(512)
@@ -55,11 +55,11 @@ class STNkd(nn.Module):
         self.fc3 = nn.Linear(256, k * k)
         self.relu = nn.ReLU()
 
-        self.bn1 = nn.BatchNorm1d(int(64*scaler))
-        self.bn2 = nn.BatchNorm1d(int(128*scaler))
-        self.bn3 = nn.BatchNorm1d(int(1024*scaler))
-        self.bn4 = nn.BatchNorm1d(int(512*scaler))
-        self.bn5 = nn.BatchNorm1d(int(256*scaler))
+        self.bn1 = nn.BatchNorm1d(64)
+        self.bn2 = nn.BatchNorm1d(128)
+        self.bn3 = nn.BatchNorm1d(1024)
+        self.bn4 = nn.BatchNorm1d(512)
+        self.bn5 = nn.BatchNorm1d(256)
 
         self.k = k
 
@@ -87,12 +87,12 @@ class PointNetEncoder(nn.Module):
     def __init__(self, global_feat=True, feature_transform=False, channel=3):
         super(PointNetEncoder, self).__init__()
         self.stn = STN3d(channel)
-        self.conv1 = torch.nn.Conv1d(channel, int(64*scaler), 1)
-        self.conv2 = torch.nn.Conv1d(int(64*scaler), int(128*scaler), 1)
-        self.conv3 = torch.nn.Conv1d(int(128*scaler), int(1024*scaler), 1)
-        self.bn1 = nn.BatchNorm1d(int(64*scaler))   
-        self.bn2 = nn.BatchNorm1d(int(128*scaler))  
-        self.bn3 = nn.BatchNorm1d(int(1024*scaler))
+        self.conv1 = torch.nn.Conv1d(channel, 64, 1)
+        self.conv2 = torch.nn.Conv1d(64, 128, 1)
+        self.conv3 = torch.nn.Conv1d(128, 1024, 1)
+        self.bn1 = nn.BatchNorm1d(64)   
+        self.bn2 = nn.BatchNorm1d(128)  
+        self.bn3 = nn.BatchNorm1d(1024)
         self.global_feat = global_feat
         self.feature_transform = feature_transform
         if self.feature_transform:
@@ -140,7 +140,7 @@ class get_model(nn.Module):
         else:
             channel = 3
         self.feat = PointNetEncoder(global_feat=True, feature_transform=True, channel=channel)
-        self.fc1 = nn.Linear(int(1024*scaler), int(512*scaler))
+        self.fc1 = nn.Linear(1024, int(512*scaler))
         self.fc2 = nn.Linear(int(512*scaler), int(256*scaler))
         self.fc3 = nn.Linear(int(256*scaler), k)
         self.dropout = nn.Dropout(p=0.4)

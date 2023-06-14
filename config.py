@@ -23,14 +23,14 @@ SAVE_MODEL = True
 RETURN_LOSS = True
 
 #For classifier 
-SCALE = 0.5
+SCALE = 0.25
 
 
 '''
 WANDB variables:
 '''
 WANDB_mode = 'online'                               # Can be 'offline or 'disabled'
-project = f'HPC_TRAIN_MODELS_newlambda' #f'HPC_RUN_{START_SHAPE}_{NUM_EPOCHS}epochs'
+project = f'HPC_TRAIN_MODELS_FINAL' #f'HPC_RUN_{START_SHAPE}_{NUM_EPOCHS}epochs'
 user = 'Jacobsk2000'
 display_name = f'HPC_RUN_{START_SHAPE}'
 
