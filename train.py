@@ -31,7 +31,7 @@ wandb.init(
 
 
 
-def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, return_loss, save_pcl=False):
+def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, return_loss, lambda_cycle, save_pcl=False):
     best_G_loss = 1e10
     best_D_loss = 1e10
     D_correct = 0
@@ -96,24 +96,22 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
 
        
         # Set chamfer loss ind
-        # if config.START_SHAPE == 'feature_shape':
-        #     cycle_female_loss = torch.mean(chamferloss(cycle_female.transpose(2,1), female.transpose(2,1))**2)
-        #     cycle_male_loss = torch.mean(chamferloss(cycle_male.transpose(2,1), male.transpose(2,1))**2)
-        # #if False: pass
+        if config.START_SHAPE == 'feature_shape':
+            cycle_female_loss = torch.mean(chamferloss(cycle_female.transpose(2,1), female.transpose(2,1))**2)
+            cycle_male_loss = torch.mean(chamferloss(cycle_male.transpose(2,1), male.transpose(2,1))**2)
+        #if False: pass
 
-        #else:
-        cycle_female_loss = chamferloss(cycle_female.transpose(2,1), female.transpose(2,1))
-        cycle_male_loss = chamferloss(cycle_male.transpose(2,1), male.transpose(2,1))
-
-        #mode_collapse_female_loss = chamferloss(female[0:config.BATCH_SIZE/2].transpose(2,1),female[config.BATCH_SIZE/2:config.BATCH_SIZE].transpose(2,1))
+        else:
+            cycle_female_loss = chamferloss(cycle_female.transpose(2,1), female.transpose(2,1))
+            cycle_male_loss = chamferloss(cycle_male.transpose(2,1), male.transpose(2,1))
 
 
         #Adding all generative losses together:
         G_loss = (
             loss_G_FM
             + loss_G_M
-            + cycle_female_loss * config.LAMBDA_CYCLE
-            + cycle_male_loss * config.LAMBDA_CYCLE
+            + cycle_female_loss * lambda_cycle
+            + cycle_male_loss * lambda_cycle
         )
 
         #Update the optimizer for the generator
@@ -134,12 +132,12 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
                         'fake_female_1234': wandb.Object3D(female_male.detach().transpose(-2,1).cpu().numpy()),
                         'cycle_male_1234': wandb.Object3D(cycle_man.detach().transpose(-2,1).cpu().numpy())}, commit = False)
                 
-                root = os.listdir("./Saved_pointclouds_new/")
-                m = len([i for i in root if f'fmale_{config.START_SHAPE}' in i]) // 3
+                root = os.listdir("./Saved_pointclouds/")
+                m = len([i for i in root if f'male_{config.START_SHAPE}' in i]) // 3
 
-                torch.save(original_man, f=f"./Saved_pointclouds_new/fmale_{config.START_SHAPE}_original_{m*config.save_pointclouds}.pt")
-                torch.save(female_male, f=f"./Saved_pointclouds_new/fmale_{config.START_SHAPE}_female_{m*config.save_pointclouds}.pt")
-                torch.save(cycle_man, f=f"./Saved_pointclouds_new/fmale_{config.START_SHAPE}_cycle_{m*config.save_pointclouds}.pt")
+                torch.save(original_man, f=f"./Saved_pointclouds_new/male_{config.START_SHAPE}_original_{m*config.save_pointclouds}.pt")
+                torch.save(female_male, f=f"./Saved_pointclouds_new/male_{config.START_SHAPE}_female_{m*config.save_pointclouds}.pt")
+                torch.save(cycle_man, f=f"./Saved_pointclouds_new/male_{config.START_SHAPE}_cycle_{m*config.save_pointclouds}.pt")
                 
 
             if 'SPRING1084.obj' in fem_ids:
@@ -152,14 +150,14 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
                         'fake_male_1084':wandb.Object3D(male_female.detach().transpose(-2,1).cpu().numpy()),
                         'cycle_female_1084':wandb.Object3D(cycle_woman.detach().transpose(-2,1).cpu().numpy()),}, commit = False)
                 
-                root = os.listdir("./Saved_pointclouds_new/")
-                w = len([i for i in root if f'fwoman_{config.START_SHAPE}' in i]) // 3
+                root = os.listdir("./Saved_pointclouds/")
+                w = len([i for i in root if f'woman_{config.START_SHAPE}' in i]) // 3
 
-                torch.save(original_woman, f=f"./Saved_pointclouds_new/fwoman_{config.START_SHAPE}_original{w*config.save_pointclouds}.pt")
-                torch.save(male_female, f=f"./Saved_pointclouds_new/fwoman_{config.START_SHAPE}_man{w*config.save_pointclouds}.pt")
-                torch.save(cycle_woman, f=f"./Saved_pointclouds_new/fwoman_{config.START_SHAPE}_cycle{w*config.save_pointclouds}.pt")
+                torch.save(original_woman, f=f"./Saved_pointclouds_new/woman_{config.START_SHAPE}_original{w*config.save_pointclouds}.pt")
+                torch.save(male_female, f=f"./Saved_pointclouds_new/woman_{config.START_SHAPE}_man{w*config.save_pointclouds}.pt")
+                torch.save(cycle_woman, f=f"./Saved_pointclouds_new/woman_{config.START_SHAPE}_cycle{w*config.save_pointclouds}.pt")
                 
-    
+
     if return_loss:
         return D_loss, G_loss, cycle_female_loss + cycle_male_loss, loss_G_FM + loss_G_M
     
@@ -168,6 +166,10 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
 
 def main():
     args_gen = config.get_parser_gen()
+    
+    lambda_cycle = config.LAMBDA_CYCLE
+    
+    
     #args_disc = config.get_parser_disc()
 
     disc_M = Discriminator_Point(k=2, normal_channel=False).to(config.DEVICE)
@@ -189,14 +191,11 @@ def main():
         betas=(0.5, 0.999),
     )
 
-    #scheduler_disc = torch.optim.lr_scheduler.StepLR(opt_disc, step_size=40, gamma=0.7)
-    #scheduler_gen = torch.optim.lr_scheduler.StepLR(opt_gen, step_size=40, gamma=0.7)
-
     mse = nn.MSELoss()
     chamferloss = ChamferLoss()
 
-    # if args_gen.shape == 'feature_shape':
-    #     chamferloss = nn.PairwiseDistance()
+    if args_gen.shape == 'feature_shape':
+        chamferloss = nn.PairwiseDistance()
     
     
     #load pretrained wheights from checkpoints
@@ -238,18 +237,22 @@ def main():
         if config.save_pointclouds:
             save_pcl = True if epoch % config.save_pointclouds == 0 else False
 
+        lambda_cycle = (config.LAMBDA_CYCLE - (config.LAMBDA_CYCLE * 0.001))
+        config.LAMBDA_CYCLE = lambda_cycle
+
         if return_loss:
-            D, G, cycle, adv = train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, return_loss, save_pcl)
+            D, G, cycle, adv = train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, return_loss, save_pcl, lambda_cycle)
             wandb.log({"LossD": D, "LossG": G,"Adviserial_loss": adv, "Cycle_loss": cycle, "epoch": epoch+1})
-        else: train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, return_loss)
+        else: train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, return_loss, lambda_cycle)
         models, opts = [disc_FM, disc_M, gen_FM, gen_M], [opt_disc, opt_gen]
-        if config.SAVE_MODEL and return_loss and (epoch+1) % 100 == 0:
+        if config.SAVE_MODEL and return_loss and (epoch+1) % 200==0:
             losses = [D, G] 
             save_checkpoint(epoch, models, opts, losses, filename=f"MODEL_OPTS_LOSSES_{config.START_SHAPE}_{epoch+1}.pth.tar")
         #elif config.SAVE_MODEL: save_checkpoint(epoch, models, opts, losses=None, filename=f"MODEL_OPTS_LOSSES_{epoch+1}.pth.tar")
-        #scheduler_disc.step()
-        #scheduler_gen.step()
-        print(f'The best Discriminator loss for epoch {epoch+1} is {D} and the Generator loss is {G}')
+        print(f'The best Discriminator loss for epoch {epoch+1} is {D} and the Generator loss is {G}, lambda: {lambda_cycle}')
+        
+        
+        
     wandb.finish()
 
 if __name__ == "__main__":

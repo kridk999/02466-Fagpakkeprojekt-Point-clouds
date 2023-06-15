@@ -9,27 +9,47 @@ from utils import ChamferLoss
 import math
 import numpy as np
 import scipy
+from Generator import ReconstructionNet as Generator_Fold
+import torch.optim as optim
+from utils import load_checkpoint
+from Discriminator import get_model as Discriminator_Point
+from PlotSpecifikkePointclouds import visualize_pc
 
-def train_one_epoch(loader):
+train_data = False
+generated_data = True
+shape = "gaussian"
+
+
+
+def train_one_epoch(gen_M, gen_FM, loader):
 
     train_loop = tqdm(loader, leave=True)
     males = []
     females = []
+    fake_females = []
+    fake_males = []
     for idx, data in enumerate(train_loop):
         female = data['pc_female'].to(config.DEVICE)
         male = data['pc_male'].to(config.DEVICE)
+        fake_female = gen_FM(male)[0].to(config.DEVICE)
+        fake_male = gen_M(female)[0].to(config.DEVICE)
+        fake_females.append(fake_female.detach())
+        fake_males.append(fake_male.detach())
         males.append(male)
         females.append(female)
-        fem_ids = data['f_id']
-        male_ids = data['m_id']
-
-    return males, females
-
+        # Generating fakes
+    # for i in range(len(males)):
+    #     fake_female = gen_FM(males[i])[0].to(config.DEVICE)
+    #     fake_male = gen_M(females[i])[0].to(config.DEVICE)
+    #     fake_females.append(fake_female.detach())
+    #     fake_males.append(fake_male.detach())
+        
+    return males, females, fake_females, fake_males
 
 def chamf_mean(pcs, chamferloss):
     if pcs[-1].size()[0] != pcs[-2].size()[0]:
         del pcs[-1]
-    out = [torch.sqrt(chamferloss(x.transpose(2,1), y.transpose(2,1))) for i, x in enumerate(pcs) for j, y in enumerate(pcs) if i != j]
+    out = [(chamferloss(x.transpose(2,1), y.transpose(2,1))) for i, x in enumerate(pcs) for j, y in enumerate(pcs) if i != j]
     
     return torch.mean(torch.tensor(out)), torch.tensor(out)
 
@@ -52,7 +72,15 @@ def main():
     args_gen = config.get_parser_gen()
     chamferloss = ChamferLoss()
     
-    #males(chamferloss)
+    gen_M = Generator_Fold(args_gen).to(config.DEVICE)
+    gen_FM = Generator_Fold(args_gen).to(config.DEVICE)
+    
+    load_checkpoint(
+            "MODEL_OPTS_LOSSES_sphere_10.pth.tar",
+            models=[gen_FM, gen_M],
+            optimizers=[],
+            lr=config.LEARNING_RATE,
+        )
     
     #load training dataset
     if args_gen.dataset == 'dataset':
@@ -90,22 +118,18 @@ def main():
             collate_fn=config.collate_fn
             )
     
-    
-    
-    male, female = train_one_epoch(loader)
-    
-    mean_male, out_male = chamf_mean(male, chamferloss)
+    male, female, fake_female, fake_male = train_one_epoch(gen_M, gen_FM, loader)
+
     mean_female, out_female = chamf_mean(female, chamferloss)
-    
-    
-    print(mean_male, mean_female)
-    print(out_male, out_female)
-    print(torch_compute_confidence_interval(out_male))
-    print(torch_compute_confidence_interval(out_female))
-        
+    mean_male, out_male = chamf_mean(male, chamferloss)
+    CI_male = torch_compute_confidence_interval(out_male)
+    CI_female =  torch_compute_confidence_interval(out_female)   
+    mean_fake_female, out_fake_female = chamf_mean(fake_female, chamferloss)
+    mean_fake_male, out_fake_male = chamf_mean(fake_male, chamferloss)
+    CI_fake_male = torch_compute_confidence_interval(out_fake_male)
+    CI_fake_female =  torch_compute_confidence_interval(out_fake_female)
+
+
 if __name__ == "__main__":
-    
-    data = PointCloudDataset()
-    
     main()
     

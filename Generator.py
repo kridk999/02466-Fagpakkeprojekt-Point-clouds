@@ -69,6 +69,7 @@ def local_cov(pts, idx):
 class FoldNet_Encoder(nn.Module):
     def __init__(self, args):
         super(FoldNet_Encoder, self).__init__()
+        self.shape = args.shape
         if args.k == None:
             self.k = 16
         else:
@@ -120,10 +121,9 @@ class FoldNet_Encoder(nn.Module):
         idx = knn(pts, k=self.k)
         x = local_cov(pts, idx)                 # (batch_size, 3, num_points) -> (batch_size, 12, num_points])            
         x = self.mlp1(x)                        # (batch_size, 12, num_points) -> (batch_size, 64, num_points])
-        if self.shape == 'feature_shape':
+        if self.shape == "feature_shape":
             global feature_shape
-            feature_shape = self.mlp3(x)
-             
+            feature_shape = self.mlp3(x)  
         x = self.graph_layer(x, idx)            # (batch_size, 64, num_points) -> (batch_size, 1024, num_points)
         x = torch.max(x, 2, keepdim=True)[0]    # (batch_size, 1024, num_points) -> (batch_size, 1024, 1)
         x = self.mlp2(x)                        # (batch_size, 1024, 1) -> (batch_size, feat_dims, 1)
