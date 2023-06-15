@@ -10,7 +10,7 @@ VAL_DIR = "data/val"
 FURTHEST_DISTANCE = 1.1048446043276023
 SAMPLE_POINTS = 2048
 DECODE_M = 2025 #isqrt(SAMPLE_POINTS)                             # kvrod(2025)
-BATCH_SIZE = 32
+BATCH_SIZE = 2
 LEARNING_RATE = 1e-4
 LAMBDA_CYCLE = 1100
 NUM_WORKERS = 7
@@ -29,7 +29,7 @@ SCALE = 0.5
 '''
 WANDB variables:
 '''
-WANDB_mode = 'online'                               # Can be 'offline or 'disabled'
+WANDB_mode = 'disabled'                               # Can be 'offline or 'disabled'
 project = f'HPC_TRAIN_MODELS_TEST' #f'HPC_RUN_{START_SHAPE}_{NUM_EPOCHS}epochs'
 user = 's214609'
 display_name = f'HPC_RUN_{START_SHAPE}_TEST'

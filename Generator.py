@@ -137,8 +137,8 @@ class FoldNet_Decoder(nn.Module):
         self.shape = args.shape
         if self.shape == 'feature_shape': self.m = 2048
         self.meshgrid = [[-1, 1, int(np.sqrt(self.m))], [-1, 1, int(np.sqrt(self.m))]]
-        self.sphere = np.load("sphere.npy")
-        self.gaussian = np.load("gaussian.npy")
+        self.sphere = np.load("Shapes/sphere.npy")
+        self.gaussian = np.load("Shapes/gaussian.npy")
         if self.shape == 'plane':
             self.folding1 = nn.Sequential(
                 nn.Conv1d(args.feat_dims+2, args.feat_dims, 1),

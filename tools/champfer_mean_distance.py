@@ -13,7 +13,7 @@ from Generator import ReconstructionNet as Generator_Fold
 import torch.optim as optim
 from utils import load_checkpoint
 from Discriminator import get_model as Discriminator_Point
-from PlotSpecifikkePointclouds import visualize_pc
+from Visualize_tool import visualize_pc
 
 train_data = True
 generated_data = False

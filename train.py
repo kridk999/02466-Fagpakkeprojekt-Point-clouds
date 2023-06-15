@@ -31,7 +31,7 @@ wandb.init(
 
 
 
-def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, return_loss, lambda_cycle, save_pcl=False):
+def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, return_loss, save_pcl=False):
     best_G_loss = 1e10
     best_D_loss = 1e10
     D_correct = 0
@@ -110,8 +110,8 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
         G_loss = (
             loss_G_FM
             + loss_G_M
-            + cycle_female_loss * lambda_cycle
-            + cycle_male_loss * lambda_cycle
+            + cycle_female_loss * config.LAMBDA_CYCLE
+            + cycle_male_loss * config.LAMBDA_CYCLE
         )
 
         #Update the optimizer for the generator
@@ -167,7 +167,6 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
 def main():
     args_gen = config.get_parser_gen()
     
-    lambda_cycle = config.LAMBDA_CYCLE
     
     
     #args_disc = config.get_parser_disc()
@@ -241,15 +240,15 @@ def main():
         config.LAMBDA_CYCLE = lambda_cycle
 
         if return_loss:
-            D, G, cycle, adv = train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, return_loss, save_pcl, lambda_cycle)
+            D, G, cycle, adv = train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, return_loss, save_pcl)
             wandb.log({"LossD": D, "LossG": G,"Adviserial_loss": adv, "Cycle_loss": cycle, "epoch": epoch+1})
-        else: train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, return_loss, lambda_cycle)
+        else: train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, return_loss)
         models, opts = [disc_FM, disc_M, gen_FM, gen_M], [opt_disc, opt_gen]
         if config.SAVE_MODEL and return_loss and (epoch+1) % 200==0:
             losses = [D, G] 
             save_checkpoint(epoch, models, opts, losses, filename=f"MODEL_OPTS_LOSSES_{config.START_SHAPE}_{epoch+1}.pth.tar")
         #elif config.SAVE_MODEL: save_checkpoint(epoch, models, opts, losses=None, filename=f"MODEL_OPTS_LOSSES_{epoch+1}.pth.tar")
-        print(f'The best Discriminator loss for epoch {epoch+1} is {D} and the Generator loss is {G}, lambda: {lambda_cycle}')
+        print(f'The best Discriminator loss for epoch {epoch+1} is {D} and the Generator loss is {G}')
         
         
         
