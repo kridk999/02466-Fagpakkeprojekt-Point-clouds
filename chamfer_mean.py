@@ -15,9 +15,9 @@ from utils import load_checkpoint
 from Discriminator import get_model as Discriminator_Point
 from PlotSpecifikkePointclouds import visualize_pc
 
-train_data = False
-generated_data = True
-shape = "gaussian"
+train_data = True
+generated_data = False
+shape = "plane"
 
 
 
@@ -31,10 +31,11 @@ def train_one_epoch(gen_M, gen_FM, loader):
     for idx, data in enumerate(train_loop):
         female = data['pc_female'].to(config.DEVICE)
         male = data['pc_male'].to(config.DEVICE)
-        fake_female = gen_FM(male)[0].to(config.DEVICE)
-        fake_male = gen_M(female)[0].to(config.DEVICE)
-        fake_females.append(fake_female.detach())
-        fake_males.append(fake_male.detach())
+        if generated_data:
+            fake_female = gen_FM(male)[0].to(config.DEVICE)
+            fake_male = gen_M(female)[0].to(config.DEVICE)
+            fake_females.append(fake_female.detach())
+            fake_males.append(fake_male.detach())
         males.append(male)
         females.append(female)
         # Generating fakes
@@ -43,8 +44,10 @@ def train_one_epoch(gen_M, gen_FM, loader):
     #     fake_male = gen_M(females[i])[0].to(config.DEVICE)
     #     fake_females.append(fake_female.detach())
     #     fake_males.append(fake_male.detach())
-        
-    return males, females, fake_females, fake_males
+    
+    if generated_data:
+        return males, females, fake_females, fake_males
+    return males, females
 
 def chamf_mean(pcs, chamferloss):
     if pcs[-1].size()[0] != pcs[-2].size()[0]:
@@ -75,12 +78,13 @@ def main():
     gen_M = Generator_Fold(args_gen).to(config.DEVICE)
     gen_FM = Generator_Fold(args_gen).to(config.DEVICE)
     
-    load_checkpoint(
-            "MODEL_OPTS_LOSSES_sphere_10.pth.tar",
-            models=[gen_FM, gen_M],
-            optimizers=[],
-            lr=config.LEARNING_RATE,
-        )
+    if generated_data:
+        load_checkpoint(
+                "MODEL_OPTS_LOSSES_plane_10.pth.tar",
+                models=[gen_FM, gen_M],
+                optimizers=[],
+                lr=config.LEARNING_RATE,
+            )
     
     #load training dataset
     if args_gen.dataset == 'dataset':
@@ -102,7 +106,7 @@ def main():
     )
 
     val_loader = DataLoader(val_dataset,
-            batch_size=13,
+            batch_size=10,
             shuffle=False,
             pin_memory=True,
             collate_fn=config.collate_fn
@@ -118,16 +122,37 @@ def main():
             collate_fn=config.collate_fn
             )
     
-    male, female, fake_female, fake_male = train_one_epoch(gen_M, gen_FM, loader)
+    
+    if generated_data:
+        male, female, fake_female, fake_male = train_one_epoch(gen_M, gen_FM, loader)
+        male, female = train_one_epoch(gen_M, gen_FM, loader)
+        mean_female, out_female = chamf_mean(female, chamferloss)
+        mean_male, out_male = chamf_mean(male, chamferloss)
+        CI_male = torch_compute_confidence_interval(out_male)
+        CI_female =  torch_compute_confidence_interval(out_female)   
+        mean_fake_female, out_fake_female = chamf_mean(fake_female, chamferloss)
+        mean_fake_male, out_fake_male = chamf_mean(fake_male, chamferloss)
+        CI_fake_male = torch_compute_confidence_interval(out_fake_male)
+        CI_fake_female =  torch_compute_confidence_interval(out_fake_female)
+        
+        print("CI")
+        print(CI_female, CI_male)
+        print("FAKE CI")
+        print(CI_fake_female, CI_fake_male)
+        
 
-    mean_female, out_female = chamf_mean(female, chamferloss)
-    mean_male, out_male = chamf_mean(male, chamferloss)
-    CI_male = torch_compute_confidence_interval(out_male)
-    CI_female =  torch_compute_confidence_interval(out_female)   
-    mean_fake_female, out_fake_female = chamf_mean(fake_female, chamferloss)
-    mean_fake_male, out_fake_male = chamf_mean(fake_male, chamferloss)
-    CI_fake_male = torch_compute_confidence_interval(out_fake_male)
-    CI_fake_female =  torch_compute_confidence_interval(out_fake_female)
+    if train_data:
+        male, female = train_one_epoch(gen_M, gen_FM, val_loader)
+        mean_female, out_female = chamf_mean(female, chamferloss)
+        mean_male, out_male = chamf_mean(male, chamferloss)
+        CI_male = torch_compute_confidence_interval(out_male)
+        CI_female =  torch_compute_confidence_interval(out_female)   
+
+        print("CI")
+        print(CI_female, CI_male)
+        breakpoint()
+        print(out_male)
+
 
 
 if __name__ == "__main__":
