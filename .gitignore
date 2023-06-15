@@ -11,3 +11,5 @@ Saved_pointclouds/*
 *.pth.tar
 
 hpc.sh
+
+train-ideas.py

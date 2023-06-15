@@ -178,7 +178,7 @@ def main():
     #     )
     
     loader = DataLoader(dataset,
-            batch_size=32,
+            batch_size=16,
             shuffle=True,
             num_workers=config.NUM_WORKERS,
             pin_memory=True,

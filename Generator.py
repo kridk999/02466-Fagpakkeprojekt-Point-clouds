@@ -91,6 +91,17 @@ class FoldNet_Encoder(nn.Module):
             nn.ReLU(),
             nn.Conv1d(args.feat_dims, args.feat_dims, 1),
         )
+        # MLP for our experiment with a new shape, which is created based on the given input
+        if args.shape == 'feature_shape':
+            self.shape = 'feature_shape'
+            self.mlp3 = nn.Sequential(
+                nn.Conv1d(64, 32, 1),
+                nn.ReLU(),
+                nn.Conv1d(32, 32, 1),
+                nn.ReLU(),
+                nn.Conv1d(32, 3, 1),
+                nn.Tanh(),
+            )
         
 
     def graph_layer(self, x, idx):           
@@ -109,8 +120,10 @@ class FoldNet_Encoder(nn.Module):
         idx = knn(pts, k=self.k)
         x = local_cov(pts, idx)                 # (batch_size, 3, num_points) -> (batch_size, 12, num_points])            
         x = self.mlp1(x)                        # (batch_size, 12, num_points) -> (batch_size, 64, num_points])
-        global feature_shape
-        feature_shape = x 
+        if self.shape == 'feature_shape':
+            global feature_shape
+            feature_shape = self.mlp3(x)
+             
         x = self.graph_layer(x, idx)            # (batch_size, 64, num_points) -> (batch_size, 1024, num_points)
         x = torch.max(x, 2, keepdim=True)[0]    # (batch_size, 1024, num_points) -> (batch_size, 1024, 1)
         x = self.mlp2(x)                        # (batch_size, 1024, 1) -> (batch_size, feat_dims, 1)
@@ -149,16 +162,7 @@ class FoldNet_Decoder(nn.Module):
             nn.ReLU(),
             nn.Conv1d(args.feat_dims, 3, 1),
         )
-        # MLP for our experiment with a new shape, which is created based on the given input
-        if self.shape == 'feature_shape':
-            self.mlp3 = nn.Sequential(
-                nn.Conv1d(64, 32, 1),
-                nn.ReLU(),
-                nn.Conv1d(32, 32, 1),
-                nn.ReLU(),
-                nn.Conv1d(32, 3, 1),
-                nn.Tanh(),
-            )
+        
 
     def build_grid(self, batch_size):
         if self.shape == 'plane':
@@ -170,8 +174,7 @@ class FoldNet_Decoder(nn.Module):
         elif self.shape == 'gaussian':
             points = self.gaussian
         elif self.shape == 'feature_shape':
-            points = self.mlp3(feature_shape)
-            return points.transpose(2,1).float()
+            return feature_shape.transpose(2,1).float()
         points = np.repeat(points[np.newaxis, ...], repeats=batch_size, axis=0)
         points = torch.tensor(points)
         return points.float()
