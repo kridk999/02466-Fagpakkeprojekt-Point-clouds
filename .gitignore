@@ -8,6 +8,10 @@ data/*
 
 Saved_pointclouds/*
 
+Saved_pointclouds_new/*
+
+Test-pointclouds/*
+
 *.pth.tar
 
 hpc.sh

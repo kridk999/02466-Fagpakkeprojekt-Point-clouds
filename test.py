@@ -8,7 +8,7 @@ import torch.optim as optim
 #from torcheval.metrics import BinaryConfussionMatrix
 from PlotSpecifikkePointclouds import visualize_pc
 from tqdm import tqdm
-import seaborn as sn
+import seaborn as sns
 import pandas as pd
 import matplotlib.pyplot as plt
 from torch.utils.data import DataLoader
@@ -174,8 +174,15 @@ def main():
 
         for i in range(3):
             df_cm = pd.DataFrame(np.array([[cf_mat['TP'][i],cf_mat['FP'][i]],[cf_mat['FN'][i],cf_mat['TN'][i]]]), index=['Female','Male'], columns=['Female_True','Male_true'])
-            plt.figure(figsize=(10,7))
-            sn.heatmap(df_cm,annot=True)
+            plt.figure(figsize=(8,6), dpi=100)
+            sns.set(font_scale = 1.1)
+            ax = sns.heatmap(df_cm, annot=True, fmt='d',cmap="Blues",cbar=False, annot_kws={"size": 20})
+            ax.set_xlabel("True labes", fontsize=16, labelpad=20)
+            ax.xaxis.set_ticklabels(['Female', 'Male'])
+            ax.set_ylabel("Predicted", fontsize=16, labelpad=20)
+            ax.yaxis.set_ticklabels(['Female', 'Male'])
+            # set plot title
+            ax.set_title("Classifiers predictions on original test data", fontsize=20, pad=20)
             plt.show()
 
         
