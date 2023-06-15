@@ -14,7 +14,7 @@ import wandb
 
 
 
-from Disc_classifier import get_model as Pointnet_model
+from modified_Discriminator import get_model as Pointnet_model
 
 wandb.init(
     # set the wandb project where this run will be logged
