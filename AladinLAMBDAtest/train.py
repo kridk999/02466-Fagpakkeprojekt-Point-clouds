@@ -192,7 +192,7 @@ def main():
     d_scaler = torch.cuda.amp.GradScaler()
 
     for epoch in range(config.NUM_EPOCHS):
-        losses, ratio, ratio1 = train_fn(
+        ratio, ratio1 = train_fn(
             disc_H,
             disc_Z,
             gen_Z,
