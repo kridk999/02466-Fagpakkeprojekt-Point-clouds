@@ -31,7 +31,7 @@ wandb.init(
 
 
 
-def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, return_loss, save_pcl=False):
+def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, return_loss, save_pcl=False, epoch=0):
     best_G_loss = 1e10
     best_D_loss = 1e10
     D_correct = 0
@@ -112,8 +112,8 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
         G_loss = (
             loss_G_FM
             + loss_G_M
-            + cycle_female_loss * config.LAMBDA_CYCLE
-            + cycle_male_loss * config.LAMBDA_CYCLE
+            + cycle_female_loss * (config.LAMBDA_CYCLE-epoch*0.7)
+            + cycle_male_loss * (config.LAMBDA_CYCLE-epoch * 0.7)
         )
 
         #Update the optimizer for the generator
@@ -239,7 +239,7 @@ def main():
             save_pcl = True if epoch % config.save_pointclouds == 0 else False
 
         if return_loss:
-            D, G, cycle, adv = train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, return_loss, save_pcl)
+            D, G, cycle, adv = train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, return_loss, save_pcl, epoch)
             wandb.log({"LossD": D, "LossG": G,"Adviserial_loss": adv, "Cycle_loss": cycle, "epoch": epoch+1})
         else: train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, return_loss)
         models, opts = [disc_FM, disc_M, gen_FM, gen_M], [opt_disc, opt_gen]
