@@ -9,9 +9,9 @@ import os
 import config
 import torch.optim as optim
 from utils import save_checkpoint, load_checkpoint, ChamferLoss
-from Generator import ReconstructionNet as Generator_Fold
-from Discriminator import get_model as Discriminator_Point
-from PlotSpecifikkePointclouds import visualize_pc
+from cycleGAN_models.Generator import ReconstructionNet as Generator_Fold
+from cycleGAN_models.Discriminator import get_model as Discriminator_Point
+from tools.Visualize_tool import visualize_pc
 import wandb
 
 

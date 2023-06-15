@@ -9,11 +9,11 @@ from utils import ChamferLoss
 import math
 import numpy as np
 import scipy
-from Generator import ReconstructionNet as Generator_Fold
+from cycleGAN_models.Generator import ReconstructionNet as Generator_Fold
 import torch.optim as optim
 from utils import load_checkpoint
-from Discriminator import get_model as Discriminator_Point
-from Visualize_tool import visualize_pc
+from cycleGAN_models.Discriminator import get_model as Discriminator_Point
+from tools.Visualize_tool import visualize_pc
 
 train_data = True
 generated_data = False

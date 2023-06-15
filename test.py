@@ -1,12 +1,12 @@
 import torch
 from utils import save_checkpoint, load_checkpoint
 import config
-from Generator import ReconstructionNet as Generator_Fold
+from cycleGAN_models.Generator import ReconstructionNet as Generator_Fold
 from modified_Discriminator import get_model as Discriminator_Point
-from Discriminator import get_model as Disc_load
+from cycleGAN_models.Discriminator import get_model as Disc_load
 import torch.optim as optim
 #from torcheval.metrics import BinaryConfussionMatrix
-from PlotSpecifikkePointclouds import visualize_pc
+from tools.Visualize_tool import visualize_pc
 from tqdm import tqdm
 import seaborn as sns
 import pandas as pd

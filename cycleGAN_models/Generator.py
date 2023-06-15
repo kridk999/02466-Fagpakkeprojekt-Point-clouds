@@ -7,7 +7,7 @@ import numpy as np
 import itertools
 from utils import ChamferLoss, CrossEntropyLoss
 import config
-from PlotSpecifikkePointclouds import visualize_pc
+from tools.Visualize_tool import visualize_pc
 from dataloader_dataset import PointCloudDataset
 
 
