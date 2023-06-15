@@ -135,7 +135,7 @@ def main():
     
 
     load_checkpoint(
-        "CLASSIFIER_MODEL_4_accuracy_0.995.pth.tar",
+        "CLASSIFIER_MODEL_1_accuracy_0.93     .pth.tar",
         models=[POINTNET_classifier],
         optimizers=[opt_class],
         lr=config.LEARNING_RATE
@@ -182,7 +182,8 @@ def main():
             ax.set_ylabel("Predicted", fontsize=16, labelpad=20)
             ax.yaxis.set_ticklabels(['Female', 'Male'])
             # set plot title
-            ax.set_title("Classifiers predictions on original test data", fontsize=20, pad=20)
+            type_list = ['original', 'fake','cycle']
+            ax.set_title(f"Classifiers predictions on {type_list[i]} test data", fontsize=20, pad=20)
             plt.show()
 
         
