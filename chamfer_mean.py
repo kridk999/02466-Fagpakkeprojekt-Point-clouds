@@ -78,12 +78,13 @@ def main():
     gen_M = Generator_Fold(args_gen).to(config.DEVICE)
     gen_FM = Generator_Fold(args_gen).to(config.DEVICE)
     
-    load_checkpoint(
-            "MODEL_OPTS_LOSSES_plane_10.pth.tar",
-            models=[gen_FM, gen_M],
-            optimizers=[],
-            lr=config.LEARNING_RATE,
-        )
+    if generated_data:
+        load_checkpoint(
+                "MODEL_OPTS_LOSSES_plane_10.pth.tar",
+                models=[gen_FM, gen_M],
+                optimizers=[],
+                lr=config.LEARNING_RATE,
+            )
     
     #load training dataset
     if args_gen.dataset == 'dataset':
