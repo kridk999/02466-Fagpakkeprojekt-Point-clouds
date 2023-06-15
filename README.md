@@ -1,2 +1,30 @@
 # 02466-Fagpakkeprojekt-Point-clouds
-Et repository til vores fagpakkeprojekt for geometrisk style transfer på point clouds
+This GitHub repository for course: 02466 | authors: s214596 , s214638 and s214609
+---
+
+This repository is for the 02466 Project work - Bachelor of Artificial Intelligence and Data course.
+This project aims to answer the questions:
+*  To what extent will the use of a cycleGAN-model be able to generate visually convinc-
+ing results for geometric style transfer on point clouds?
+*  How does the model, using four different input shapes (plane, sphere, gaussian distri-
+bution, and a self learned feature shape) in the generator, compare in terms of their
+effectiveness in achieving geometric style transfer for point clouds?
+
+
+This repository is built of using the PyTorch framework. The main file for this project to carry out experiments is the train.py file. Running this file will start the training of the cycleGAN, save the models and start a weights and biases pipeline to follow the training. A main config file 'config.py' is used to configure the arguments such as start_shape, epochs, data dirs and hyperparameters for the cycleGAN.
+
+All dependencies required to run the code can be installed with the requirement.txt file with the following code:
+
+`python3 -m pip install -r requirements.txt`
+
+For the final results produced in the paper, we used the following config settings:
+~~~
+SAMPLE_POINTS = 2048
+DECODE_M = 2025
+BATCH_SIZE = 32
+LEARNING_RATE = 1e-4
+LAMBDA_CYCLE = 1100
+NUM_WORKERS = 7
+NUM_EPOCHS = 1201
+save_pointclouds = 20  
+~~~
