@@ -89,6 +89,9 @@ def train_fn(
 
         ratio = (cycle_zebra_loss + cycle_horse_loss) * config.LAMBDA_CYCLE / (loss_G_Z + loss_G_H) 
 
+        print(cycle_zebra_loss + cycle_horse_loss)
+        print(loss_G_H + loss_G_Z)
+        
         print(ratio.data)
 
         opt_gen.zero_grad()
