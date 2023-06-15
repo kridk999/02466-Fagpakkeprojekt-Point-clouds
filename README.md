@@ -57,6 +57,9 @@ and then run the code to start the cycleGAN training. This will intitialize a wa
 ~~~
 python3 train.py
 ~~~
+## Results
+___
+Maybe include a sections with our results from the cycleGAN?
 
 ## Credits
 ___
