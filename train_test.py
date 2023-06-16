@@ -258,7 +258,7 @@ def main():
             losses = [D, G] 
             save_checkpoint(epoch, models, opts, losses, filename=f"MODEL_OPTS_LOSSES_{config.START_SHAPE}_{epoch+1}.pth.tar")
         #elif config.SAVE_MODEL: save_checkpoint(epoch, models, opts, losses=None, filename=f"MODEL_OPTS_LOSSES_{epoch+1}.pth.tar")
-        print(f'The best Discriminator loss for epoch {epoch+1} is {D} and the Generator loss is {G}')
+        print(f'The best Discriminator loss for epoch {epoch+1} is {D} and the Generator loss is {G} lambda: {lambda_cycle}')
         
         
         
