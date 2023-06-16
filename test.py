@@ -36,6 +36,7 @@ def validation(gen_FM, gen_M, POINTNET_classifier, val_loader, vis_list_female, 
         fake_female = gen_FM(male)[0]
         fake_male = gen_M(female)[0]
         
+        breakpoint()
 
         # Generate cycles
         cycle_female = gen_FM(fake_male)[0]
@@ -134,12 +135,12 @@ def main():
 
     
 
-    load_checkpoint(
-        "CLASSIFIER_MODEL_1_accuracy_0.93.pth.tar",
-        models=[POINTNET_classifier],
-        optimizers=[opt_class],
-        lr=config.LEARNING_RATE
-    )
+    # load_checkpoint(
+    #     "CLASSIFIER_MODEL_1_accuracy_0.93.pth.tar",
+    #     models=[POINTNET_classifier],
+    #     optimizers=[opt_class],
+    #     lr=config.LEARNING_RATE
+    # )
     
     val_dataset = PointCloudDataset(
         root_female=config.VAL_DIR + "/female_test",
@@ -158,16 +159,17 @@ def main():
     vis_list_female = ['SPRING0380.obj','SPRING0400.obj','SPRING0469.obj']
     vis_list_male = ['SPRING0223.obj','SPRING0300.obj','SPRING0320.obj']
 
-    for shape in ['plane', 'sphere', 'gaussian']:#,'feature_shape']:
+    for shape in ['sphere']:#,'feature_shape']:
         args_gen.shape = shape
         gen_M = Generator_Fold(args_gen).to(config.DEVICE)
         gen_FM = Generator_Fold(args_gen).to(config.DEVICE)
         load_checkpoint(
-            f"MODEL_OPTS_LOSSES_{shape}_1201.pth.tar",
+            f"MODEL_OPTS_LOSSES_gaussian_1201.pth.tar",
             models=[disc_FM, disc_M, gen_FM, gen_M],
             optimizers=[opt_disc, opt_gen],
             lr=config.LEARNING_RATE,
         )
+        
         #gen_FM, gen_M, POINTNET_classifier = gen_FM.eval(), gen_M.eval(), POINTNET_classifier.eval()
 
         cf_mat = validation(gen_FM, gen_M, POINTNET_classifier, val_loader, vis_list_female, vis_list_male, shape)
