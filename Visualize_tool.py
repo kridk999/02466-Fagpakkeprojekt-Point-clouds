@@ -1,6 +1,6 @@
 
-import config
-import dataloader_dataset
+import config as config
+import dataloader_dataset as dataloader_dataset
 from utils import save_checkpoint, load_checkpoint, ChamferLoss, visualize
 from dataloader_dataset import PointCloudDataset
 import matplotlib.pyplot as plt
@@ -92,9 +92,9 @@ def visualize_pc(point_cloud, visualize = False, axisoff = True,axislim=0.67,dot
     fig = plt.figure()
     ax = fig.add_subplot(projection="3d")
     ax.scatter(point_cloud[:, 0], point_cloud[:, 1], point_cloud[:, 2], c=color_per_point/255.0, s=dotsize)
-    ax.set_xlim3d(-axislim,axislim)
-    ax.set_ylim3d(-axislim,axislim)
-    ax.set_zlim3d(-axislim,axislim)
+    ax.set_xlim3d(torch.min(point_cloud[0][0,:]),torch.max(point_cloud[0][0,:]))
+    ax.set_ylim3d(torch.min(point_cloud[0][1,:]),torch.max(point_cloud[0][1,:]))
+    ax.set_zlim3d(torch.min(point_cloud[0][2,:]),torch.max(point_cloud[0][2,:]))
     ax.set_box_aspect((1,1,1)) 
     ax.view_init(elev=20,azim=-170,roll=0)
     if axisoff:
@@ -117,8 +117,8 @@ if __name__=='__main__':
 
     original = data[5]["m_pcs"]
 
-    sphere = torch.from_numpy(np.load('sphere.npy')).float()
-    gauss = torch.from_numpy(np.load('gaussian.npy')).float()
+    sphere = torch.from_numpy(np.load('Shapes/sphere.npy')).float()
+    gauss = torch.from_numpy(np.load('Shapes/gaussian.npy')).float()
 
  
     #create plane

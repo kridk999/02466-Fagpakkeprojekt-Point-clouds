@@ -7,7 +7,7 @@ import numpy as np
 import itertools
 from utils import ChamferLoss, CrossEntropyLoss
 import config as config
-from tools.Visualize_tool import visualize_pc
+from Visualize_tool import visualize_pc
 from dataloader_dataset import PointCloudDataset
 
 
@@ -184,10 +184,13 @@ class FoldNet_Decoder(nn.Module):
         points = self.build_grid(x.shape[0]).transpose(1, 2)  # (batch_size, 2, num_points) or (batch_size, 3, num_points)
         if x.get_device() != -1:
             points = points.cuda(x.get_device())
+        breakpoint()
         cat1 = torch.cat((x, points), dim=1)            # (batch_size, feat_dims+2, num_points) or (batch_size, feat_dims+3, num_points)
         folding_result1 = self.folding1(cat1)           # (batch_size, 3, num_points)
+        breakpoint()
         cat2 = torch.cat((x, folding_result1), dim=1)   # (batch_size, 515, num_points)
         folding_result2 = self.folding2(cat2)           # (batch_size, 3, num_points)
+        breakpoint()
         return folding_result2.transpose(1, 2)          # (batch_size, num_points ,3)
 
 class ReconstructionNet(nn.Module):
