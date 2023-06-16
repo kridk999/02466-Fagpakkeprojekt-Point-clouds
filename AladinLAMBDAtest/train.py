@@ -102,6 +102,11 @@ def train_fn(
             )
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+        adv = (loss_G_Z + loss_G_H)
+        cycle = (cycle_zebra_loss + cycle_horse_loss) * config.LAMBDA_CYCLE
+>>>>>>> fbd86caf4bda86fde3d919294279e29abafad5a0
 =======
         adv = (loss_G_Z + loss_G_H)
         cycle = (cycle_zebra_loss + cycle_horse_loss) * config.LAMBDA_CYCLE
@@ -123,7 +128,11 @@ def train_fn(
         loop.set_postfix(H_real=H_reals / (idx + 1), H_fake=H_fakes / (idx + 1))
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     return ratio, ratio1
+=======
+    return ratio, ratio1, adv, cycle
+>>>>>>> fbd86caf4bda86fde3d919294279e29abafad5a0
 =======
     return ratio, ratio1, adv, cycle
 >>>>>>> fbd86caf4bda86fde3d919294279e29abafad5a0
@@ -202,7 +211,11 @@ def main():
 
     for epoch in range(config.NUM_EPOCHS):
 <<<<<<< HEAD
+<<<<<<< HEAD
         ratio, ratio1 = train_fn(
+=======
+        ratio, ratio1, adv, cycle = train_fn(
+>>>>>>> fbd86caf4bda86fde3d919294279e29abafad5a0
 =======
         ratio, ratio1, adv, cycle = train_fn(
 >>>>>>> fbd86caf4bda86fde3d919294279e29abafad5a0
@@ -220,7 +233,11 @@ def main():
         )
         
 <<<<<<< HEAD
+<<<<<<< HEAD
         wandb.log({"ratio with lambda": ratio, "ratio without lambda": ratio1})
+=======
+        wandb.log({"ratio with lambda": ratio, "ratio without lambda": ratio1, "adv": adv, "cycle" : cycle})
+>>>>>>> fbd86caf4bda86fde3d919294279e29abafad5a0
 =======
         wandb.log({"ratio with lambda": ratio, "ratio without lambda": ratio1, "adv": adv, "cycle" : cycle})
 >>>>>>> fbd86caf4bda86fde3d919294279e29abafad5a0
