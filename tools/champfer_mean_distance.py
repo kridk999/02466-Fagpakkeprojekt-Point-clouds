@@ -4,7 +4,7 @@ import torch
 from dataloader_dataset import PointCloudDataset
 from tqdm import tqdm
 from torch.utils.data import DataLoader
-import config
+import config as config
 from utils import ChamferLoss
 import math
 import numpy as np

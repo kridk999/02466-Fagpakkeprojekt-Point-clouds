@@ -6,7 +6,7 @@ import torch.nn.functional as F
 import numpy as np
 import itertools
 from utils import ChamferLoss, CrossEntropyLoss
-import config
+import config as config
 from tools.Visualize_tool import visualize_pc
 from dataloader_dataset import PointCloudDataset
 
