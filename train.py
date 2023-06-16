@@ -74,6 +74,7 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
         #Total discriminator loss
         D_loss = (D_M_loss + D_FM_loss) / 2
 
+
         #Update the optimizer for the discriminator
         opt_disc.zero_grad()
         D_loss.backward()
@@ -113,7 +114,6 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
             + cycle_female_loss * config.LAMBDA_CYCLE
             + cycle_male_loss * config.LAMBDA_CYCLE
         )
-
         #Update the optimizer for the generator
         opt_gen.zero_grad()
         G_loss.backward()
