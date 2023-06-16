@@ -158,7 +158,7 @@ def main():
     vis_list_female = ['SPRING0380.obj','SPRING0400.obj','SPRING0469.obj']
     vis_list_male = ['SPRING0223.obj','SPRING0300.obj','SPRING0320.obj']
 
-    for shape in ['plane', 'sphere', 'gaussian','feature_shape']:
+    for shape in ['plane', 'sphere', 'gaussian']:#,'feature_shape']:
         args_gen.shape = shape
         gen_M = Generator_Fold(args_gen).to(config.DEVICE)
         gen_FM = Generator_Fold(args_gen).to(config.DEVICE)
@@ -174,13 +174,13 @@ def main():
 
         for i in range(3):
             df_cm = pd.DataFrame(np.array([[cf_mat['TP'][i],cf_mat['FP'][i]],[cf_mat['FN'][i],cf_mat['TN'][i]]]), index=['Female','Male'], columns=['Female_True','Male_true'])
-            plt.figure(figsize=(8,6), dpi=100)
+            plt.figure(figsize=(6,5), dpi=100)
             sns.set(font_scale = 1.1)
-            ax = sns.heatmap(df_cm, annot=True, fmt='d',cmap="Blues",cbar=False, annot_kws={"size": 20})
-            ax.set_xlabel("True labes", fontsize=16, labelpad=20)
-            ax.xaxis.set_ticklabels(['Female', 'Male'])
-            ax.set_ylabel("Predicted", fontsize=16, labelpad=20)
-            ax.yaxis.set_ticklabels(['Female', 'Male'])
+            ax = sns.heatmap(df_cm, annot=True, fmt='d',cmap="Blues",cbar=False, annot_kws={"size": 40})
+            ax.set_xlabel("True labels", fontsize=18, labelpad=25)
+            ax.xaxis.set_ticklabels(['Female', 'Male'], fontsize=20)
+            ax.set_ylabel("Predicted labels", fontsize=18, labelpad=16)
+            ax.yaxis.set_ticklabels(['Female', 'Male'],fontsize=20)
             # set plot title
             type_list = ['original', 'fake','cycle']
             ax.set_title(f"Classifiers predictions on {type_list[i]} test data", fontsize=20, pad=20)
