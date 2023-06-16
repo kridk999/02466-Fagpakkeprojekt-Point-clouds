@@ -18,7 +18,20 @@ from tqdm import tqdm
 from torchvision.utils import save_image
 from discriminator_model import Discriminator
 from generator_model import Generator
+import wandb
 
+wandb.init(
+    # set the wandb project where this run will be logged
+    project=config.project,
+    name = config.display_name,
+    entity=config.user,
+    mode=config.WANDB_mode
+    # track hyperparameters and run metadata
+    # config={
+    # "learning_rate": config.LEARNING_RATE,
+    # "epochs": config.NUM_EPOCHS,
+    # }
+)
 
 def train_fn(
     disc_H, disc_Z, gen_Z, gen_H, loader, opt_disc, opt_gen, l1, mse, d_scaler, g_scaler
@@ -28,6 +41,7 @@ def train_fn(
     loop = tqdm(loader, leave=True)
 
     for idx, (zebra, horse) in enumerate(loop):
+
         zebra = zebra.to(config.DEVICE).float().transpose(1,3)
         horse = horse.to(config.DEVICE).float().transpose(1,3)
 
@@ -87,12 +101,10 @@ def train_fn(
                 + identity_zebra_loss * config.LAMBDA_IDENTITY
             )
 
-        ratio = (cycle_zebra_loss + cycle_horse_loss) * config.LAMBDA_CYCLE / (loss_G_Z + loss_G_H) 
 
-        print(cycle_zebra_loss + cycle_horse_loss)
-        print(loss_G_H + loss_G_Z)
-    
-        print(ratio.data)
+        losses = (cycle_zebra_loss + cycle_horse_loss) * config.LAMBDA_CYCLE, (loss_G_Z + loss_G_H)
+        ratio = ((cycle_zebra_loss + cycle_horse_loss) * config.LAMBDA_CYCLE) / (loss_G_Z + loss_G_H)
+        ratio1 = (cycle_zebra_loss + cycle_horse_loss)  / (loss_G_Z + loss_G_H)
 
         opt_gen.zero_grad()
         g_scaler.scale(G_loss).backward()
@@ -105,6 +117,7 @@ def train_fn(
 
         loop.set_postfix(H_real=H_reals / (idx + 1), H_fake=H_fakes / (idx + 1))
 
+    return ratio, ratio1
 
 def main():
     disc_H = Discriminator(in_channels=3).to(config.DEVICE)
@@ -179,7 +192,7 @@ def main():
     d_scaler = torch.cuda.amp.GradScaler()
 
     for epoch in range(config.NUM_EPOCHS):
-        train_fn(
+        ratio, ratio1 = train_fn(
             disc_H,
             disc_Z,
             gen_Z,
@@ -192,13 +205,15 @@ def main():
             d_scaler,
             g_scaler,
         )
+        
+        wandb.log({"ratio with lambda": ratio, "ratio without lambda": ratio1})
 
         if config.SAVE_MODEL:
             save_checkpoint(gen_H, opt_gen, filename=config.CHECKPOINT_GEN_H)
             save_checkpoint(gen_Z, opt_gen, filename=config.CHECKPOINT_GEN_Z)
             save_checkpoint(disc_H, opt_disc, filename=config.CHECKPOINT_CRITIC_H)
             save_checkpoint(disc_Z, opt_disc, filename=config.CHECKPOINT_CRITIC_Z)
-
+    wandb.finish()
 
 if __name__ == "__main__":
     main()
