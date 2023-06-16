@@ -101,6 +101,8 @@ def train_fn(
                 + identity_zebra_loss * config.LAMBDA_IDENTITY
             )
 
+        adv = (loss_G_Z + loss_G_H)
+        cycle = (cycle_zebra_loss + cycle_horse_loss) * config.LAMBDA_CYCLE
 
         losses = (cycle_zebra_loss + cycle_horse_loss) * config.LAMBDA_CYCLE, (loss_G_Z + loss_G_H)
         ratio = ((cycle_zebra_loss + cycle_horse_loss) * config.LAMBDA_CYCLE) / (loss_G_Z + loss_G_H)
@@ -117,7 +119,7 @@ def train_fn(
 
         loop.set_postfix(H_real=H_reals / (idx + 1), H_fake=H_fakes / (idx + 1))
 
-    return ratio, ratio1
+    return ratio, ratio1, adv, cycle
 
 def main():
     disc_H = Discriminator(in_channels=3).to(config.DEVICE)
@@ -192,7 +194,7 @@ def main():
     d_scaler = torch.cuda.amp.GradScaler()
 
     for epoch in range(config.NUM_EPOCHS):
-        ratio, ratio1 = train_fn(
+        ratio, ratio1, adv, cycle = train_fn(
             disc_H,
             disc_Z,
             gen_Z,
@@ -206,7 +208,7 @@ def main():
             g_scaler,
         )
         
-        wandb.log({"ratio with lambda": ratio, "ratio without lambda": ratio1})
+        wandb.log({"ratio with lambda": ratio, "ratio without lambda": ratio1, "adv": adv, "cycle" : cycle})
 
         if config.SAVE_MODEL:
             save_checkpoint(gen_H, opt_gen, filename=config.CHECKPOINT_GEN_H)
