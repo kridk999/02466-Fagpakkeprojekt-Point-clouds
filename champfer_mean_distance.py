@@ -124,19 +124,19 @@ def main():
     
     
     if generated_data:
-        male, female, fake_female, fake_male = train_one_epoch(gen_M, gen_FM, loader)
-        male, female = train_one_epoch(gen_M, gen_FM, loader)
-        mean_female, out_female = chamf_mean(female, chamferloss)
-        mean_male, out_male = chamf_mean(male, chamferloss)
-        CI_male = torch_compute_confidence_interval(out_male)
-        CI_female =  torch_compute_confidence_interval(out_female)   
+        male, female, fake_female, fake_male = train_one_epoch(gen_M, gen_FM, val_loader)
+        # male, female = train_one_epoch(gen_M, gen_FM, loader)
+        # mean_female, out_female = chamf_mean(female, chamferloss)
+        # mean_male, out_male = chamf_mean(male, chamferloss)
+        # CI_male = torch_compute_confidence_interval(out_male)
+        # CI_female =  torch_compute_confidence_interval(out_female)   
         mean_fake_female, out_fake_female = chamf_mean(fake_female, chamferloss)
         mean_fake_male, out_fake_male = chamf_mean(fake_male, chamferloss)
         CI_fake_male = torch_compute_confidence_interval(out_fake_male)
         CI_fake_female =  torch_compute_confidence_interval(out_fake_female)
         
-        print("CI")
-        print(CI_female, CI_male)
+        # print("CI")
+        # print(CI_female, CI_male)
         print("FAKE CI")
         print(CI_fake_female, CI_fake_male)
         

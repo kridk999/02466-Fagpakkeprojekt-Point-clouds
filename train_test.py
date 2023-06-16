@@ -59,8 +59,8 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
             #D_correct += 1
 
         #Calculating MSE loss for male
-        D_M_real_loss = mse(D_M_real[:,0], torch.ones_like(D_M_real))          
-        D_M_fake_loss = mse(D_M_fake[:,1], torch.zeros_like(D_M_fake))         
+        D_M_real_loss = mse(D_M_real[:,0], torch.ones_like(D_M_real[:,1]))          
+        D_M_fake_loss = mse(D_M_fake[:,1], torch.zeros_like(D_M_fake[:,1]))         
         D_M_loss = D_M_real_loss + D_M_fake_loss
         
         identity_M = torch.eye(hov.shape[-1]).to(config.DEVICE)
@@ -73,11 +73,11 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
         D_FM_fake = disc_FM(fake_female.detach())[0]       # Putting a generated female through the discriminator
 
         #Calculate MSE loss for female
-        D_FM_real_loss = mse(D_FM_real[:,0], torch.ones_like(D_FM_real))           
-        D_FM_fake_loss = mse(D_FM_fake[:,1], torch.zeros_like(D_FM_fake))          
+        D_FM_real_loss = mse(D_FM_real[:,0], torch.ones_like(D_FM_real)[:,1])           
+        D_FM_fake_loss = mse(D_FM_fake[:,1], torch.zeros_like(D_FM_fake)[:,0])          
         D_FM_loss = D_FM_real_loss + D_FM_fake_loss
 
-
+        
         identity_FM = torch.eye(hov1.shape[-1]).to(config.DEVICE)
         regularization_loss_FM = torch.norm(identity_FM - torch.bmm(hov1, hov1.transpose(2, 1))).to(config.DEVICE)
         D_FM_loss = D_FM_loss + 0.001 * regularization_loss_FM
@@ -100,8 +100,8 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
         #Advisarial loss for both generators
         D_M_fake = disc_M(fake_male)[0]
         D_FM_fake = disc_FM(fake_female)[0]
-        loss_G_M = mse(D_M_fake[:,1], torch.ones_like(D_M_fake))                          
-        loss_G_FM = mse(D_FM_fake[:,1], torch.ones_like(D_FM_fake))             
+        loss_G_M = mse(D_M_fake[:,1], torch.ones_like(D_M_fake[:,1]))                          
+        loss_G_FM = mse(D_FM_fake[:,1], torch.ones_like(D_FM_fake[:,1]))             
 
         #Cycle loss
         cycle_female, _ = gen_FM(fake_male)
@@ -172,7 +172,7 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
                 
 
     if return_loss:
-        return D_loss, G_loss, cycle_female_loss + cycle_male_loss, loss_G_FM + loss_G_M
+        return D_loss, G_loss#, cycle_female_loss + cycle_male_loss, loss_G_FM + loss_G_M
     
 
 
