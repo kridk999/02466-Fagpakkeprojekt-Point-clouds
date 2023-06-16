@@ -124,6 +124,10 @@ def train_fn(
         loop.set_postfix(H_real=H_reals / (idx + 1), H_fake=H_fakes / (idx + 1))
 
 
+    return ratio, ratio1
+
+    return ratio, ratio1, adv, cycle
+
     return ratio, ratio1, adv, cycle
 
 def main():
@@ -200,6 +204,7 @@ def main():
 
     for epoch in range(config.NUM_EPOCHS):
 
+
         ratio, ratio1, adv, cycle = train_fn(
             disc_H,
             disc_Z,
@@ -214,6 +219,7 @@ def main():
             g_scaler,
         )
         
+
 
         wandb.log({"ratio with lambda": ratio, "ratio without lambda": ratio1, "adv": adv, "cycle" : cycle})
 
