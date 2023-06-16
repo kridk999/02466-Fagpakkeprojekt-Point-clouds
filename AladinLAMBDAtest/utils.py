@@ -1,6 +1,6 @@
 import random, torch, os, numpy as np
 import torch.nn as nn
-import config
+import config as config
 import copy
 
 def save_checkpoint(model, optimizer, filename="my_checkpoint.pth.tar"):

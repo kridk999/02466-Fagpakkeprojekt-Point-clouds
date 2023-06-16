@@ -13,7 +13,7 @@ from utils import save_checkpoint, load_checkpoint
 from torch.utils.data import DataLoader
 import torch.nn as nn
 import torch.optim as optim
-import config
+import config as config
 from tqdm import tqdm
 from torchvision.utils import save_image
 from discriminator_model import Discriminator

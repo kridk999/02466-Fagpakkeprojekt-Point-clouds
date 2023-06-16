@@ -6,7 +6,7 @@ import torch.nn as nn
 from tqdm import tqdm
 from torch.utils.data import DataLoader
 import os
-import config
+import config as config
 import torch.optim as optim
 from utils import save_checkpoint, load_checkpoint, ChamferLoss
 from cycleGAN_models.Generator import ReconstructionNet as Generator_Fold

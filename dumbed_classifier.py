@@ -4,7 +4,7 @@ import torch.nn as nn
 from tqdm import tqdm
 from torch.utils.data import DataLoader
 import os
-import config
+import config as config
 import numpy as np
 import torch.optim as optim
 from utils import save_checkpoint, load_checkpoint, ChamferLoss, visualize

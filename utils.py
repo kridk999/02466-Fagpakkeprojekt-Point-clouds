@@ -1,7 +1,7 @@
 import random, torch, os, numpy as np
 import torch.nn as nn
 import torch.nn.parallel
-import config
+import config as config
 import copy
 import torch.nn.functional as F
 import matplotlib.pyplot as plt

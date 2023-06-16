@@ -1,6 +1,6 @@
 import torch
 from utils import save_checkpoint, load_checkpoint
-import config
+import config as config
 from cycleGAN_models.Generator import ReconstructionNet as Generator_Fold
 from modified_Discriminator import get_model as Discriminator_Point
 from cycleGAN_models.Discriminator import get_model as Disc_load
