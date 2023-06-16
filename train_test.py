@@ -63,8 +63,8 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
         D_M_fake_loss = mse(D_M_fake, torch.zeros_like(D_M_fake))         
         D_M_loss = D_M_real_loss + D_M_fake_loss
         
-        identity_M = torch.eye(hov.shape[-1])
-        regularization_loss_M = torch.norm(identity_M - torch.bmm(hov, hov.transpose(2, 1)))
+        identity_M = torch.eye(hov.shape[-1]).to(config.DEVICE)
+        regularization_loss_M = torch.norm(identity_M - torch.bmm(hov, hov.transpose(2, 1))).to(config.DEVICE)
         D_M_loss = D_M_loss + 0.001 * regularization_loss_M
         
         #Female discriminator
@@ -78,8 +78,8 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
         D_FM_loss = D_FM_real_loss + D_FM_fake_loss
 
 
-        identity_FM = torch.eye(hov1.shape[-1])
-        regularization_loss_FM = torch.norm(identity_M - torch.bmm(hov1, hov1.transpose(2, 1)))
+        identity_FM = torch.eye(hov1.shape[-1]).to(config.DEVICE)
+        regularization_loss_FM = torch.norm(identity_M - torch.bmm(hov1, hov1.transpose(2, 1))).to(config.DEVICE)
         D_FM_loss = D_FM_loss + 0.001 * regularization_loss_FM
 
         #Total discriminator loss

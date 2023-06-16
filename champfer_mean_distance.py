@@ -15,8 +15,8 @@ from utils import load_checkpoint
 from Discriminator import get_model as Discriminator_Point
 from Visualize_tool import visualize_pc
 
-train_data = True
-generated_data = False
+train_data = False
+generated_data = True
 shape = "plane"
 
 
@@ -80,7 +80,7 @@ def main():
     
     if generated_data:
         load_checkpoint(
-                "MODEL_OPTS_LOSSES_plane_10.pth.tar",
+                "MODEL_OPTS_LOSSES_gaussian_1201.pth.tar",
                 models=[gen_FM, gen_M],
                 optimizers=[],
                 lr=config.LEARNING_RATE,
