@@ -53,10 +53,7 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
         fake_male, hov = gen_M(female)
         D_M_real = disc_M(male)[0]
         D_M_fake = disc_M(fake_male.detach())[0]
-        
-
-        breakpoint()
-
+    
 
         #if D_M_real.detach()[:,0] > 0.5:
             #D_correct += 1
@@ -180,8 +177,6 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
 
 def main():
     args_gen = config.get_parser_gen()
-    
-    
     
     #args_disc = config.get_parser_disc()
 
