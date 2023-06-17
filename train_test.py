@@ -76,10 +76,10 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
 
         #Total discriminator loss
         D_loss = (D_M_loss + D_FM_loss) / 2
-        identity_FM = torch.eye(hov1.shape[-1]).to(config.DEVICE)
-        regularization_loss_FM = torch.norm(identity_FM - torch.bmm(hov1, hov1.transpose(2, 1))).to(config.DEVICE)
-        D_loss = D_loss + 0.001 * regularization_loss_FM
-        breakpoint()
+        # identity_FM = torch.eye(hov1.shape[-1]).to(config.DEVICE)
+        # regularization_loss_FM = torch.norm(identity_FM - torch.bmm(hov1, hov1.transpose(2, 1))).to(config.DEVICE)
+        # D_loss = D_loss + 0.001 * regularization_loss_FM
+        
         #Update the optimizer for the discriminator
         opt_disc.zero_grad()
         D_loss.backward()
@@ -104,14 +104,14 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
 
        
         # Set chamfer loss ind
-        if config.START_SHAPE == 'feature_shape':
-            cycle_female_loss = torch.mean(chamferloss(cycle_female.transpose(2,1), female.transpose(2,1))**2)
-            cycle_male_loss = torch.mean(chamferloss(cycle_male.transpose(2,1), male.transpose(2,1))**2)
-        #if False: pass
+        # if config.START_SHAPE == 'feature_shape':
+        #     cycle_female_loss = torch.mean(chamferloss(cycle_female.transpose(2,1), female.transpose(2,1))**2)
+        #     cycle_male_loss = torch.mean(chamferloss(cycle_male.transpose(2,1), male.transpose(2,1))**2)
+        # #if False: pass
 
-        else:
-            cycle_female_loss = chamferloss(cycle_female.transpose(2,1), female.transpose(2,1))
-            cycle_male_loss = chamferloss(cycle_male.transpose(2,1), male.transpose(2,1))
+        # else:
+        cycle_female_loss = chamferloss(cycle_female.transpose(2,1), female.transpose(2,1))
+        cycle_male_loss = chamferloss(cycle_male.transpose(2,1), male.transpose(2,1))
 
 
         #Adding all generative losses together:
@@ -167,7 +167,7 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
                 
 
     if return_loss:
-        return D_loss, G_loss#, cycle_female_loss + cycle_male_loss, loss_G_FM + loss_G_M
+        return D_loss, G_loss, cycle_female_loss + cycle_male_loss, loss_G_FM + loss_G_M
     
 
 
@@ -199,8 +199,8 @@ def main():
     mse = nn.MSELoss()
     chamferloss = ChamferLoss()
 
-    if args_gen.shape == 'feature_shape':
-        chamferloss = nn.PairwiseDistance()
+    # if args_gen.shape == 'feature_shape':
+    #     chamferloss = nn.PairwiseDistance()
     
     
     #load pretrained wheights from checkpoints
@@ -247,7 +247,7 @@ def main():
         config.LAMBDA_CYCLE = lambda_cycle
 
         if return_loss:
-            D, G = train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, lambda_cycle, return_loss, save_pcl)
+            D, G, cyc, adv = train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, lambda_cycle, return_loss, save_pcl)
             wandb.log({"LossD": D, "LossG": G, "epoch": epoch+1})
         else: train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, lambda_cycle, return_loss)
         models, opts = [disc_FM, disc_M, gen_FM, gen_M], [opt_disc, opt_gen]
@@ -255,7 +255,7 @@ def main():
             losses = [D, G] 
             save_checkpoint(epoch, models, opts, losses, filename=f"MODEL_OPTS_LOSSES_{config.START_SHAPE}_{epoch+1}.pth.tar")
         #elif config.SAVE_MODEL: save_checkpoint(epoch, models, opts, losses=None, filename=f"MODEL_OPTS_LOSSES_{epoch+1}.pth.tar")
-        print(f'The best Discriminator loss for epoch {epoch+1} is {D} and the Generator loss is {G}')
+        print(f'The best Discriminator loss for epoch {epoch+1} is {D} and the Generator loss is {G}, cycle: {cyc}, adv: {adv}')
         
         
         
