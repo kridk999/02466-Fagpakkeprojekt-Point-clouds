@@ -60,12 +60,8 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
 
         #Calculating MSE loss for male
         D_M_real_loss = mse(D_M_real[:,0], torch.ones_like(D_M_real[:,1]))          
-        D_M_fake_loss = mse(D_M_fake[:,1], torch.zeros_like(D_M_fake[:,1]))         
+        D_M_fake_loss = mse(D_M_fake[:,0], torch.zeros_like(D_M_fake[:,1]))         
         D_M_loss = D_M_real_loss + D_M_fake_loss
-        
-        identity_M = torch.eye(hov.shape[-1]).to(config.DEVICE)
-        regularization_loss_M = torch.norm(identity_M - torch.bmm(hov, hov.transpose(2, 1))).to(config.DEVICE)
-        D_M_loss = D_M_loss + 0.001 * regularization_loss_M
         
         #Female discriminator
         fake_female, hov1 = gen_FM(male)                      # Generating a female from a male pointcloud
@@ -74,18 +70,16 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
 
         #Calculate MSE loss for female
         D_FM_real_loss = mse(D_FM_real[:,0], torch.ones_like(D_FM_real)[:,1])           
-        D_FM_fake_loss = mse(D_FM_fake[:,1], torch.zeros_like(D_FM_fake)[:,0])          
+        D_FM_fake_loss = mse(D_FM_fake[:,0], torch.zeros_like(D_FM_fake)[:,0])          
         D_FM_loss = D_FM_real_loss + D_FM_fake_loss
 
-        
-        identity_FM = torch.eye(hov1.shape[-1]).to(config.DEVICE)
-        regularization_loss_FM = torch.norm(identity_FM - torch.bmm(hov1, hov1.transpose(2, 1))).to(config.DEVICE)
-        D_FM_loss = D_FM_loss + 0.001 * regularization_loss_FM
 
         #Total discriminator loss
         D_loss = (D_M_loss + D_FM_loss) / 2
-
-        
+        identity_FM = torch.eye(hov1.shape[-1]).to(config.DEVICE)
+        regularization_loss_FM = torch.norm(identity_FM - torch.bmm(hov1, hov1.transpose(2, 1))).to(config.DEVICE)
+        D_loss = D_loss + 0.001 * regularization_loss_FM
+        breakpoint()
         #Update the optimizer for the discriminator
         opt_disc.zero_grad()
         D_loss.backward()
@@ -103,6 +97,7 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
         loss_G_M = mse(D_M_fake[:,1], torch.ones_like(D_M_fake[:,1]))                          
         loss_G_FM = mse(D_FM_fake[:,1], torch.ones_like(D_FM_fake[:,1]))             
 
+        
         #Cycle loss
         cycle_female, _ = gen_FM(fake_male)
         cycle_male, _ = gen_M(fake_female)

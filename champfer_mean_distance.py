@@ -17,7 +17,7 @@ from Visualize_tool import visualize_pc
 
 train_data = False
 generated_data = True
-shape = "plane"
+shape = "gaussian"
 
 
 
@@ -80,7 +80,7 @@ def main():
     
     if generated_data:
         load_checkpoint(
-                "MODEL_OPTS_LOSSES_gaussian_1201.pth.tar",
+                f"MODEL_OPTS_LOSSES_{shape}_1200.pth.tar",
                 models=[gen_FM, gen_M],
                 optimizers=[],
                 lr=config.LEARNING_RATE,
