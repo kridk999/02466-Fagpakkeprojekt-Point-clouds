@@ -167,7 +167,7 @@ def train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, m
                 
 
     if return_loss:
-        return D_loss, G_loss, cycle_female_loss + cycle_male_loss, loss_G_FM + loss_G_M
+        return D_loss, G_loss, cycle_female_loss + cycle_male_loss, loss_G_FM + loss_G_M, (D_M_fake[:,0]),(D_FM_fake[:,0]),(D_M_real[:,0]),(D_FM_real[:,0])
     
 
 
@@ -247,8 +247,8 @@ def main():
         config.LAMBDA_CYCLE = lambda_cycle
 
         if return_loss:
-            D, G, cyc, adv = train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, lambda_cycle, return_loss, save_pcl)
-            wandb.log({"LossD": D, "LossG": G, "epoch": epoch+1})
+            D, G, cyc, adv, M_fake, F_fake, M_real, F_real = train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, lambda_cycle, return_loss, save_pcl)
+            wandb.log({"LossD": D, "LossG": G, "epoch": epoch+1, "M_FAKE" : M_fake, "F_FAKE" : F_fake,"M_REAL" : M_real,"F_real": F_real})
         else: train_one_epoch(disc_M, disc_FM, gen_M, gen_FM, loader, opt_disc, opt_gen, mse, chamferloss, lambda_cycle, return_loss)
         models, opts = [disc_FM, disc_M, gen_FM, gen_M], [opt_disc, opt_gen]
         if config.SAVE_MODEL and return_loss and (epoch+1) % 200==0:
