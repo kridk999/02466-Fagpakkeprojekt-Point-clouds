@@ -42,7 +42,6 @@ def local_maxpool(x, idx):
     x = x.view(batch_size*num_points, -1)[idx, :]           # (batch_size*n, num_dims) -> (batch_size*n*k, num_dims)
     x = x.view(batch_size, num_points, -1, num_dims)        # (batch_size, num_points, k, num_dims)
     x, _ = torch.max(x, dim=2)                              # (batch_size, num_points, num_dims)
-
     return x
 
 def local_cov(pts, idx):
