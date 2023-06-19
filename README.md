@@ -59,7 +59,9 @@ python3 train.py
 ~~~
 ## Results
 ___
-Maybe include a sections with our results from the cycleGAN?
+Due to the extensive computational power and time it takes to train the cycleGAN model, the results are posted here
+
+![title](Images/Trainingmodel2.png)
 
 ## Credits
 ___
