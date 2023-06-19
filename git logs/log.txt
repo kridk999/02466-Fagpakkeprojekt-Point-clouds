@@ -1,13 +1,16 @@
-2caa846 - kridk999, 8 hours ago : last experiment
-53d5573 - kridk999, 26 hours ago : test
+34e8241 - kridk999, 29 seconds ago : readME clean
+21b7c38 - kridk999, 12 minutes ago : final
+880b809 - kridk999, 18 hours ago : git logs
+2caa846 - kridk999, 26 hours ago : last experiment
+53d5573 - kridk999, 2 days ago : test
 e5c0ee1 - kridk999, 2 days ago : CIs and train_test
-f8dbd25 - kridk999, 2 days ago : da
-a398c53 - kridk999, 2 days ago : test
-13f84c2 - kridk999, 2 days ago : test
-2045a15 - kridk999, 2 days ago : torch device fix
-fda9b53 - kridk999, 2 days ago : lambda
-3b5749d - kridk999, 2 days ago : train idea
-408d83f - kridk999, 2 days ago : train_idea
+f8dbd25 - kridk999, 3 days ago : da
+a398c53 - kridk999, 3 days ago : test
+13f84c2 - kridk999, 3 days ago : test
+2045a15 - kridk999, 3 days ago : torch device fix
+fda9b53 - kridk999, 3 days ago : lambda
+3b5749d - kridk999, 3 days ago : train idea
+408d83f - kridk999, 3 days ago : train_idea
 5fcb477 - kridk999, 3 days ago : modify
 d7208ee - kridk999, 3 days ago : idk
 8bf6e88 - KarolineKlan, 3 days ago : merge
@@ -17,104 +20,104 @@ d7208ee - kridk999, 3 days ago : idk
 fbd86ca - kridk999, 3 days ago : Aladin
 3c0e704 - kridk999, 3 days ago : Merge branch 'main' of https://github.com/kridk999/02466-Fagpakkeprojekt-Point-clouds
 aee8c63 - kridk999, 3 days ago : config folder
-ecd70b4 - Kristoffer Kjær, 3 days ago : aladin touch
-6c530de - Kristoffer Kjær, 3 days ago : alladin update
-e537196 - Kristoffer Kjær, 3 days ago : aladin test
-5e3fe75 - KarolineKlan, 3 days ago : Cleanup in visualize tool
-697ca53 - KarolineKlan, 3 days ago : Plot ændringer confusion matrix
-ce2657f - KarolineKlan, 3 days ago : test fix
-df61caa - kridk999, 3 days ago : fix folders
-fdb6dcb - kridk999, 3 days ago : readme
-98148e9 - kridk999, 3 days ago : clean GIT
-679aa02 - kridk999, 3 days ago : more clean
-5cb4a01 - kridk999, 3 days ago : clean up
-940f2f0 - kridk999, 3 days ago : readme
-1b956ec - kridk999, 3 days ago : ReadME and alladin
-c10a4b2 - kridk999, 3 days ago : Merge branch 'main' of https://github.com/kridk999/02466-Fagpakkeprojekt-Point-clouds
-18242ee - kridk999, 3 days ago : ReadME and requirements
-8451bc2 - JaSeKii, 3 days ago : test and Aladdin
-72a84a7 - JaSeKii, 3 days ago : test and Aladdin
-aad8bfa - kridk999, 3 days ago : chamf test
-b773597 - kridk999, 3 days ago : chamf mean
-eeca07d - KarolineKlan, 3 days ago : Confusion Matrix plot
+ecd70b4 - Kristoffer Kjær, 4 days ago : aladin touch
+6c530de - Kristoffer Kjær, 4 days ago : alladin update
+e537196 - Kristoffer Kjær, 4 days ago : aladin test
+5e3fe75 - KarolineKlan, 4 days ago : Cleanup in visualize tool
+697ca53 - KarolineKlan, 4 days ago : Plot ændringer confusion matrix
+ce2657f - KarolineKlan, 4 days ago : test fix
+df61caa - kridk999, 4 days ago : fix folders
+fdb6dcb - kridk999, 4 days ago : readme
+98148e9 - kridk999, 4 days ago : clean GIT
+679aa02 - kridk999, 4 days ago : more clean
+5cb4a01 - kridk999, 4 days ago : clean up
+940f2f0 - kridk999, 4 days ago : readme
+1b956ec - kridk999, 4 days ago : ReadME and alladin
+c10a4b2 - kridk999, 4 days ago : Merge branch 'main' of https://github.com/kridk999/02466-Fagpakkeprojekt-Point-clouds
+18242ee - kridk999, 4 days ago : ReadME and requirements
+8451bc2 - JaSeKii, 4 days ago : test and Aladdin
+72a84a7 - JaSeKii, 4 days ago : test and Aladdin
+aad8bfa - kridk999, 4 days ago : chamf test
+b773597 - kridk999, 4 days ago : chamf mean
+eeca07d - KarolineKlan, 4 days ago : Confusion Matrix plot
 425ac00 - kridk999, 4 days ago : lambda linear reduce
 ae046f8 - JaSeKii, 4 days ago : new test
 7c2f7ed - JaSeKii, 4 days ago : test run
 43410c8 - JaSeKii, 4 days ago : test run
-277b703 - JaSeKii, 4 days ago : Sidste hpc run
+277b703 - JaSeKii, 5 days ago : Sidste hpc run
 e7055d7 - JaSeKii, 5 days ago : added lr scheduler
 c0fcd90 - JaSeKii, 5 days ago : krise
 2849166 - JaSeKii, 5 days ago : krise
-e394706 - kridk999, 5 days ago : chamfer CI
-e8679e3 - kridk999, 5 days ago : torch deivce
-c06f149 - kridk999, 5 days ago : change in chamf
-adc565e - kridk999, 5 days ago : Merge branch 'main' of https://github.com/kridk999/02466-Fagpakkeprojekt-Point-clouds
-e07a56d - kridk999, 5 days ago : Chamfer Distance Metric
-c9bcee5 - JaSeKii, 5 days ago : new lambda values
-fa7a89c - JaSeKii, 5 days ago : train data
-a2a23fb - JaSeKii, 5 days ago : pushing training data
-6b6f533 - JaSeKii, 5 days ago : test vis works
-c3c25ae - JaSeKii, 5 days ago : test vis
-bf66797 - JaSeKii, 5 days ago : Featureshape ready for hpc
+e394706 - kridk999, 6 days ago : chamfer CI
+e8679e3 - kridk999, 6 days ago : torch deivce
+c06f149 - kridk999, 6 days ago : change in chamf
+adc565e - kridk999, 6 days ago : Merge branch 'main' of https://github.com/kridk999/02466-Fagpakkeprojekt-Point-clouds
+e07a56d - kridk999, 6 days ago : Chamfer Distance Metric
+c9bcee5 - JaSeKii, 6 days ago : new lambda values
+fa7a89c - JaSeKii, 6 days ago : train data
+a2a23fb - JaSeKii, 6 days ago : pushing training data
+6b6f533 - JaSeKii, 6 days ago : test vis works
+c3c25ae - JaSeKii, 6 days ago : test vis
+bf66797 - JaSeKii, 6 days ago : Featureshape ready for hpc
 bab466f - JaSeKii, 6 days ago : Merge branch 'main' of https://github.com/kridk999/02466-Fagpakkeprojekt-Point-clouds
 27c4bc8 - KarolineKlan, 6 days ago : tilføj punktstørrelse
 80e4c23 - JaSeKii, 6 days ago : Merge branch 'main' of https://github.com/kridk999/02466-Fagpakkeprojekt-Point-clouds
 f5fd999 - KarolineKlan, 6 days ago : modificeringer til visualize plot
 f5459ab - JaSeKii, 6 days ago : hpc for feature_shape
-65591c2 - JaSeKii, 6 days ago : SPHERE HPC RUN 2
-d55d38f - JaSeKii, 6 days ago : feature shape euclidian distance to hpc
-99f6825 - JaSeKii, 6 days ago : Merge branch 'main' of https://github.com/kridk999/02466-Fagpakkeprojekt-Point-clouds
-5325dda - JaSeKii, 6 days ago : feature shape euclidian distance to hpc
-8cb182f - JaSeKii, 6 days ago : feature_chamfer
-ccae24d - JaSeKii, 6 days ago : feature shape with pairwise distance
-0d72cfc - JaSeKii, 6 days ago : feature with chamfer
-a72381c - JaSeKii, 6 days ago : feature and classifier
-5df2ff7 - JaSeKii, 6 days ago : clasifier modifications
+65591c2 - JaSeKii, 7 days ago : SPHERE HPC RUN 2
+d55d38f - JaSeKii, 7 days ago : feature shape euclidian distance to hpc
+99f6825 - JaSeKii, 7 days ago : Merge branch 'main' of https://github.com/kridk999/02466-Fagpakkeprojekt-Point-clouds
+5325dda - JaSeKii, 7 days ago : feature shape euclidian distance to hpc
+8cb182f - JaSeKii, 7 days ago : feature_chamfer
+ccae24d - JaSeKii, 7 days ago : feature shape with pairwise distance
+0d72cfc - JaSeKii, 7 days ago : feature with chamfer
+a72381c - JaSeKii, 7 days ago : feature and classifier
+5df2ff7 - JaSeKii, 7 days ago : clasifier modifications
 d627b66 - JaSeKii, 7 days ago : classifier cuda integration
 e516400 - JaSeKii, 7 days ago : train feature_shape
 7a09b91 - JaSeKii, 7 days ago : classifier fixes
-2635502 - JaSeKii, 9 days ago : euclidian distance loss and classifier mse loss
-e28b371 - JaSeKii, 9 days ago : hpc script change
-7f0ed41 - JaSeKii, 9 days ago : redid classifier with mse loss
+2635502 - JaSeKii, 10 days ago : euclidian distance loss and classifier mse loss
+e28b371 - JaSeKii, 10 days ago : hpc script change
+7f0ed41 - JaSeKii, 10 days ago : redid classifier with mse loss
 92abd41 - JaSeKii, 10 days ago : changed mlp3
 ee1b016 - JaSeKii, 10 days ago : Merge branch 'main' of https://github.com/kridk999/02466-Fagpakkeprojekt-Point-clouds
 c0684e4 - JaSeKii, 10 days ago : classifier og test
-f60615d - JaSeKii, 10 days ago : added 'feature_shape' as a starting shape for FoldingNet
-a0b8ee6 - JaSeKii, 10 days ago : classifier ready for hpc
-300d7e2 - JaSeKii, 10 days ago : git playing tricks
-37fdadf - JaSeKii, 10 days ago : work on classifier and test
-c4cebcc - KarolineKlan, 10 days ago : Changes to visualization-plot
-e706305 - JaSeKii, 10 days ago : hpc.sh
-c613539 - JaSeKii, 10 days ago : READY TO TRAIN!
-e047515 - JaSeKii, 11 days ago : work on test
-4adb48c - JaSeKii, 11 days ago : created working classifier
-71e47a3 - kridk999, 11 days ago : classifier try
-24749f3 - kridk999, 11 days ago : ændr
-2c77385 - kridk999, 11 days ago : trying classifier
-389dd41 - JaSeKii, 11 days ago : train.py ready for training
-2c61fe1 - JaSeKii, 11 days ago : Pointnet classifier-jacob
+f60615d - JaSeKii, 11 days ago : added 'feature_shape' as a starting shape for FoldingNet
+a0b8ee6 - JaSeKii, 11 days ago : classifier ready for hpc
+300d7e2 - JaSeKii, 11 days ago : git playing tricks
+37fdadf - JaSeKii, 11 days ago : work on classifier and test
+c4cebcc - KarolineKlan, 11 days ago : Changes to visualization-plot
+e706305 - JaSeKii, 11 days ago : hpc.sh
+c613539 - JaSeKii, 11 days ago : READY TO TRAIN!
+e047515 - JaSeKii, 12 days ago : work on test
+4adb48c - JaSeKii, 12 days ago : created working classifier
+71e47a3 - kridk999, 12 days ago : classifier try
+24749f3 - kridk999, 12 days ago : ændr
+2c77385 - kridk999, 12 days ago : trying classifier
+389dd41 - JaSeKii, 12 days ago : train.py ready for training
+2c61fe1 - JaSeKii, 12 days ago : Pointnet classifier-jacob
 0d175f0 - JaSeKii, 12 days ago : cant push train.py
 9b9f106 - JaSeKii, 12 days ago : config and train changes
 2159fba - JaSeKii, 12 days ago : added classifier, changed the saving of pcls
-98f0cc7 - JaSeKii, 12 days ago : fixed dataloader to use sample_surface_even
-ec0363f - JaSeKii, 12 days ago : moved some pcls from val to train, created validation function
-4790f34 - JaSeKii, 12 days ago : disc-loss-test and adv-loss
-30efb2e - JaSeKii, 12 days ago : test og visualization
+98f0cc7 - JaSeKii, 13 days ago : fixed dataloader to use sample_surface_even
+ec0363f - JaSeKii, 13 days ago : moved some pcls from val to train, created validation function
+4790f34 - JaSeKii, 13 days ago : disc-loss-test and adv-loss
+30efb2e - JaSeKii, 13 days ago : test og visualization
 ca9c73f - JaSeKii, 13 days ago : Visualization changes
-3224ad3 - KarolineKlan, 13 days ago : lille bitte ændring
-a2101e4 - KarolineKlan, 13 days ago : Lille ændring til plot
-2b50994 - JaSeKii, 13 days ago : small change
-2b864c8 - JaSeKii, 13 days ago : visualizeation of pointcloud in rgb
+3224ad3 - KarolineKlan, 2 weeks ago : lille bitte ændring
+a2101e4 - KarolineKlan, 2 weeks ago : Lille ændring til plot
+2b50994 - JaSeKii, 2 weeks ago : small change
+2b864c8 - JaSeKii, 2 weeks ago : visualizeation of pointcloud in rgb
 06a6d83 - JaSeKii, 2 weeks ago : upscale dimensions in generator and added cycle + adviserial loss to wandb
 bf20664 - KarolineKlan, 2 weeks ago : Visualize according to dimension
 e539bb4 - kridk999, 2 weeks ago : test without even sampling
-80830b9 - JaSeKii, 2 weeks ago : reverted changes to disc
-a260758 - JaSeKii, 2 weeks ago : changed mse calculation in disc and gen
-1b6f88f - JaSeKii, 2 weeks ago : removed pycache files
-e14bbec - JaSeKii, 2 weeks ago : removed flag in config
-f189199 - KarolineKlan, 2 weeks ago : Visualiseringer ift. dimension
-9f60398 - kridk999, 2 weeks ago : logs
-e207b9e - JaSeKii, 2 weeks ago : wandb & sample points
+80830b9 - JaSeKii, 3 weeks ago : reverted changes to disc
+a260758 - JaSeKii, 3 weeks ago : changed mse calculation in disc and gen
+1b6f88f - JaSeKii, 3 weeks ago : removed pycache files
+e14bbec - JaSeKii, 3 weeks ago : removed flag in config
+f189199 - KarolineKlan, 3 weeks ago : Visualiseringer ift. dimension
+9f60398 - kridk999, 3 weeks ago : logs
+e207b9e - JaSeKii, 3 weeks ago : wandb & sample points
 d34be76 - KarolineKlan, 3 weeks ago : merge
 e35e8d1 - KarolineKlan, 3 weeks ago : new
 c4f09c7 - JaSeKii, 3 weeks ago : chamferloss changed, learningrate changed
@@ -192,10 +195,10 @@ b118c90 - JaSeKii, 10 weeks ago : added transform to getitem
 658dd52 - JaSeKii, 10 weeks ago : getitem
 6c6f2ef - JaSeKii, 10 weeks ago : changes
 3f95642 - JaSeKii, 10 weeks ago : update data
-febcb7f - JaSeKii, 10 weeks ago : dagens arbejde
-2ab128f - JaSeKii, 10 weeks ago : added foldingNet as generator
-8c58bdd - JaSeKii, 10 weeks ago : mere trainloop, config og utils
-361cda2 - JaSeKii, 10 weeks ago : training loop and config
+febcb7f - JaSeKii, 2 months ago : dagens arbejde
+2ab128f - JaSeKii, 2 months ago : added foldingNet as generator
+8c58bdd - JaSeKii, 2 months ago : mere trainloop, config og utils
+361cda2 - JaSeKii, 2 months ago : training loop and config
 0a14371 - KarolineKlan, 3 months ago : ny dataloader mere rigtig måske
 1bf63e7 - KarolineKlan, 3 months ago : plot update
 42eb6a6 - KarolineKlan, 3 months ago : leg med plot
